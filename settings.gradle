@@ -1,0 +1,2 @@
+rootProject.name='dolby_beta'
+include ':app', ':hotxposed'

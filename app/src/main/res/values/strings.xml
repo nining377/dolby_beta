@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">杜比大喇叭β版</string>
+
+    <string name="xposed_description">仅供测试</string>
+    <string name="Module_is_Not_Active">模块未激活</string>
+
+    <string name="pref_base_setting">基本设置</string>
+    <string name="pref_optional_setting">可选设置</string>
+    <string name="pref_beautify">美化设置</string>
+    <string name="pref_other">其他</string>
+
+    <string name="unblock_key">unblock</string>
+    <string name="unblock_default_value">true</string>
+    <string name="unblock_title">开关</string>
+
+    <string name="dex_key" translatable="false">dex</string>
+    <string name="dex_default_value">true</string>
+    <string name="dex_title">启用DEX缓存</string>
+    <string name="dex_summary">加快启动速度，但同版本号的内测版与稳定版互装可能会有兼容性问题</string>
+
+    <string name="black_key" translatable="false">black</string>
+    <string name="black_default_value">true</string>
+    <string name="black_title">本地黑胶</string>
+    <string name="black_summary">去广告、鲸云音效、个性换肤等，启动图片与背景图片为服务器云同步所以设置不可用</string>
+
+    <string name="remove_update_key" translatable="false">remove_update</string>
+    <string name="remove_update_default_value">true</string>
+    <string name="remove_update_title">去升级</string>
+    <string name="remove_update_summary">屏蔽升级提示</string>
+
+    <string name="auto_sign_key" translatable="false">auto_sign</string>
+    <string name="auto_sign_default_value">true</string>
+    <string name="auto_sign_title">自动签到</string>
+
+    <string name="hide_module_icon_key" translatable="false">hide_module_icon</string>
+    <string name="hide_module_default_value">false</string>
+    <string name="hide_module_icon_title">隐藏本模块图标</string>
+
+    <string name="gray_key" translatable="false">gray</string>
+    <string name="gray_default_value">false</string>
+    <string name="gray_title">不变灰</string>
+    <string name="gray_summary">只影响显示效果，与能否播放无关</string>
+
+    <string name="sign_song_key" translatable="false">sign_song</string>
+    <string name="sign_song_default_value">false</string>
+    <string name="sign_song_title">歌曲打卡</string>
+    <string name="sign_song_summary">获取每日推荐歌单中的歌曲进行打卡，每日最多记录300首，打卡效果有一定延时不要重复打卡，会影响年度听歌总结且有可能会导致几天内签到天数不变，介意者慎用</string>
+
+    <string name="self_sign_key" translatable="false">self_sign</string>
+    <string name="self_sign_title">自助打卡</string>
+
+    <string name="internal_key" translatable="false">internal</string>
+    <string name="internal_default_value">false</string>
+    <string name="internal_title">阻止内测到期提示</string>
+    <string name="internal_summary">可以无限制的使用内测版，但因内测版产生的任何问题不负责解决</string>
+
+    <string name="oversea_key" translatable="false">oversea</string>
+    <string name="oversea_default_value">false</string>
+    <string name="oversea_title">海外模式</string>
+    <string name="oversea_summary">国内用户勾选后会降低缓冲速度</string>
+
+    <string name="magisk_key" translatable="false">magisk</string>
+    <string name="magisk_default_value">false</string>
+    <string name="magisk_title">修复Magisk冲突</string>
+    <string name="magisk_summary">如果遇到本地歌曲不能扫描，勾选该选项</string>
+
+    <string name="hide_tab_key" translatable="false">hide_tab</string>
+    <string name="hide_tab_default_value">false</string>
+    <string name="hide_tab_title">精简Tab（6.0.0以上）</string>
+    <string name="hide_tab_summary">首页顶部仅保留“我的”与“发现”</string>
+
+    <string name="hide_sidebar_key" translatable="false">hide_sidebar</string>
+    <string name="hide_sidebar_default_value">false</string>
+    <string name="hide_sidebar_title">精简侧边栏</string>
+    <string name="hide_sidebar_summary">部分Item需配合“设置”->“侧边栏管理”开关生效</string>
+
+    <string name="profile_key" translatable="false">profile</string>
+    <string name="profile_title">设置个人信息</string>
+    <string name="profile_summary">暂无</string>
+
+    <string name="core_ver_key" translatable="false">core_ver</string>
+    <string name="core_ver_title">模块版本</string>
+    <string name="core_ver_summary">ver.</string>
+
+    <string name="compatible_appver_key" translatable="false">compatible_appver</string>
+    <string name="compatible_appver_title">兼容版本</string>
+    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~7.1.51</string>
+
+    <string name="github_key" translatable="false">github</string>
+    <string name="github_title">github源码</string>
+    <string name="github_summary">请务必帮我点一下小星星！</string>
+</resources>
