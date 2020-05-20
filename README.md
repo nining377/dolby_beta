@@ -6,7 +6,7 @@
 
 # 主要功能
 
-
+<img src="https://raw.githubusercontent.com/nining377/dolby_beta/master/image/img_01.png" width="50%">
 
 ## 许可
 
