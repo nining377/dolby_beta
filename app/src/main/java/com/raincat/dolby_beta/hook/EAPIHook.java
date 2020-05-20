@@ -10,12 +10,10 @@ import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 
 /**
  * <pre>
