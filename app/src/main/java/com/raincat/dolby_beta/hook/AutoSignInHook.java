@@ -252,6 +252,10 @@ public class AutoSignInHook {
             int count = 0;
 
             DailyRecommend dailyRecommend = gson.fromJson(new Http("GET", "https://music.163.com/api/v1/discovery/recommend/resource", null, headers).getResult(), DailyRecommend.class);
+            if (dailyRecommend == null || dailyRecommend.getRecommend() == null) {
+                Tools.showToastOnLooper(context, "打卡失败，每日歌单列表为空！");
+                return;
+            }
             Start:
             for (DailyRecommend.RecommendBean recommendBean : dailyRecommend.getRecommend()) {
                 if (signedListMap.get(recommendBean.getId()) != null)

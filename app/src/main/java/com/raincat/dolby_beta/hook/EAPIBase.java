@@ -1,18 +1,29 @@
 package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.gson.Gson;
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.model.UserInfo;
 import com.raincat.dolby_beta.net.Http;
+import com.raincat.dolby_beta.utils.CloudMusicPackage;
+import com.raincat.dolby_beta.utils.NeteaseAES;
 import com.raincat.dolby_beta.utils.NeteaseAES2;
+import com.raincat.dolby_beta.utils.Setting;
+import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import de.robv.android.xposed.XposedBridge;
 
 class EAPIBase {
     private static final Pattern REX_TYPE = Pattern.compile("\"type\":\\d+");
@@ -94,6 +105,16 @@ class EAPIBase {
         if (result.contains("502") || result.contains("200"))
             result = "{\"playlistId\":" + pid + ",\"code\":200}";
         return result;
+    }
+
+    void getUserId(Context context, String original) throws JSONException {
+        JSONObject jsonObject = new JSONObject(original);
+        if (!jsonObject.isNull("/api/v1/user/info")) {
+            jsonObject = jsonObject.getJSONObject("/api/v1/user/info");
+            jsonObject = jsonObject.getJSONObject("userPoint");
+            String userId = jsonObject.getString("userId");
+            ExtraDao.getInstance(context).saveExtra("userId", userId);
+        }
     }
 
     /**

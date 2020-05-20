@@ -53,7 +53,7 @@
 # 指定class
 -packageobfuscationdictionary proguard-class.txt
 # 将包里的类混淆成n个再重新打包到一个统一的package中  会覆盖flattenpackagehierarchy选项
--repackageclasses com.raincat.unblockneteasemusic
+-repackageclasses com.raincat.dolby_beta
 # 删除日志
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);

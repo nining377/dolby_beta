@@ -10,6 +10,7 @@ import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -54,6 +55,7 @@ public class EAPIHook extends EAPIBase {
                 } else if (path.contains("sound/mobile") || path.contains("page=audio_effect")) {
                     modified = modifyEffect(original);
                 } else if (path.contains("batch")) {
+                    getUserId(context, original);
                     modified = modifyByRegex(original);
                     if (modified.contains("comment\\/banner\\/get")) {
                         JSONObject jsonObject = new JSONObject(modified);
@@ -74,11 +76,13 @@ public class EAPIHook extends EAPIBase {
                         Tools.showToastOnLooper(context, "自动签到成功");
                 } else if (path.contains("login")) {
                     Object response = httpResponse.getResponseObject();
-                    CloudMusicPackage.OKHttp3Header okHttp3Header = new CloudMusicPackage.OKHttp3Header(response);
+                    CloudMusicPackage.OKHttp3Response okHttp3Response = new CloudMusicPackage.OKHttp3Response(response);
+                    Object header = okHttp3Response.getHeadersObject();
+                    CloudMusicPackage.OKHttp3Header okHttp3Header = new CloudMusicPackage.OKHttp3Header(header);
                     String[] headers = okHttp3Header.getHeaders();
                     Start:
                     for (int i = 0; i < headers.length; i++) {
-                        if (headers[i].contains("Set-Cookie")) {
+                        if (headers[i].toLowerCase().contains("set-cookie")) {
                             String[] cookies = headers[i + 1].split(";");
                             for (String cookie : cookies) {
                                 if (cookie.contains("MUSIC_U")) {
