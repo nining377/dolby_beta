@@ -1,4 +1,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="@string/warning_key"
+        android:summary="@string/warning_summary" />
+
     <PreferenceCategory android:title="@string/pref_base_setting">
         <CheckBoxPreference
             android:defaultValue="@string/unblock_default_value"
@@ -87,6 +91,24 @@
             android:key="@string/hide_tab_key"
             android:summary="@string/hide_tab_summary"
             android:title="@string/hide_tab_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/hide_banner_default_value"
+            android:dependency="@string/unblock_key"
+            android:key="@string/hide_banner_key"
+            android:title="@string/hide_banner_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/hide_playlist_banner_default_value"
+            android:dependency="@string/unblock_key"
+            android:key="@string/hide_playlist_banner_key"
+            android:title="@string/hide_playlist_banner_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/hide_bubble_default_value"
+            android:dependency="@string/unblock_key"
+            android:key="@string/hide_bubble_key"
+            android:title="@string/hide_bubble_title" />
 
         <Preference
             android:dependency="@string/unblock_key"

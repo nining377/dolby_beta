@@ -7,6 +7,7 @@ import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.model.UserInfo;
 import com.raincat.dolby_beta.net.Http;
 import com.raincat.dolby_beta.utils.NeteaseAES2;
+import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,11 +33,11 @@ class EAPIBase {
         header.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
 
         HashMap<String, Object> param = new HashMap<>();
-        String trackIds = (String) data.get("trackIds");
+        String trackIds = data.get("trackIds");
         param.put("op", data.get("op"));
         param.put("pid", data.get("pid"));
 
-        String paramString = NeteaseAES2.Decrypt((String) data.get("params"));
+        String paramString = NeteaseAES2.Decrypt( data.get("params"));
         if (paramString != null && paramString.length() != 0) {
             if (paramString.contains("-36cd479b6b5-")) {
                 paramString = paramString.substring(paramString.indexOf("-36cd479b6b5-") + 13);
@@ -48,6 +49,7 @@ class EAPIBase {
             param.put("pid", jsonObject.getString("pid"));
         }
 
+        assert trackIds != null;
         String newTrackIds = trackIds.replace("]", "") + trackIds.replace("[", ",");
         param.put("trackIds", newTrackIds);
         String result = new Http("POST", "http://music.163.com/api/playlist/manipulate/tracks", param, header).getResult();
@@ -69,7 +71,7 @@ class EAPIBase {
 
         //获取我喜欢的音乐列表
         Gson gson = new Gson();
-        String paramString = NeteaseAES2.Decrypt((String) data.get("params"));
+        String paramString = NeteaseAES2.Decrypt( data.get("params"));
         if (paramString != null && paramString.length() != 0) {
             if (paramString.contains("-36cd479b6b5-")) {
                 paramString = paramString.substring(paramString.indexOf("-36cd479b6b5-") + 13);
@@ -79,12 +81,17 @@ class EAPIBase {
             trackId = jsonObject.getString("trackId");
         }
 
-        String userInfoString = new Http("GET", "http://music.163.com/api/v1/user/info", null, header).getResult();
-        UserInfo userInfo = gson.fromJson(userInfoString, UserInfo.class);
-        String playlistString = new Http("GET", "http://music.163.com/api/user/playlist?limit=1&uid=" + userInfo.getUserPoint().getUserId(), null, header).getResult();
-        JSONObject playlistJson = new JSONObject(playlistString);
-        JSONArray playlistArray = playlistJson.getJSONArray("playlist");
-        String pid = playlistArray.getJSONObject(0).getString("id");
+        String pid = null;
+        try {
+            String userInfoString = new Http("GET", "http://music.163.com/api/v1/user/info", null, header).getResult();
+            UserInfo userInfo = gson.fromJson(userInfoString, UserInfo.class);
+            String playlistString = new Http("GET", "http://music.163.com/api/user/playlist?limit=1&uid=" + userInfo.getUserPoint().getUserId(), null, header).getResult();
+            JSONObject playlistJson = new JSONObject(playlistString);
+            JSONArray playlistArray = playlistJson.getJSONArray("playlist");
+            pid = playlistArray.getJSONObject(0).getString("id");
+        } catch (Exception e) {
+            Tools.showToastOnLooper(context, "收藏失败，请重新登录账号以刷新数据！");
+        }
 
         HashMap<String, Object> param = new HashMap<>();
         param.put("trackIds", "[\"" + trackId + "\",\"" + trackId + "\"]");

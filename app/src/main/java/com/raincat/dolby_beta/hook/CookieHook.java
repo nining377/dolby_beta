@@ -18,17 +18,17 @@ public class CookieHook {
         findAndHookMethod("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader(),
                 "onCreate", Bundle.class, new XC_MethodHook() {
                     @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    protected void afterHookedMethod(MethodHookParam param) {
                         //获取cookie
-                        if (Setting.isCookieEnabled()) {
-                            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                            String cookie = ExtraDao.getInstance(context).getExtra("cookie");
-                            if (cookie.equals("-1") || cookie.length() == 0)
-                                return;
-                            ClipData clipData = ClipData.newPlainText(null, ExtraDao.getInstance(context).getExtra("cookie"));
-                            Toast.makeText(context, "cookie已复制到剪切板", Toast.LENGTH_SHORT).show();
-                            clipboard.setPrimaryClip(clipData);
+                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                        String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+                        if (cookie.equals("-1") || cookie.length() == 0) {
+                            Toast.makeText(context, "cookie获取失败，请重新登录账号以刷新数据", Toast.LENGTH_SHORT).show();
+                            return;
                         }
+                        ClipData clipData = ClipData.newPlainText(null, ExtraDao.getInstance(context).getExtra("cookie"));
+                        Toast.makeText(context, "cookie已复制到剪切板", Toast.LENGTH_SHORT).show();
+                        clipboard.setPrimaryClip(clipData);
                     }
                 });
     }

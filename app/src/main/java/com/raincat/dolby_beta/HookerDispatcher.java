@@ -5,16 +5,19 @@ import android.content.Context;
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
 import com.raincat.dolby_beta.hook.BlackHook;
+import com.raincat.dolby_beta.hook.CookieHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
 import com.raincat.dolby_beta.hook.GrayHook;
+import com.raincat.dolby_beta.hook.HideBubbleHook;
+import com.raincat.dolby_beta.hook.HideMainBannerHook;
+import com.raincat.dolby_beta.hook.HidePlaylistBannerHook;
+import com.raincat.dolby_beta.hook.HideSidebarHook;
 import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
 import com.raincat.dolby_beta.hook.OverseaHook;
 import com.raincat.dolby_beta.hook.ProfileHook;
-import com.raincat.dolby_beta.hook.CookieHook;
-import com.raincat.dolby_beta.hook.SidebarCutHook;
 import com.raincat.dolby_beta.hook.TaiChiFixHook;
 import com.raincat.dolby_beta.hook.TestHook;
 import com.raincat.dolby_beta.utils.CloudMusicPackage;
@@ -68,7 +71,7 @@ public class HookerDispatcher implements IHookerDispatcher {
                             //不变灰
                             if (Setting.isGrayEnabled())
                                 new GrayHook(neteaseContext);
-                            //干掉内测弹窗
+                            //隐藏内测弹窗
                             if (Setting.isInternalEnabled())
                                 new InternalDialogHook(neteaseContext, CloudMusicPackage.versionCode);
                             //海外模式
@@ -81,12 +84,23 @@ public class HookerDispatcher implements IHookerDispatcher {
                             new AdAndUpdateHook(neteaseContext, CloudMusicPackage.versionCode);
                             //修复太极优化后无法hook的bug
                             new TaiChiFixHook();
-                            new CookieHook(neteaseContext);
+                            //获取cookie
+                            if (Setting.isCookieEnabled())
+                                new CookieHook(neteaseContext);
                             //精简Tab
                             if (Setting.isHideTabEnabled())
                                 new HideTabHook(neteaseContext, CloudMusicPackage.versionCode);
+                            //隐藏发现页Banner
+                            if (Setting.isHideMainBannerEnabled())
+                                new HideMainBannerHook(neteaseContext, CloudMusicPackage.versionCode);
+                            //隐藏歌单页Banner
+                            if (Setting.isHidePlaylistBannerEnabled())
+                                new HidePlaylistBannerHook(neteaseContext, CloudMusicPackage.versionCode);
+                            //隐藏小红点
+                            if (Setting.isHideBubbleEnabled())
+                                new HideBubbleHook(neteaseContext);
                             //精简侧边栏
-                            new SidebarCutHook(neteaseContext, CloudMusicPackage.versionCode);
+                            new HideSidebarHook(neteaseContext, CloudMusicPackage.versionCode);
                             //伪装个人信息
                             new ProfileHook(neteaseContext);
                             new TestHook(neteaseContext);

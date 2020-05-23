@@ -22,7 +22,7 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
  *     version: 1.0
  * </pre>
  */
-public class SidebarCutHook {
+public class HideSidebarHook {
     private String classMainDrawerString = "com.netease.cloudmusic.ui.MainDrawer";
     private String classDrawerItemEnumString = "com.netease.cloudmusic.ui.MainDrawer$DrawerItemEnum";
     private String methodRefreshDrawerString = "refreshDrawer";
@@ -31,7 +31,7 @@ public class SidebarCutHook {
     private HashMap<String, Boolean> tagMap = new HashMap<>();
 
 
-    public SidebarCutHook(Context context, int versionCode) {
+    public HideSidebarHook(Context context, int versionCode) {
         if (versionCode < 138) {
             classMainDrawerString = "com.netease.cloudmusic.ui.l";
             classDrawerItemEnumString = "com.netease.cloudmusic.ui.l$b";

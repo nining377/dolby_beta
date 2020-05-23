@@ -253,7 +253,7 @@ public class AutoSignInHook {
 
             DailyRecommend dailyRecommend = gson.fromJson(new Http("GET", "https://music.163.com/api/v1/discovery/recommend/resource", null, headers).getResult(), DailyRecommend.class);
             if (dailyRecommend == null || dailyRecommend.getRecommend() == null) {
-                Tools.showToastOnLooper(context, "打卡失败，每日歌单列表为空！");
+                Tools.showToastOnLooper(context, "打卡失败，请重新登录账号以刷新数据！");
                 return;
             }
             Start:

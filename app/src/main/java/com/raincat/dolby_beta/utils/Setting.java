@@ -76,6 +76,27 @@ public class Setting {
         return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.hide_tab_key), defaultValue);
     }
 
+    public static boolean isHideMainBannerEnabled() {
+        String valueString = getModuleResString(R.string.hide_banner_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.hide_banner_key), defaultValue);
+    }
+
+    public static boolean isHidePlaylistBannerEnabled() {
+        String valueString = getModuleResString(R.string.hide_playlist_banner_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.hide_playlist_banner_key), defaultValue);
+    }
+
+    public static boolean isHideBubbleEnabled() {
+        String valueString = getModuleResString(R.string.hide_bubble_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.hide_bubble_key), defaultValue);
+    }
+
     public static boolean isInternalEnabled() {
         String valueString = getModuleResString(R.string.internal_default_value);
         boolean defaultValue = Boolean.parseBoolean(valueString);

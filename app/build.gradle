@@ -8,8 +8,8 @@ android {
         applicationId "com.raincat.dolby_beta"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 101
-        versionName "1.0.1"
+        versionCode 102
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -53,5 +53,4 @@ dependencies {
 
     implementation project(':hotxposed')
     implementation files('libs/tools.jar')
-    implementation files('libs/JavaMD5.jar')
 }

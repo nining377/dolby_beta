@@ -133,7 +133,7 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
             return false;
         });
 
-        Preference ver = findPreference(getString(R.string.compatible_appver_key));
+        Preference ver = findPreference(getString(R.string.core_ver_key));
         ver.setOnPreferenceClickListener(preference -> {
             authorCheckCount++;
             if (authorCheckCount == 5) {

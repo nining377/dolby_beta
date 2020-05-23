@@ -9,6 +9,9 @@
     <string name="pref_beautify">美化设置</string>
     <string name="pref_other">其他</string>
 
+    <string name="warning_key">warning</string>
+    <string name="warning_summary">欢迎使用杜比大喇叭，本模块仅供学习交流使用且公开免费，严禁用于商业用途！</string>
+
     <string name="unblock_key">unblock</string>
     <string name="unblock_default_value">true</string>
     <string name="unblock_title">开关</string>
@@ -68,6 +71,18 @@
     <string name="hide_tab_default_value">false</string>
     <string name="hide_tab_title">精简Tab（6.0.0以上）</string>
     <string name="hide_tab_summary">首页顶部仅保留“我的”与“发现”</string>
+
+    <string name="hide_banner_key" translatable="false">hide_banner</string>
+    <string name="hide_banner_default_value">false</string>
+    <string name="hide_banner_title">移除发现页Banner</string>
+
+    <string name="hide_playlist_banner_key" translatable="false">hide_playlist_banner</string>
+    <string name="hide_playlist_banner_default_value">false</string>
+    <string name="hide_playlist_banner_title">移除歌单广场Banner</string>
+
+    <string name="hide_bubble_key" translatable="false">hide_bubble</string>
+    <string name="hide_bubble_default_value">false</string>
+    <string name="hide_bubble_title">移除小红点</string>
 
     <string name="hide_sidebar_key" translatable="false">hide_sidebar</string>
     <string name="hide_sidebar_default_value">false</string>
