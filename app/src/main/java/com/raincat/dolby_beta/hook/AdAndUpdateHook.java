@@ -52,7 +52,7 @@ public class AdAndUpdateHook {
                     Field httpUrl = request.getClass().getDeclaredField(httpUrlFieldString);
                     httpUrl.setAccessible(true);
                     Object urlObj = httpUrl.get(request);
-                    if ((removeAd && urlObj.toString().contains("api/ad")) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
+                    if ((removeAd && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4"))) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
                         Field url = urlObj.getClass().getDeclaredField(urlFieldString);
                         boolean urlAccessible = url.isAccessible();
                         url.setAccessible(true);

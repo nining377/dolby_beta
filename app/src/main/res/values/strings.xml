@@ -84,6 +84,10 @@
     <string name="hide_bubble_default_value">false</string>
     <string name="hide_bubble_title">移除小红点</string>
 
+    <string name="comment_hot_key" translatable="false">comment_hot</string>
+    <string name="comment_hot_default_value">false</string>
+    <string name="comment_hot_title">评论区优先显示“最热”内容</string>
+
     <string name="hide_sidebar_key" translatable="false">hide_sidebar</string>
     <string name="hide_sidebar_default_value">false</string>
     <string name="hide_sidebar_title">精简侧边栏</string>

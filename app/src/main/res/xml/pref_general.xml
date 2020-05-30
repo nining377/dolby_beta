@@ -110,6 +110,12 @@
             android:key="@string/hide_bubble_key"
             android:title="@string/hide_bubble_title" />
 
+        <CheckBoxPreference
+            android:defaultValue="@string/comment_hot_default_value"
+            android:dependency="@string/unblock_key"
+            android:key="@string/comment_hot_key"
+            android:title="@string/comment_hot_title" />
+
         <Preference
             android:dependency="@string/unblock_key"
             android:key="@string/hide_sidebar_key"

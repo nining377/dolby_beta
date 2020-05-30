@@ -97,6 +97,13 @@ public class Setting {
         return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.hide_bubble_key), defaultValue);
     }
 
+    public static boolean isCommentHotEnabled() {
+        String valueString = getModuleResString(R.string.comment_hot_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.comment_hot_key), defaultValue);
+    }
+
     public static boolean isInternalEnabled() {
         String valueString = getModuleResString(R.string.internal_default_value);
         boolean defaultValue = Boolean.parseBoolean(valueString);

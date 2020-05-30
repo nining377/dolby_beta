@@ -5,6 +5,7 @@ import android.content.Context;
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
 import com.raincat.dolby_beta.hook.BlackHook;
+import com.raincat.dolby_beta.hook.CommentHotClickHook;
 import com.raincat.dolby_beta.hook.CookieHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
@@ -99,6 +100,9 @@ public class HookerDispatcher implements IHookerDispatcher {
                             //隐藏小红点
                             if (Setting.isHideBubbleEnabled())
                                 new HideBubbleHook(neteaseContext);
+                            //打开评论后优先显示最热评论
+                            if (Setting.isCommentHotEnabled())
+                                new CommentHotClickHook(neteaseContext);
                             //精简侧边栏
                             new HideSidebarHook(neteaseContext, CloudMusicPackage.versionCode);
                             //伪装个人信息
