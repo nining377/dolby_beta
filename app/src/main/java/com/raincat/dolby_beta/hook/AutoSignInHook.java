@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -82,7 +83,7 @@ public class AutoSignInHook {
                             }
                         });
             }
-        } else {
+        } else if (versionCode < 7001080) {
             //禁止签到跳转到商城
             if (findClassIfExists("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader()) != null) {
                 XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader()), "a", new XC_MethodHook() {
@@ -110,8 +111,21 @@ public class AutoSignInHook {
                     }
                 });
             }
+        } else {
+            //禁止签到跳转到商城
+            if (findClassIfExists("com.netease.cloudmusic.activity.RedirectActivity", context.getClassLoader()) != null) {
+                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.activity.RedirectActivity", context.getClassLoader()), "a", Context.class, String.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        Object context = param.args[0];
+                        String string = (String) param.args[1];
+                        if (context.getClass().getName().equals("com.netease.cloudmusic.activity.MainActivity") && string.contains("cloudshell")) {
+                            param.setResult(null);
+                        }
+                    }
+                });
+            }
         }
-
         //获取关键Object
         findAndHookMethod(classMainDrawer, context.getClassLoader(), methodInitDrawerHeader, new XC_MethodHook() {
             @Override
