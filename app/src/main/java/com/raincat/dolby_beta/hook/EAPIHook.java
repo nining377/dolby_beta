@@ -62,12 +62,10 @@ public class EAPIHook extends EAPIBase {
                         modified = modified.replace("\"{\\\"code\\\":200}\"", "{\"code\":200}");
                     }
                     if (modified.contains("\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get")) {
-                        int firstIndex = modified.indexOf("\"records\":") + 11;
-                        int endIndex = modified.indexOf("]}},", firstIndex);
-                        String subString = modified.substring(firstIndex, endIndex);
-                        modified = modified.replace(subString, "");
-                        modified = modified.replaceAll("\"count\":\\d+", "\"count\":0");
-                        modified = modified.replaceAll("\"offset\":\\d+", "\"offset\":999999999");
+                        JSONObject jsonObject = new JSONObject(modified);
+                        jsonObject.put("/api/v1/content/exposure/comment/banner/get", "\"code\":200,\"data\":{\"count\":0,\"offset\":999999999,\"records\":[]},\"message\":\"\"");
+                        modified = jsonObject.toString();
+                        modified = modified.replace("\\\\\\", "");
                     }
                 } else if (path.contains("point/dailyTask")) {
                     if (original.contains("200") && !original.contains("msg"))
@@ -109,5 +107,16 @@ public class EAPIHook extends EAPIBase {
                 }
             }
         });
+    }
+
+    private void logcat(String msg) {
+        int max_str_length = 1800;
+        //大于4000时
+        while (msg.length() > max_str_length) {
+            XposedBridge.log(msg.substring(0, max_str_length));
+            msg = msg.substring(max_str_length);
+        }
+        //剩余部分
+        XposedBridge.log(msg);
     }
 }

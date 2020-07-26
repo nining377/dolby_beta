@@ -22,8 +22,13 @@ public class CommentHotClickHook {
         Class<?> commentFragmentClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.fragment.CommentFragment", context.getClassLoader());
         Class<?> commentFragmentAClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.fragment.CommentFragment$a", context.getClassLoader());
         Class<?> viewHolderClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.fragment.CommentFragment$a$a", context.getClassLoader());
+        if (commentFragmentAClass == null)
+            commentFragmentAClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.fragment.CommentFragment$SortAdapter", context.getClassLoader());
+        if (viewHolderClass == null)
+            viewHolderClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.fragment.CommentFragment$SortAdapter$SortViewHolder", context.getClassLoader());
         if (commentFragmentAClass == null || viewHolderClass == null)
             return;
+
         XposedHelpers.findAndHookMethod(commentFragmentAClass, "a", viewHolderClass, int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
