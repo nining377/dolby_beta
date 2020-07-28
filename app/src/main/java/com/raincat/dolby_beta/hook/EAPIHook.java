@@ -63,9 +63,10 @@ public class EAPIHook extends EAPIBase {
                     }
                     if (modified.contains("\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get")) {
                         JSONObject jsonObject = new JSONObject(modified);
-                        jsonObject.put("/api/v1/content/exposure/comment/banner/get", "\"code\":200,\"data\":{\"count\":0,\"offset\":999999999,\"records\":[]},\"message\":\"\"");
+                        jsonObject.put("/api/v1/content/exposure/comment/banner/get", "{-\"code-\":200,-\"data-\":{-\"count-\":0,-\"offset-\":999999999,-\"records-\":[]},-\"message-\":-\"-\"}");
                         modified = jsonObject.toString();
-                        modified = modified.replace("\\\\\\", "");
+                        modified = modified.replace("-\\", "").replace("\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":\"", "\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":")
+                                .replace("\"message\":\"\"}\"", "\"message\":\"\"}");
                     }
                 } else if (path.contains("point/dailyTask")) {
                     if (original.contains("200") && !original.contains("msg"))
