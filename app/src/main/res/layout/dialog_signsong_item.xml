@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:hint="点击5次“模块版本”按提示获取"
+                android:maxLines="5"
                 android:textColor="@android:color/black"
                 android:textSize="15sp" />
 
@@ -60,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:hint="可直接粘贴歌单链接的全部内容"
+                android:maxLines="5"
                 android:textColor="@android:color/black"
                 android:textSize="15sp" />
 
