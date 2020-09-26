@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
+import com.raincat.dolby_beta.hook.AutoSignInHook2;
 import com.raincat.dolby_beta.hook.BlackHook;
 import com.raincat.dolby_beta.hook.CommentHotClickHook;
 import com.raincat.dolby_beta.hook.CookieHook;
@@ -68,7 +69,10 @@ public class HookerDispatcher implements IHookerDispatcher {
                             }
                             //自动签到
                             if (Setting.isAutoSignInEnabled())
-                                new AutoSignInHook(neteaseContext, CloudMusicPackage.versionCode);
+                                if (CloudMusicPackage.versionCode <= 7003000)
+                                    new AutoSignInHook(neteaseContext, CloudMusicPackage.versionCode);
+                                else
+                                    new AutoSignInHook2(neteaseContext);
                             //不变灰
                             if (Setting.isGrayEnabled())
                                 new GrayHook(neteaseContext);
@@ -104,7 +108,8 @@ public class HookerDispatcher implements IHookerDispatcher {
                             if (Setting.isCommentHotEnabled())
                                 new CommentHotClickHook(neteaseContext);
                             //精简侧边栏
-                            new HideSidebarHook(neteaseContext, CloudMusicPackage.versionCode);
+                            if (CloudMusicPackage.versionCode <= 7003000)
+                                new HideSidebarHook(neteaseContext, CloudMusicPackage.versionCode);
                             //伪装个人信息
                             new ProfileHook(neteaseContext);
                             new TestHook(neteaseContext);
