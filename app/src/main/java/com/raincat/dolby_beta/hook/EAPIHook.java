@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.utils.CloudMusicPackage;
+import com.raincat.dolby_beta.utils.Setting;
 import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONObject;
@@ -54,7 +55,10 @@ public class EAPIHook extends EAPIBase {
                     modified = modifyEffect(original);
                 } else if (path.contains("batch")) {
                     getUserId(context, original);
-                    modified = modifyByRegex(original);
+                    //解除灰色
+                    if (Setting.isGrayEnabled())
+                        modified = modifyByRegex(original);
+                    //去除评论广告
                     if (modified.contains("comment\\/banner\\/get")) {
                         JSONObject jsonObject = new JSONObject(modified);
                         jsonObject.put("/api/content/exposure/comment/banner/get", "{\"code\":200}");
@@ -71,7 +75,7 @@ public class EAPIHook extends EAPIBase {
                 } else if (path.contains("point/dailyTask")) {
                     if (original.contains("200") && !original.contains("msg"))
                         Tools.showToastOnLooper(context, "自动签到成功");
-                } else if (path.contains("login")) {
+                } else if (path.contains("login") || path.contains("captcha")) {
                     Object response = httpResponse.getResponseObject();
                     CloudMusicPackage.OKHttp3Response okHttp3Response = new CloudMusicPackage.OKHttp3Response(response);
                     Object header = okHttp3Response.getHeadersObject();
@@ -90,6 +94,8 @@ public class EAPIHook extends EAPIBase {
                         }
                     }
                 } else {
+                    if (!Setting.isGrayEnabled())
+                        return;
                     List<String> segments = uri.getPathSegments();
                     if (segments.contains("album")
                             || segments.contains("artist")

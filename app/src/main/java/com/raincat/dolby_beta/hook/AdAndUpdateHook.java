@@ -13,7 +13,7 @@ import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedBridge.hookAllMethods;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 
 /**
  * <pre>
@@ -44,27 +44,30 @@ public class AdAndUpdateHook {
         removeUpdate = Setting.isUpdateEnabled();
 
         //去广告和升级
-        hookAllMethods(findClass(okHttpClientClassString, context.getClassLoader()), newCallMethodString, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (param.args != null && param.args.length == 1 && param.args[0].getClass().getName().contains("okhttp")) {
-                    Object request = param.args[0];
-                    Field httpUrl = request.getClass().getDeclaredField(httpUrlFieldString);
-                    httpUrl.setAccessible(true);
-                    Object urlObj = httpUrl.get(request);
-                    if ((removeAd && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4"))) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
-                        Field url = urlObj.getClass().getDeclaredField(urlFieldString);
-                        boolean urlAccessible = url.isAccessible();
-                        url.setAccessible(true);
-                        url.set(urlObj, "https://33.123.21.14/");
-                        url.setAccessible(urlAccessible);
-                        param.args[0] = request;
+        Class<?> okHttpClientClass = findClassIfExists(okHttpClientClassString, context.getClassLoader());
+        if (okHttpClientClass != null)
+            hookAllMethods(okHttpClientClass, newCallMethodString, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (param.args != null && param.args.length == 1 && param.args[0].getClass().getName().contains("okhttp")) {
+                        Object request = param.args[0];
+                        Field httpUrl = request.getClass().getDeclaredField(httpUrlFieldString);
+                        httpUrl.setAccessible(true);
+                        Object urlObj = httpUrl.get(request);
+                        //加了一个反营销版权保护的URL，暂时作用未知
+                        if (urlObj.toString().contains("appcustomconfig/get") || (removeAd && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4"))) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
+                            Field url = urlObj.getClass().getDeclaredField(urlFieldString);
+                            boolean urlAccessible = url.isAccessible();
+                            url.setAccessible(true);
+                            url.set(urlObj, "https://33.123.21.14/");
+                            url.setAccessible(urlAccessible);
+                            param.args[0] = request;
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        if (removeAd && XposedHelpers.findClass("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader()) != null)
+        if (removeAd && XposedHelpers.findClassIfExists("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader()) != null)
             findAndHookMethod("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader(),
                     "onCreate", Bundle.class, new XC_MethodHook() {
                         @Override

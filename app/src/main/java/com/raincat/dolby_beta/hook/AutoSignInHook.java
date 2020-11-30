@@ -240,6 +240,11 @@ public class AutoSignInHook {
                 e.printStackTrace();
             }
 
+            String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+            if (cookie.equals("-1")) {
+                Tools.showToastOnLooper(context, "打卡失败，请重新登录以获取cookie");
+            }
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
             sdf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
             String userId = ExtraDao.getInstance(context).getExtra("userId");
@@ -257,7 +262,7 @@ public class AutoSignInHook {
             final int maxCount = 350;
 
             HashMap<String, Object> headers = new HashMap<>();
-            headers.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
+            headers.put("Cookie", cookie);
 
             List<Long> signedSongList = new ArrayList<>();
             HashMap<Long, Integer> signedSongMap, signedListMap = SignDao.getInstance(context).getList(userId);

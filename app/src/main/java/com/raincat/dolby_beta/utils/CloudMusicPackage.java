@@ -175,7 +175,7 @@ public class CloudMusicPackage {
     }
 
     public static class NeteaseMusicApplication {
-        private static Class clazz;
+        private static Class<?> clazz;
         private static Field singletonField;
 
         static void init(Context context) {
@@ -183,7 +183,7 @@ public class CloudMusicPackage {
             singletonField = XposedHelpers.findFirstFieldByExactType(getClazz(), getClazz());
         }
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             return clazz;
         }
 
@@ -194,9 +194,9 @@ public class CloudMusicPackage {
 
     public static class HttpResult {
         private static final List<Method> rawStringMethodList = new ArrayList<>();
-        private static Class clazz;
+        private static Class<?> clazz;
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 if (versionCode == 138) {
                     clazz = findClass("com.netease.cloudmusic.j.g.d.a", CloudMusicPackage.getClassLoader());
@@ -242,12 +242,12 @@ public class CloudMusicPackage {
     }
 
     public static class MainActivitySuperClass {
-        private static Class clazz;
+        private static Class<?> clazz;
         private static Method[] methods;
 
-        public static Class getClazz(Context context) {
+        public static Class<?> getClazz(Context context) {
             if (clazz == null) {
-                Class mainActivityClass = findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader());
+                Class<?> mainActivityClass = findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader());
                 clazz = mainActivityClass.getSuperclass();
             }
             return clazz;
@@ -262,7 +262,7 @@ public class CloudMusicPackage {
     }
 
     public static class OKHttp3Response {
-        private static Class clazz;
+        private static Class<?> clazz;
 
         final Object okHttp3Response;
 
@@ -270,7 +270,7 @@ public class CloudMusicPackage {
             this.okHttp3Response = okHttp3Response;
         }
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 Pattern pattern = Pattern.compile("^okhttp3\\.[a-zA-Z]{1,8}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
@@ -307,7 +307,7 @@ public class CloudMusicPackage {
     }
 
     public static class OKHttp3Header {
-        private static Class clazz;
+        private static Class<?> clazz;
 
         final Object okHttp3Header;
 
@@ -315,7 +315,7 @@ public class CloudMusicPackage {
             this.okHttp3Header = okHttp3Header;
         }
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 Pattern pattern = Pattern.compile("^okhttp3\\.[a-zA-Z]{1,7}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
@@ -347,7 +347,7 @@ public class CloudMusicPackage {
     }
 
     public static class HttpResponse {
-        private static Class clazz;
+        private static Class<?> clazz;
         private static Method getResultMethod;
 
         final Object httpResponse;
@@ -356,7 +356,7 @@ public class CloudMusicPackage {
             this.httpResponse = httpResponse;
         }
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -418,9 +418,9 @@ public class CloudMusicPackage {
     }
 
     public static class HttpApi {
-        private static Class clazz;
+        private static Class<?> clazz;
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -452,10 +452,10 @@ public class CloudMusicPackage {
     }
 
     public static class HttpParams {
-        private static Class clazz;
+        private static Class<?> clazz;
         private static Field paramsMap;
 
-        static Class getClazz() {
+        static Class<?> getClazz() {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)

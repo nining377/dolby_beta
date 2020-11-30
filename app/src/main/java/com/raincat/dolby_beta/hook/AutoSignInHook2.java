@@ -45,11 +45,12 @@ public class AutoSignInHook2 {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         SharedPreferences sharedPreferences = context.getSharedPreferences("com.netease.cloudmusic.preferences", Context.MODE_MULTI_PROCESS);
-                        long lastSignInTime = sharedPreferences.getLong("lastSignInTime", 0L);
+                        String userId = ExtraDao.getInstance(context).getExtra("userId");
+                        long lastSignInTime = sharedPreferences.getLong("lastSignInTime_" + userId, 0L);
                         if (lastSignInTime < getTodayStartTime()) {
                             sign(context);
                             signSong(context);
-                            sharedPreferences.edit().putLong("lastSignInTime", System.currentTimeMillis()).apply();
+                            sharedPreferences.edit().putLong("lastSignInTime_" + userId, System.currentTimeMillis()).apply();
                         }
                     }
                 });
@@ -86,6 +87,11 @@ public class AutoSignInHook2 {
                 e.printStackTrace();
             }
 
+            String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+            if (cookie.equals("-1")) {
+                Tools.showToastOnLooper(context, "打卡失败，请重新登录以获取cookie");
+            }
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.CHINA);
             sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+8:00"));
             String userId = ExtraDao.getInstance(context).getExtra("userId");
@@ -103,7 +109,7 @@ public class AutoSignInHook2 {
             final int maxCount = 350;
 
             HashMap<String, Object> headers = new HashMap<>();
-            headers.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
+            headers.put("Cookie", cookie);
 
             java.util.List<Long> signedSongList = new ArrayList<>();
             HashMap<Long, Integer> signedSongMap, signedListMap = SignDao.getInstance(context).getList(userId);

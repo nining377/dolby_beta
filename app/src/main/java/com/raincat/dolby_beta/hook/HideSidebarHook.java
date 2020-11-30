@@ -11,7 +11,7 @@ import java.util.HashMap;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
-import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 /**
@@ -97,12 +97,14 @@ public class HideSidebarHook {
         tagMap.put("div3", Setting.getSidebar("div3"));
         tagMap.put("VIP_CARD", Setting.getSidebar("VIP_CARD"));
 
-        XposedHelpers.findAndHookMethod(findClass(classMainDrawerString, context.getClassLoader()), methodRefreshDrawerString, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                removeUselessItem(param, versionCode);
-            }
-        });
+        Class<?> mainDrawerClass = findClassIfExists(classMainDrawerString, context.getClassLoader());
+        if (mainDrawerClass != null)
+            XposedHelpers.findAndHookMethod(mainDrawerClass, methodRefreshDrawerString, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) {
+                    removeUselessItem(param, versionCode);
+                }
+            });
     }
 
     private void removeUselessItem(XC_MethodHook.MethodHookParam param, int versionCode) {

@@ -6,7 +6,7 @@ import android.view.View;
 import de.robv.android.xposed.XC_MethodHook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 
 /**
  * <pre>
@@ -19,11 +19,12 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
  */
 public class HideBubbleHook {
     public HideBubbleHook(Context context) {
-        final Class<?> messageBubbleView = findClass("com.netease.cloudmusic.ui.MessageBubbleView", context.getClassLoader());
+        final Class<?> messageBubbleView = findClassIfExists("com.netease.cloudmusic.ui.MessageBubbleView", context.getClassLoader());
+        final Class<?> messageBubbleView_800 = findClassIfExists("com.netease.cloudmusic.theme.ui.MessageBubbleView", context.getClassLoader());
         findAndHookMethod(View.class, "setVisibility", int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param) {
-                if (param.thisObject.getClass() == messageBubbleView) {
+                if ((messageBubbleView != null && param.thisObject.getClass() == messageBubbleView) || (messageBubbleView_800 != null && param.thisObject.getClass() == messageBubbleView_800)) {
                     param.args[0] = View.GONE;
                 }
             }

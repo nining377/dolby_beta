@@ -104,6 +104,9 @@ class EAPIBase {
         return result;
     }
 
+    /**
+     * 获取用户id
+     */
     void getUserId(Context context, String original) throws JSONException {
         JSONObject jsonObject = new JSONObject(original);
         if (!jsonObject.isNull("/api/v1/user/info")) {
@@ -122,6 +125,9 @@ class EAPIBase {
         return originalContent;
     }
 
+    /**
+     * 解除灰色
+     */
     String modifyByRegex(String originalContent) {
         originalContent = REX_PL.matcher(originalContent).replaceAll("\"pl\":320000");
         originalContent = REX_DL.matcher(originalContent).replaceAll("\"dl\":320000");
