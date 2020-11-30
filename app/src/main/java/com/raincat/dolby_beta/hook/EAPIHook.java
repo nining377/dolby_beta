@@ -55,23 +55,23 @@ public class EAPIHook extends EAPIBase {
                     modified = modifyEffect(original);
                 } else if (path.contains("batch")) {
                     getUserId(context, original);
-                    //解除灰色
-                    if (Setting.isGrayEnabled())
-                        modified = modifyByRegex(original);
                     //去除评论广告
-                    if (modified.contains("comment\\/banner\\/get")) {
-                        JSONObject jsonObject = new JSONObject(modified);
+                    if (original.contains("comment\\/banner\\/get")) {
+                        JSONObject jsonObject = new JSONObject(original);
                         jsonObject.put("/api/content/exposure/comment/banner/get", "{\"code\":200}");
                         modified = jsonObject.toString();
                         modified = modified.replace("\"{\\\"code\\\":200}\"", "{\"code\":200}");
                     }
-                    if (modified.contains("\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get")) {
-                        JSONObject jsonObject = new JSONObject(modified);
+                    if (original.contains("\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get")) {
+                        JSONObject jsonObject = new JSONObject(original);
                         jsonObject.put("/api/v1/content/exposure/comment/banner/get", "{-\"code-\":200,-\"data-\":{-\"count-\":0,-\"offset-\":999999999,-\"records-\":[]},-\"message-\":-\"-\"}");
                         modified = jsonObject.toString();
                         modified = modified.replace("-\\", "").replace("\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":\"", "\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":")
                                 .replace("\"message\":\"\"}\"", "\"message\":\"\"}");
                     }
+                    //解除灰色
+                    if (Setting.isGrayEnabled())
+                        modified = modifyByRegex(modified);
                 } else if (path.contains("point/dailyTask")) {
                     if (original.contains("200") && !original.contains("msg"))
                         Tools.showToastOnLooper(context, "自动签到成功");
