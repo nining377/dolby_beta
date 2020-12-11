@@ -1,7 +1,6 @@
 package com.raincat.dolby_beta;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
