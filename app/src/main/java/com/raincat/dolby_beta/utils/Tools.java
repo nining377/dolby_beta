@@ -36,8 +36,9 @@ import java.util.regex.Pattern;
  */
 
 public class Tools {
-    public static String neteaseDbPath = "data/data/" + CloudMusicPackage.PACKAGE_NAME + "/databases/SignedSong_1.db";
-    public static String sdcardDbPath = Environment.getExternalStorageDirectory() + "/netease/cloudmusic/Cache/SignedSong_1.db";
+    public static final String neteaseTinkerPath="data/data/" + CloudMusicPackage.PACKAGE_NAME + "/tinker";
+    public static final String neteaseDbPath = "data/data/" + CloudMusicPackage.PACKAGE_NAME + "/databases/SignedSong_1.db";
+    public static final String sdcardDbPath = Environment.getExternalStorageDirectory() + "/netease/cloudmusic/Cache/SignedSong_1.db";
 
     /**
      * 获取线程名称

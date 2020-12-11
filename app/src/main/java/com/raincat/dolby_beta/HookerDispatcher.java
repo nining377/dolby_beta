@@ -1,6 +1,7 @@
 package com.raincat.dolby_beta;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
@@ -28,6 +29,9 @@ import com.raincat.dolby_beta.utils.Tools;
 
 import net.androidwing.hotxposed.IHookerDispatcher;
 
+import java.io.File;
+import java.io.IOException;
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -52,6 +56,17 @@ public class HookerDispatcher implements IHookerDispatcher {
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         if (!Setting.isEnable()) {
                             return;
+                        }
+
+                        File neteaseTinkerFile = new File(Tools.neteaseTinkerPath);
+                        if (neteaseTinkerFile.exists()) {
+                            try {
+                                String command = "chmod 200 " + neteaseTinkerFile.getAbsolutePath();
+                                Runtime runtime = Runtime.getRuntime();
+                                runtime.exec(command);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         final Context neteaseContext = (Context) param.thisObject;

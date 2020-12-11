@@ -103,7 +103,7 @@
 
     <string name="compatible_appver_key" translatable="false">compatible_appver</string>
     <string name="compatible_appver_title">兼容版本</string>
-    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.0.0</string>
+    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.0.10</string>
 
     <string name="github_key" translatable="false">github</string>
     <string name="github_title">github源码</string>
