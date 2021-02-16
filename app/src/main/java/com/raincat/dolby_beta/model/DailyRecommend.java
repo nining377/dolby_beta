@@ -1,5 +1,6 @@
 package com.raincat.dolby_beta.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,8 @@ public class DailyRecommend {
     private List<RecommendBean> recommend;
 
     public List<RecommendBean> getRecommend() {
+        if (recommend == null)
+            recommend = new ArrayList<>();
         return recommend;
     }
 
@@ -22,13 +25,8 @@ public class DailyRecommend {
     }
 
     public static class RecommendBean {
-        /**
-         * id : 2829821753
-         * name : [聚精会神] 工作学习必备纯音乐
-         */
-
-        private long id;
-        private String name;
+        private long id = 0L;
+        private String name = "";
 
         public long getId() {
             return id;

@@ -30,6 +30,9 @@
         <meta-data
             android:name="xposedminversion"
             android:value="54" />
+        <meta-data
+            android:name="xposedscope"
+            android:resource="@array/package_scope" />
 
         <activity
             android:name="com.raincat.dolby_beta.ui.MainActivity"

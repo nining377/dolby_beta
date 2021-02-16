@@ -42,7 +42,7 @@
     <string name="gray_key" translatable="false">gray</string>
     <string name="gray_default_value">false</string>
     <string name="gray_title">不变灰</string>
-    <string name="gray_summary">只影响显示效果，与能否播放无关</string>
+    <string name="gray_summary">只影响显示效果，与能否播放无关，请配合音质解锁模块使用，否则无音源歌曲将无法播放且无法自动跳过。</string>
 
     <string name="sign_song_key" translatable="false">sign_song</string>
     <string name="sign_song_default_value">false</string>
@@ -91,7 +91,7 @@
     <string name="hide_sidebar_key" translatable="false">hide_sidebar</string>
     <string name="hide_sidebar_default_value">false</string>
     <string name="hide_sidebar_title">精简侧边栏</string>
-    <string name="hide_sidebar_summary">部分Item需配合“设置”->“侧边栏管理”开关生效</string>
+    <string name="hide_sidebar_summary">部分Item需配合“设置”->“侧边栏管理”开关生效，仅支持8.X以下的版本</string>
 
     <string name="profile_key" translatable="false">profile</string>
     <string name="profile_title">设置个人信息</string>
@@ -103,9 +103,13 @@
 
     <string name="compatible_appver_key" translatable="false">compatible_appver</string>
     <string name="compatible_appver_title">兼容版本</string>
-    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.0.10</string>
+    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.1.10</string>
 
     <string name="github_key" translatable="false">github</string>
     <string name="github_title">github源码</string>
     <string name="github_summary">请务必帮我点一下小星星！</string>
+
+    <string-array name="package_scope" >
+        <item>com.netease.cloudmusic</item>
+    </string-array>
 </resources>

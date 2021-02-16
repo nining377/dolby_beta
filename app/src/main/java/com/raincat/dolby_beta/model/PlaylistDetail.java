@@ -1,5 +1,6 @@
 package com.raincat.dolby_beta.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,13 +12,11 @@ import java.util.List;
  * </pre>
  */
 public class PlaylistDetail {
-    /**
-     * playlist : {"trackIds":[{"id":622720}],"id":2829821753}
-     */
-
     private PlaylistBean playlist;
 
     public PlaylistBean getPlaylist() {
+        if (playlist == null)
+            playlist = new PlaylistBean();
         return playlist;
     }
 
@@ -26,12 +25,7 @@ public class PlaylistDetail {
     }
 
     public static class PlaylistBean {
-        /**
-         * trackIds : [{"id":622720}]
-         * id : 2829821753
-         */
-
-        private long id;
+        private long id = 0L;
         private List<TrackIdsBean> trackIds;
 
         public long getId() {
@@ -43,6 +37,8 @@ public class PlaylistDetail {
         }
 
         public List<TrackIdsBean> getTrackIds() {
+            if (trackIds == null)
+                trackIds = new ArrayList<>();
             return trackIds;
         }
 
@@ -51,11 +47,7 @@ public class PlaylistDetail {
         }
 
         public static class TrackIdsBean {
-            /**
-             * id : 622720
-             */
-
-            private long id;
+            private long id = 0L;
 
             public long getId() {
                 return id;

@@ -72,9 +72,6 @@ public class EAPIHook extends EAPIBase {
                     //解除灰色
                     if (Setting.isGrayEnabled())
                         modified = modifyByRegex(modified == null ? original : modified);
-                } else if (path.contains("point/dailyTask")) {
-                    if (original.contains("200") && !original.contains("msg"))
-                        Tools.showToastOnLooper(context, "自动签到成功");
                 } else if (path.contains("login") || path.contains("captcha")) {
                     Object response = httpResponse.getResponseObject();
                     CloudMusicPackage.OKHttp3Response okHttp3Response = new CloudMusicPackage.OKHttp3Response(response);

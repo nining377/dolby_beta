@@ -10,22 +10,22 @@ package com.raincat.dolby_beta.model;
  */
 
 public class UserInfo {
-    private int level;
+    private int level = 0;
     private UserPointBean userPoint;
-    private boolean mobileSign;
-    private boolean pcSign;
-    private int viptype;
-    private long expiretime;
-    private long backupExpireTime;
-    private String storeurl;
-    private String mallDesc;
-    private String storeTitle;
-    private String pubwords;
+    private boolean mobileSign = true;
+    private boolean pcSign = true;
+    private int viptype = 0;
+    private long expiretime = 0L;
+    private long backupExpireTime = 0L;
+    private String storeurl = "";
+    private String mallDesc = "";
+    private String storeTitle = "";
+    private String pubwords = "";
     private Object gameConfig;
     private Object ringConfig;
     private Object fmConfig;
     private TicketConfigBean ticketConfig;
-    private int code;
+    private int code = 0;
 
     public int getLevel() {
         return level;
@@ -36,6 +36,8 @@ public class UserInfo {
     }
 
     public UserPointBean getUserPoint() {
+        if (userPoint == null)
+            userPoint = new UserPointBean();
         return userPoint;
     }
 
@@ -156,12 +158,12 @@ public class UserInfo {
     }
 
     public static class UserPointBean {
-        private int balance;
-        private int blockBalance;
-        private int status;
-        private long updateTime;
-        private int userId;
-        private int version;
+        private int balance = 0;
+        private int blockBalance = 0;
+        private int status = 0;
+        private long updateTime = 0L;
+        private int userId = 0;
+        private int version = 0;
 
         public int getBalance() {
             return balance;

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
-import com.raincat.dolby_beta.hook.AutoSignInHook2;
 import com.raincat.dolby_beta.hook.BlackHook;
 import com.raincat.dolby_beta.hook.CommentHotClickHook;
 import com.raincat.dolby_beta.hook.CookieHook;
@@ -83,10 +82,7 @@ public class HookerDispatcher implements IHookerDispatcher {
                             }
                             //自动签到
                             if (Setting.isAutoSignInEnabled())
-                                if (CloudMusicPackage.versionCode <= 7003000)
-                                    new AutoSignInHook(neteaseContext, CloudMusicPackage.versionCode);
-                                else
-                                    new AutoSignInHook2(neteaseContext);
+                                new AutoSignInHook(neteaseContext, CloudMusicPackage.versionCode);
                             //不变灰
                             if (Setting.isGrayEnabled())
                                 new GrayHook(neteaseContext);

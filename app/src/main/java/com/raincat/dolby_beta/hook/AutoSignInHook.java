@@ -1,7 +1,7 @@
 package com.raincat.dolby_beta.hook;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -21,214 +21,98 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.TimeZone;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 
-import static de.robv.android.xposed.XposedHelpers.callMethod;
+import static de.robv.android.xposed.XposedBridge.log;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 
 /**
  * <pre>
  *     author : RainCat
- *     time   : 2019/12/05
+ *     e-mail : nining377@gmail.com
+ *     time   : 2020/09/26
  *     desc   : 自动签到hook
  *     version: 1.0
  * </pre>
  */
 
 public class AutoSignInHook {
-    private TextView drawerUserSignIn;
-    private Object mainDrawer;
-
-    private Calendar calendar;
-    private long nextSignInTime = 0L;
-    private static boolean nextSingInFlag = false;
-
     private String classMainDrawer = "com.netease.cloudmusic.ui.MainDrawer";
     private String methodInitDrawerHeader = "initDrawerHeader";
-    private String methodUpdateSignIn = "updateSignIn";
-    private String methodToggleDrawerMenu = "toggleDrawerMenu";
-    private String methodIsDoingSinginTask = "isDoingSinginTask";
-    private String methodDoSignInTask = "doSignInTask";
     private String valueDrawerUserSignIn = "drawerUserSignIn";
 
     public AutoSignInHook(Context context, int versionCode) {
+        //每天0点签到
+        findAndHookMethod("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader(),
+                "onStart", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        SharedPreferences sharedPreferences = context.getSharedPreferences("com.netease.cloudmusic.preferences", Context.MODE_MULTI_PROCESS);
+                        String userId = ExtraDao.getInstance(context).getExtra("userId");
+                        long lastSignInTime = sharedPreferences.getLong("lastSignInTime_" + userId, 0L);
+                        if (lastSignInTime < getTodayStartTime()) {
+                            sign(context);
+                            signSong(context);
+                            sharedPreferences.edit().putLong("lastSignInTime_" + userId, System.currentTimeMillis()).apply();
+                        }
+                    }
+                });
+
         if (versionCode < 138) {
             classMainDrawer = "com.netease.cloudmusic.ui.l";
             methodInitDrawerHeader = "r";
-            methodUpdateSignIn = "a";
-            methodToggleDrawerMenu = "d";
-            methodIsDoingSinginTask = "h";
-            methodDoSignInTask = "i";
             valueDrawerUserSignIn = "t";
+        } else if (versionCode >= 7003000)
+            return;
 
-            if (findClassIfExists("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader()) != null) {
-                //禁止签到跳转到商城
-                findAndHookMethod("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader(),
-                        "a", Context.class, new XC_MethodHook() {
-                            @Override
-                            protected void beforeHookedMethod(MethodHookParam param) {
-                                Object context = param.args[0];
-                                if (context.getClass().getName().equals("com.netease.cloudmusic.activity.MainActivity")) {
-                                    param.setResult(null);
-                                }
-                            }
-                        });
-            }
-        } else if (versionCode < 7001080) {
-            //禁止签到跳转到商城
-            if (findClassIfExists("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader()) != null) {
-                XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.activity.ReactNativeActivity", context.getClassLoader()), "a", new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        if (param.args.length >= 3 && param.args[0] instanceof Context) {
-                            if (param.args[1] instanceof Boolean && param.args[2] instanceof String) {
-                                Object context = param.args[0];
-                                boolean b = (boolean) param.args[1];
-                                if (context.getClass().getName().equals("com.netease.cloudmusic.activity.MainActivity") && b) {
-                                    param.setResult(null);
-                                }
-                            } else if (param.args[1] instanceof String && param.args[2] instanceof Boolean) {
-                                Object context = param.args[0];
-                                String shell = (String) param.args[1];
-                                if (shell.equals("ReactNativeStore") || shell.toLowerCase().contains("shell") || shell.toLowerCase().contains("center")) {
-                                    if (context.getClass().getName().equals("com.netease.cloudmusic.activity.RedirectActivity")) {
-                                        ((Activity) context).finish();
-                                        param.setResult(null);
-                                    } else if (context.getClass().getName().equals("com.netease.cloudmusic.activity.MainActivity"))
-                                        param.setResult(null);
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        } else {
-            //禁止签到跳转到商城
-            if (findClassIfExists("com.netease.cloudmusic.activity.RedirectActivity", context.getClassLoader()) != null) {
-                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.activity.RedirectActivity", context.getClassLoader()), "a", Context.class, String.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        Object context = param.args[0];
-                        String string = (String) param.args[1];
-                        if (context.getClass().getName().equals("com.netease.cloudmusic.activity.MainActivity") && string.contains("cloudshell")) {
-                            param.setResult(null);
-                        }
-                    }
-                });
-            }
-        }
-        //获取关键Object
-        findAndHookMethod(classMainDrawer, context.getClassLoader(), methodInitDrawerHeader, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                mainDrawer = param.thisObject;
-                Field drawerUserSignInField = mainDrawer.getClass().getDeclaredField(valueDrawerUserSignIn);
-                drawerUserSignInField.setAccessible(true);
-                drawerUserSignIn = (TextView) drawerUserSignInField.get(mainDrawer);
-            }
-        });
-
-        //修改签到UI
-        findAndHookMethod(classMainDrawer, context.getClassLoader(), methodUpdateSignIn, boolean.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                boolean bool0 = (boolean) param.args[0];
-                boolean bool1 = (boolean) param.args[1];
-
-                if (!bool0 && bool1) {
-                    sign(context);
+        //更改当前签到状态文字
+        if (findClassIfExists(classMainDrawer, context.getClassLoader()) != null) {
+            findAndHookMethod(classMainDrawer, context.getClassLoader(), methodInitDrawerHeader, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Field drawerUserSignInField = param.thisObject.getClass().getDeclaredField(valueDrawerUserSignIn);
+                    drawerUserSignInField.setAccessible(true);
+                    TextView drawerUserSignIn = (TextView) drawerUserSignInField.get(param.thisObject);
+                    drawerUserSignIn.setText("已签到");
+                    drawerUserSignIn.setEnabled(false);
+                    drawerUserSignIn.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 }
-                drawerUserSignIn.setText("已签到");
-                drawerUserSignIn.setEnabled(false);
-                drawerUserSignIn.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-        });
-
-        //禁止签到的时候打开侧边栏
-        findAndHookMethod(classMainDrawer, context.getClassLoader(), methodToggleDrawerMenu,
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        if (nextSingInFlag) {
-                            param.setResult(null);
-                        }
-                    }
-                });
+            });
+        }
 
         //更改当前签到状态
         findAndHookMethod("com.netease.cloudmusic.meta.Profile", context.getClassLoader(),
                 "isMobileSign", new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        if (nextSingInFlag) {
-                            param.setResult(false);
-                        }
+                        param.setResult(true);
                     }
                 });
-
-        //每天0点签到
-        findAndHookMethod("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader(),
-                "onStart", new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        calendar = Calendar.getInstance();
-                        TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");
-                        calendar.setTimeZone(timeZone);
-                        long nowTime = calendar.getTimeInMillis();
-
-                        if (nowTime > nextSignInTime) {
-                            sign(context);
-                        }
-                    }
-                });
-
     }
 
+    /**
+     * 签到
+     */
     private void sign(Context context) {
-        if (mainDrawer != null && drawerUserSignIn != null) {
-            boolean running = (boolean) callMethod(mainDrawer, methodIsDoingSinginTask);
-            if (!running) {
-                nextSingInFlag = true;
-                callMethod(mainDrawer, methodDoSignInTask);
-                nextSingInFlag = false;
-
-                if (calendar == null) {
-                    calendar = Calendar.getInstance();
-                    TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");
-                    calendar.setTimeZone(timeZone);
-                }
-
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
-                nextSignInTime = calendar.getTimeInMillis() + 86400000;
-
-                signByWeb(context);
-                signSong(context);
-            }
-        }
-    }
-
-    private void signByWeb(Context context) {
         HashMap<String, Object> header = new HashMap<>();
         header.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
 
         HashMap<String, Object> param = new HashMap<>();
         param.put("type", "1");
-
         new Http("POST", "http://music.163.com/api/point/dailyTask", param, header).getResult();
+
+        param.put("type", "0");
+        String result = new Http("POST", "http://music.163.com/api/point/dailyTask", param, header).getResult();
+        if (result.contains("200") && !result.contains("msg"))
+            Tools.showToastOnLooper(context, "自动签到成功");
     }
 
+    /**
+     * 歌曲打卡
+     */
     private void signSong(Context context) {
         if (!Setting.isSignSongEnabled())
             return;
@@ -245,8 +129,8 @@ public class AutoSignInHook {
                 Tools.showToastOnLooper(context, "打卡失败，请重新登录以获取cookie");
             }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.CHINA);
+            sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+8:00"));
             String userId = ExtraDao.getInstance(context).getExtra("userId");
             String signSongDate = sdf.format(new Date(System.currentTimeMillis()));
             if (ExtraDao.getInstance(context).getExtra("signSongDate" + userId).equals(signSongDate))
@@ -264,17 +148,13 @@ public class AutoSignInHook {
             HashMap<String, Object> headers = new HashMap<>();
             headers.put("Cookie", cookie);
 
-            List<Long> signedSongList = new ArrayList<>();
+            java.util.List<Long> signedSongList = new ArrayList<>();
             HashMap<Long, Integer> signedSongMap, signedListMap = SignDao.getInstance(context).getList(userId);
             String result, url, params, param = "{\"logs\":\"[{\\\"action\\\":\\\"play\\\",\\\"json\\\":{\\\"sourceId\\\":\\\"%s\\\",\\\"type\\\":\\\"song\\\",\\\"wifi\\\":0,\\\"download\\\":0,\\\"id\\\":%s,\\\"time\\\":%s,\\\"end\\\":\\\"ui\\\"}}]\",\"csrf_token\":\"\"}";
             Gson gson = new Gson();
             int count = 0;
 
             DailyRecommend dailyRecommend = gson.fromJson(new Http("GET", "https://music.163.com/api/v1/discovery/recommend/resource", null, headers).getResult(), DailyRecommend.class);
-            if (dailyRecommend == null || dailyRecommend.getRecommend() == null) {
-                Tools.showToastOnLooper(context, "打卡失败，请重新登录账号以刷新数据！");
-                return;
-            }
             Start:
             for (DailyRecommend.RecommendBean recommendBean : dailyRecommend.getRecommend()) {
                 if (signedListMap.get(recommendBean.getId()) != null)
@@ -306,11 +186,23 @@ public class AutoSignInHook {
                 SignDao.getInstance(context).deleteSong(recommendBean.getId(), userId);
                 signedSongList.clear();
             }
-            XposedBridge.log("打卡完毕，共计打卡歌曲" + count + "首！");
+            log("打卡完毕，共计打卡歌曲" + count + "首！");
             Tools.showToastOnLooper(context, "打卡完毕，共计打卡歌曲" + count + "首！");
             Tools.copyFile(Tools.neteaseDbPath, Tools.sdcardDbPath);
             Tools.copyFile(Tools.neteaseDbPath + "-journal", Tools.sdcardDbPath + "-journal");
             ExtraDao.getInstance(context).saveExtra("signSongDate" + userId, signSongDate);
         }).start();
+    }
+
+    /**
+     * 获取今天0点的时间戳
+     */
+    private long getTodayStartTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime().getTime();
     }
 }
