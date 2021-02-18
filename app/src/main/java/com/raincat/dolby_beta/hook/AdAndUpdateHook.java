@@ -56,6 +56,8 @@ public class AdAndUpdateHook {
                         Object urlObj = httpUrl.get(request);
                         //加了一个反营销版权保护的URL，暂时作用未知
                         if (urlObj.toString().contains("appcustomconfig/get") || (removeAd && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4"))) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
+                            if (urlObj.toString().contains("music.126.net"))
+                                return;
                             Field url = urlObj.getClass().getDeclaredField(urlFieldString);
                             boolean urlAccessible = url.isAccessible();
                             url.setAccessible(true);

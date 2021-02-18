@@ -28,9 +28,8 @@ public class DownloadMD5Hook {
             protected void beforeHookedMethod(MethodHookParam param) {
                 final Object[] array = (Object[]) param.args[3];
                 String path = param.args[0].toString();
-                if (((String) array[5]).length() == 32) {
+                if (((String) array[5]).length() == 32)
                     return;
-                }
                 array[5] = fileToMD5(path);
                 param.args[3] = array;
             }
