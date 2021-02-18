@@ -151,7 +151,9 @@ public class CloudMusicPackage {
 
     public static class Transfer {
         private static Method checkMd5Method;
+        private static Method checkDownloadStatusMethod;
 
+        //下载完后的MD5检查
         public static Method getCheckMd5Method() {
             if (checkMd5Method == null) {
                 Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
@@ -171,6 +173,30 @@ public class CloudMusicPackage {
                 }
             }
             return checkMd5Method;
+        }
+
+        //下载之前下载状态检查
+        public static Method getCheckDownloadStatusMethod() {
+            if (checkDownloadStatusMethod == null) {
+                Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
+                List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+
+                try {
+                    checkDownloadStatusMethod = Stream.of(list)
+                            .map(c -> findClass(c, getClassLoader()).getDeclaredMethods())
+                            .flatMap(Stream::of)
+                            .filter(m -> m.getReturnType() == long.class)
+                            .filter(m -> m.getParameterTypes().length == 5)
+                            .filter(m -> m.getParameterTypes()[1] == int.class)
+                            .filter(m -> m.getParameterTypes()[3] == File.class)
+                            .filter(m -> m.getParameterTypes()[4] == long.class)
+                            .findFirst()
+                            .get();
+                } catch (NoSuchElementException e) {
+                    throw new RuntimeException("can't find checkDownloadStatusMethod");
+                }
+            }
+            return checkDownloadStatusMethod;
         }
     }
 
