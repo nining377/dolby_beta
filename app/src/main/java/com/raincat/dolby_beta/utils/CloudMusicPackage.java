@@ -123,7 +123,7 @@ public class CloudMusicPackage {
 
                                 for (DexBackedClassDef classDef : dexFile.getClasses()) {
                                     String classType = classDef.getType();
-                                    if (classType.contains("com/netease/cloudmusic")) {
+                                    if (classType.contains("com/netease/cloudmusic") || classType.contains("okhttp3")) {
                                         classType = classType.substring(1, classType.length() - 1).replace("/", ".");
                                         list.add(classType);
                                     }

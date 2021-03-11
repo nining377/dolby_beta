@@ -31,6 +31,7 @@ import java.io.File;
 
 
 public class MainActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private final int SCRIPT = 0x10, NODE = 0x11;
     private Context context;
 
     private SharedPreferences share;
@@ -60,6 +61,9 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         share.edit().remove("cookie").apply();
         findPreference(getString(R.string.core_ver_key)).setSummary(getString(R.string.core_ver_summary) + BuildConfig.VERSION_NAME);
 
+        findPreference(getString(R.string.script_key)).setSummary(share.getString("script", "script.zip"));
+        findPreference(getString(R.string.node_key)).setSummary(share.getString("node", "node"));
+
         checkState();
         checkSignature();
 
@@ -72,7 +76,7 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
      * 去掉下划线
      */
     private void removeDivider() {
-        ListView listView =  findViewById(android.R.id.list);
+        ListView listView = findViewById(android.R.id.list);
         listView.setDivider(null);
     }
 
@@ -130,6 +134,25 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
             Uri uri = Uri.parse("https://github.com/nining377/dolby_beta");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
+            return false;
+        });
+
+        Preference script = findPreference(getString(R.string.script_key));
+        script.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
+                    .putExtra(Intent.EXTRA_MIME_TYPES, "application/zip")
+                    .setType("*/*")
+                    .addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, SCRIPT);
+            return false;
+        });
+
+        Preference node = findPreference(getString(R.string.node_key));
+        node.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
+                    .setType("*/*")
+                    .addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, NODE);
             return false;
         });
 
@@ -230,6 +253,26 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         } else {
             findPreference(getString(R.string.unblock_key)).setSummary("注意：若发现模块失效请清除网易云音乐数据");
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK)
+            if (requestCode == NODE) {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    share.edit().putString("node", uri.getPath()).apply();
+                    findPreference(getString(R.string.node_key)).setSummary(uri.getPath());
+                }
+            } else if (requestCode == SCRIPT) {
+                Uri uri = data.getData();
+                if (uri != null && uri.getPath() != null && uri.getPath().endsWith("zip")) {
+                    share.edit().putString("script", uri.getPath()).apply();
+                    findPreference(getString(R.string.script_key)).setSummary(uri.getPath());
+                } else
+                    Toast.makeText(context, "你选择的不是ZIP文件！", Toast.LENGTH_SHORT).show();
+            }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

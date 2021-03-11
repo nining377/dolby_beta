@@ -70,7 +70,7 @@ public class EAPIHook extends EAPIBase {
                                 .replace("\"message\":\"\"}\"", "\"message\":\"\"}");
                     }
                     //解除灰色
-                    if (Setting.isGrayEnabled())
+                    if (Setting.isGrayEnabled() || Setting.isProxyEnabled())
                         modified = modifyByRegex(modified == null ? original : modified);
                 } else if (path.contains("login") || path.contains("captcha")) {
                     Object response = httpResponse.getResponseObject();
@@ -91,7 +91,7 @@ public class EAPIHook extends EAPIBase {
                         }
                     }
                 } else {
-                    if (!Setting.isGrayEnabled())
+                    if (!Setting.isGrayEnabled() && !Setting.isProxyEnabled())
                         return;
                     List<String> segments = uri.getPathSegments();
                     if (segments.contains("album")

@@ -62,6 +62,13 @@ public class Setting {
         return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.unblock_key), defaultValue);
     }
 
+    public static boolean isProxyEnabled() {
+        String valueString = getModuleResString(R.string.proxy_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.proxy_key), defaultValue);
+    }
+
     public static boolean isGrayEnabled() {
         String valueString = getModuleResString(R.string.gray_default_value);
         boolean defaultValue = Boolean.parseBoolean(valueString);
@@ -184,11 +191,11 @@ public class Setting {
         return getModuleSharedPreferences().getInt("role", -1);
     }
 
-    static String getBaseUrl() {
-        return getModuleSharedPreferences().getString("base_url", "");
+    public static String getNodeFile() {
+        return getModuleSharedPreferences().getString("node", "node");
     }
 
-    static String getCode() {
-        return getModuleSharedPreferences().getString("code", "");
+    public static String getScriptFile() {
+        return getModuleSharedPreferences().getString("script", "script.zip");
     }
 }

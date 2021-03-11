@@ -24,6 +24,22 @@
             android:title="@string/black_title" />
 
         <CheckBoxPreference
+            android:defaultValue="@string/proxy_default_value"
+            android:dependency="@string/unblock_key"
+            android:key="@string/proxy_key"
+            android:title="@string/proxy_title" />
+
+        <Preference
+            android:dependency="@string/proxy_key"
+            android:key="@string/script_key"
+            android:title="@string/script_title" />
+
+        <Preference
+            android:dependency="@string/proxy_key"
+            android:key="@string/node_key"
+            android:title="@string/node_title" />
+
+        <CheckBoxPreference
             android:defaultValue="@string/remove_update_default_value"
             android:dependency="@string/unblock_key"
             android:key="@string/remove_update_key"

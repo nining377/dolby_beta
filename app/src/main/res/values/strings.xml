@@ -26,10 +26,19 @@
     <string name="black_title">本地黑胶</string>
     <string name="black_summary">去广告、鲸云音效、个性换肤等，启动图片与背景图片为服务器云同步所以设置不可用</string>
 
+    <string name="proxy_key" translatable="false">proxy</string>
+    <string name="proxy_default_value">false</string>
+    <string name="proxy_title">启用UnblockNeteaseMusic代理</string>
+
+    <string name="script_key" translatable="false">script</string>
+    <string name="script_title">脚本路径（ZIP文件）</string>
+
+    <string name="node_key" translatable="false">node</string>
+    <string name="node_title">node路径</string>
+
     <string name="remove_update_key" translatable="false">remove_update</string>
     <string name="remove_update_default_value">true</string>
     <string name="remove_update_title">去升级</string>
-    <string name="remove_update_summary">屏蔽升级提示</string>
 
     <string name="auto_sign_key" translatable="false">auto_sign</string>
     <string name="auto_sign_default_value">true</string>

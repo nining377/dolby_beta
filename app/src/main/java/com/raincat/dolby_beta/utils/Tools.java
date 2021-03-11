@@ -11,6 +11,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.annimon.stream.Stream;
+import com.stericson.RootShell.exceptions.RootDeniedException;
+import com.stericson.RootShell.execution.Command;
+import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +27,12 @@ import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import de.robv.android.xposed.XposedBridge;
 
 /**
  * <pre>
@@ -36,7 +44,7 @@ import java.util.regex.Pattern;
  */
 
 public class Tools {
-    public static final String neteaseTinkerPath="data/data/" + CloudMusicPackage.PACKAGE_NAME + "/tinker";
+    public static final String neteaseTinkerPath = "data/data/" + CloudMusicPackage.PACKAGE_NAME + "/tinker";
     public static final String neteaseDbPath = "data/data/" + CloudMusicPackage.PACKAGE_NAME + "/databases/SignedSong_1.db";
     public static final String sdcardDbPath = Environment.getExternalStorageDirectory() + "/netease/cloudmusic/Cache/SignedSong_1.db";
 
@@ -56,6 +64,9 @@ public class Tools {
         throw new RuntimeException("can't get current process name");
     }
 
+    /**
+     * 获取签名
+     */
     public static String getSign(Context context, String packageName) {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
@@ -103,7 +114,6 @@ public class Tools {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -220,7 +230,7 @@ public class Tools {
                 FileInputStream fis = new FileInputStream(originalFile);
                 FileOutputStream fos = new FileOutputStream(targetFile);
                 byte[] buffer = new byte[1024];
-                int count ;
+                int count;
                 while ((count = fis.read(buffer)) != -1) {
                     fos.write(buffer, 0, count);
                 }
@@ -233,6 +243,99 @@ public class Tools {
         }
     }
 
+    /**
+     * 复制文件夹里所有文件
+     */
+    static void copyFiles(String originalPath, String targetPath) {
+        try {
+            File newFile = new File(targetPath);
+            newFile.mkdirs();
+            File oldFile = new File(originalPath);
+            String[] files = oldFile.list();
+            File temp;
+            for (String file : files) {
+                if (originalPath.endsWith(File.separator)) {
+                    temp = new File(originalPath + file);
+                } else {
+                    temp = new File(originalPath + File.separator + file);
+                }
+
+                if (temp.isDirectory()) {   //如果是子文件夹
+                    copyFiles(originalPath + "/" + file, targetPath + "/" + file);
+                } else if (!temp.exists()) {
+                    Log.e("--Method--", "copyFolder:  oldFile not exist.");
+                } else if (!temp.isFile()) {
+                    Log.e("--Method--", "copyFolder:  oldFile not file.");
+                } else if (!temp.canRead()) {
+                    Log.e("--Method--", "copyFolder:  oldFile cannot read.");
+                } else {
+                    FileInputStream fileInputStream = new FileInputStream(temp);
+                    FileOutputStream fileOutputStream = new FileOutputStream(targetPath + "/" + temp.getName());
+                    byte[] buffer = new byte[1024];
+                    int byteRead;
+                    while ((byteRead = fileInputStream.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, byteRead);
+                    }
+                    fileInputStream.close();
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解压文件
+     */
+    public static boolean unZipFile(String zipFileString, String outPathString) {
+        try {
+            // 创建解压目标目录
+            File outPath = new File(outPathString);
+            // 如果目标目录不存在，则创建
+            if (!outPath.exists()) {
+                outPath.mkdirs();
+            }
+
+            ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
+            ZipEntry zipEntry;
+            String fileName = "";
+            while ((zipEntry = inZip.getNextEntry()) != null) {
+                fileName = zipEntry.getName();
+                if (zipEntry.isDirectory()) {//文件夹
+                    fileName = fileName.substring(0, fileName.length() - 1);
+                    File folder = new File(outPathString + File.separator + fileName);
+                    folder.mkdirs();
+                } else {//文件
+                    File file = new File(outPathString + File.separator + fileName);
+                    if (!file.exists()) {
+                        file.getParentFile().mkdirs();
+                        file.createNewFile();
+                    }
+                    // 获取文件的输出流
+                    FileOutputStream out = new FileOutputStream(file);
+                    int len;
+                    byte[] buffer = new byte[1024];
+                    while ((len = inZip.read(buffer)) != -1) {
+                        out.write(buffer, 0, len);
+                        out.flush();
+                    }
+                    out.close();
+                }
+            }
+            inZip.close();
+
+            fileName = fileName.substring(0, fileName.indexOf(File.separator));
+            copyFiles(outPathString + File.separator + fileName, outPathString);
+            deleteDirectory(outPathString + File.separator + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     static List<String> filterList(List<String> list, Pattern pattern) {
         return Stream.of(list)
                 .filter(s -> pattern.matcher(s).find())
@@ -240,11 +343,25 @@ public class Tools {
     }
 
     private static String chinaIP;
+
     public static String getChinaIP() {
         if (chinaIP == null) {
 //            Random rand = new Random();
             chinaIP = "111.63.128.23";
         }
         return chinaIP;
+    }
+
+    /**
+     * ADB命令
+     */
+    public static void shell(Context context, Command command) {
+        try {
+            RootTools.closeAllShells();
+            RootTools.getShell(false).add(command);
+        } catch (TimeoutException | RootDeniedException | IOException e) {
+            e.printStackTrace();
+            showToastOnLooper(context, e.getMessage());
+        }
     }
 }
