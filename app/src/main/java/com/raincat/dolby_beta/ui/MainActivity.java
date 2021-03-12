@@ -64,6 +64,11 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         findPreference(getString(R.string.script_key)).setSummary(share.getString("script", "script.zip"));
         findPreference(getString(R.string.node_key)).setSummary(share.getString("node", "node"));
 
+        if (Tools.is64BitImpl())
+            findPreference(getString(R.string.node_key)).setTitle(getString(R.string.node_title) + "（64bit）");
+        else
+            findPreference(getString(R.string.node_key)).setTitle(getString(R.string.node_title) + "（32bit）");
+
         checkState();
         checkSignature();
 
@@ -153,6 +158,22 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
                     .setType("*/*")
                     .addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, NODE);
+            return false;
+        });
+
+        Preference script_github = findPreference(getString(R.string.script_github_key));
+        script_github.setOnPreferenceClickListener(preference -> {
+            Uri uri = Uri.parse("https://github.com/nondanee/UnblockNeteaseMusic");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+            return false;
+        });
+
+        Preference node_github = findPreference(getString(R.string.node_github_key));
+        node_github.setOnPreferenceClickListener(preference -> {
+            Uri uri = Uri.parse("https://github.com/sjitech/nodejs-android-prebuilt-binaries");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
             return false;
         });
 
@@ -260,13 +281,14 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         if (resultCode == RESULT_OK)
             if (requestCode == NODE) {
                 Uri uri = data.getData();
-                if (uri != null) {
+                if (uri != null && uri.getPath() != null && uri.getPath().toLowerCase().endsWith("node")) {
                     share.edit().putString("node", uri.getPath()).apply();
                     findPreference(getString(R.string.node_key)).setSummary(uri.getPath());
-                }
+                } else
+                    Toast.makeText(context, "你选择的不是node文件！", Toast.LENGTH_SHORT).show();
             } else if (requestCode == SCRIPT) {
                 Uri uri = data.getData();
-                if (uri != null && uri.getPath() != null && uri.getPath().endsWith("zip")) {
+                if (uri != null && uri.getPath() != null && uri.getPath().toLowerCase().endsWith("zip")) {
                     share.edit().putString("script", uri.getPath()).apply();
                     findPreference(getString(R.string.script_key)).setSummary(uri.getPath());
                 } else

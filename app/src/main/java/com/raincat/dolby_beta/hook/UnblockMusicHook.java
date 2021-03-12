@@ -12,6 +12,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -113,28 +114,66 @@ public class UnblockMusicHook {
             File dataFile = new File(dataPath);
             if (!dataFile.exists())
                 dataFile.mkdirs();
-            if (scriptFile.exists() && scriptFile.lastModified() > scriptLastUpdateTime) {
-                if (Tools.unZipFile(scriptFilePath, dataPath))
-                    ExtraDao.getInstance(c).saveExtra("script_time", scriptFile.lastModified() + "");
+            if (scriptFile.exists()) {
+                if (scriptFile.lastModified() != scriptLastUpdateTime) {
+                    if (Tools.unZipFile(scriptFilePath, dataPath))
+                        ExtraDao.getInstance(c).saveExtra("script_time", scriptFile.lastModified() + "");
+                }
+                quality();
+                force();
             }
             if (nodeFile.exists() && nodeSize != nodeFile.length()) {
                 Tools.copyFile(nodeFilePath, dataPath + File.separator + "node");
                 ExtraDao.getInstance(c).saveExtra("node_size", nodeFile.length() + "");
+                Command auth = new Command(0, "cd " + dataPath, "chmod 770 *");
+                Tools.shell(c, auth);
             }
 
-            Command auth = new Command(0, "cd " + dataPath, "chmod 770 *");
             Command start = new Command(0, STOP_PROXY, "cd " + dataPath, START_PROXY) {
                 @Override
                 public void commandOutput(int id, String line) {
                     if (line.contains("Error")) {
                         Tools.showToastOnLooper(c, "运行失败，错误为：" + line);
                     } else if (line.contains("HTTP Server running")) {
-                        Tools.showToastOnLooper(c, "脚本运行成功");
+                        Tools.showToastOnLooper(c, "UnblockNeteaseMusic运行成功");
                     }
                 }
             };
-            Tools.shell(c, auth);
             Tools.shell(c, start);
         }
+    }
+
+    /**
+     * 改变音质
+     */
+    private void quality() {
+        List<String> scriptList = Tools.readFileFromSD(dataPath + File.separator + "src" + File.separator + "provider" + File.separator + "select.js");
+        for (int i = 0; i < scriptList.size(); i++) {
+            if (scriptList.get(i).contains("ENABLE_FLAC")) {
+                if (Setting.isQualityEnabled())
+                    scriptList.set(i, "module.exports.ENABLE_FLAC = 'true'");
+                else
+                    scriptList.set(i, "module.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === 'true'");
+                break;
+            }
+        }
+        Tools.writeFileFromSD(dataPath + File.separator + "src" + File.separator + "provider" + File.separator + "select.js", scriptList);
+    }
+
+    /**
+     * 低音质强制代理
+     */
+    private void force() {
+        List<String> scriptList = Tools.readFileFromSD(dataPath + File.separator + "src" + File.separator + "hook.js");
+        for (int i = 0; i < scriptList.size(); i++) {
+            if (scriptList.get(i).contains("item.code") && scriptList.get(i).contains("item.freeTrialInfo")) {
+                if (Setting.isForceEnabled())
+                    scriptList.set(i, "\t\tif ((item.code != 200 || item.freeTrialInfo || item.br <= 128000) && (target == 0 || item.id == target)) {");
+                else
+                    scriptList.set(i, "\t\tif ((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)) {");
+                break;
+            }
+        }
+        Tools.writeFileFromSD(dataPath + File.separator + "src" + File.separator + "hook.js", scriptList);
     }
 }

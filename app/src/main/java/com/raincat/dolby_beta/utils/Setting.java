@@ -69,6 +69,20 @@ public class Setting {
         return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.proxy_key), defaultValue);
     }
 
+    public static boolean isQualityEnabled() {
+        String valueString = getModuleResString(R.string.quality_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.quality_key), defaultValue);
+    }
+
+    public static boolean isForceEnabled() {
+        String valueString = getModuleResString(R.string.force_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.force_key), defaultValue);
+    }
+
     public static boolean isGrayEnabled() {
         String valueString = getModuleResString(R.string.gray_default_value);
         boolean defaultValue = Boolean.parseBoolean(valueString);

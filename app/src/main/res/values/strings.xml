@@ -5,6 +5,7 @@
     <string name="Module_is_Not_Active">模块未激活</string>
 
     <string name="pref_base_setting">基本设置</string>
+    <string name="pref_proxy_setting">代理设置</string>
     <string name="pref_optional_setting">可选设置</string>
     <string name="pref_beautify">美化设置</string>
     <string name="pref_other">其他</string>
@@ -29,12 +30,29 @@
     <string name="proxy_key" translatable="false">proxy</string>
     <string name="proxy_default_value">false</string>
     <string name="proxy_title">启用UnblockNeteaseMusic代理</string>
+    <string name="proxy_summary">原理为使用其他音源（如：酷我）来替换无版权歌曲，偶发歌曲匹配错误无法避免，请勿因此提交issue</string>
+
+    <string name="force_key" translatable="false">force</string>
+    <string name="force_default_value">false</string>
+    <string name="force_title">强制替换音源</string>
+    <string name="force_summary">即使网易云有版权，也尝试从其他音源中获取更高音质，会增大匹配错误概率</string>
+
+    <string name="quality_key" translatable="false">quality</string>
+    <string name="quality_default_value">false</string>
+    <string name="quality_title">优先获取无损音质</string>
+    <string name="quality_summary">仅能从酷我音源获取无损音质</string>
 
     <string name="script_key" translatable="false">script</string>
-    <string name="script_title">脚本路径（ZIP文件）</string>
+    <string name="script_title">脚本ZIP压缩包路径</string>
 
     <string name="node_key" translatable="false">node</string>
-    <string name="node_title">node路径</string>
+    <string name="node_title">node文件路径</string>
+
+    <string name="script_github_key" translatable="false">script_github</string>
+    <string name="script_github_title">访问UnblockNeteaseMusic github</string>
+
+    <string name="node_github_key" translatable="false">node_github</string>
+    <string name="node_github_title">访问node github</string>
 
     <string name="remove_update_key" translatable="false">remove_update</string>
     <string name="remove_update_default_value">true</string>
@@ -78,7 +96,7 @@
 
     <string name="hide_tab_key" translatable="false">hide_tab</string>
     <string name="hide_tab_default_value">false</string>
-    <string name="hide_tab_title">精简Tab（6.0.0以上）</string>
+    <string name="hide_tab_title">精简Tab（6.0.0~7.3.0）</string>
     <string name="hide_tab_summary">首页顶部仅保留“我的”与“发现”</string>
 
     <string name="hide_banner_key" translatable="false">hide_banner</string>
@@ -112,13 +130,13 @@
 
     <string name="compatible_appver_key" translatable="false">compatible_appver</string>
     <string name="compatible_appver_title">兼容版本</string>
-    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.1.10</string>
+    <string name="compatible_appver_summary">4.3.1，6.0.0，6.4.3~8.1.50</string>
 
     <string name="github_key" translatable="false">github</string>
     <string name="github_title">github源码</string>
     <string name="github_summary">请务必帮我点一下小星星！</string>
 
-    <string-array name="package_scope" >
+    <string-array name="package_scope">
         <item>com.netease.cloudmusic</item>
     </string-array>
 </resources>

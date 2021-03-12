@@ -25,7 +25,6 @@ import java.util.Random;
 
 import de.robv.android.xposed.XC_MethodHook;
 
-import static de.robv.android.xposed.XposedBridge.log;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 
@@ -186,7 +185,6 @@ public class AutoSignInHook {
                 SignDao.getInstance(context).deleteSong(recommendBean.getId(), userId);
                 signedSongList.clear();
             }
-            log("打卡完毕，共计打卡歌曲" + count + "首！");
             Tools.showToastOnLooper(context, "打卡完毕，共计打卡歌曲" + count + "首！");
             Tools.copyFile(Tools.neteaseDbPath, Tools.sdcardDbPath);
             Tools.copyFile(Tools.neteaseDbPath + "-journal", Tools.sdcardDbPath + "-journal");

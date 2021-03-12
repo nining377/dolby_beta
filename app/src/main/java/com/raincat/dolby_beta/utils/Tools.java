@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import de.robv.android.xposed.XposedBridge;
 
 /**
  * <pre>
@@ -174,7 +173,7 @@ public class Tools {
     /**
      * 从SD卡中读取一个文件
      */
-    static List<String> readFileFromSD(String path) {
+    public static List<String> readFileFromSD(String path) {
         List<String> list = new ArrayList<>();
         File file = new File(path);
         if (!file.isDirectory()) {
@@ -197,7 +196,7 @@ public class Tools {
     /**
      * 写入内容到一个文件
      */
-    static void writeFileFromSD(String path, List<String> content) {
+    public static void writeFileFromSD(String path, List<String> content) {
         BufferedWriter out = null;
         try {
             File file = new File(path);
@@ -334,6 +333,39 @@ public class Tools {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 判断是否为64bit手机
+     *
+     * @return true是64位
+     */
+    public static boolean is64BitImpl() {
+        try {
+            Class<?> clzVMRuntime = Class.forName("dalvik.system.VMRuntime");
+            if (clzVMRuntime == null) {
+                return false;
+            }
+            Method mthVMRuntimeGet = clzVMRuntime.getDeclaredMethod("getRuntime");
+            if (mthVMRuntimeGet == null) {
+                return false;
+            }
+            Object objVMRuntime = mthVMRuntimeGet.invoke(null);
+            if (objVMRuntime == null) {
+                return false;
+            }
+            Method sVMRuntimeIs64BitMethod = clzVMRuntime.getDeclaredMethod("is64Bit");
+            if (sVMRuntimeIs64BitMethod == null) {
+                return false;
+            }
+            Object objIs64Bit = sVMRuntimeIs64BitMethod.invoke(objVMRuntime);
+            if (objIs64Bit instanceof Boolean) {
+                return (boolean) objIs64Bit;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     static List<String> filterList(List<String> list, Pattern pattern) {
