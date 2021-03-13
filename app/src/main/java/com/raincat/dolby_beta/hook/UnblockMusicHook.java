@@ -53,46 +53,47 @@ public class UnblockMusicHook {
             classRealCall = "okhttp3.RealCall";
         }
 
-        if (isPlayProcess) {
-            final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 23338));
-            hookAllConstructors(findClass(classRealCall, context.getClassLoader()), new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    if (param.args.length == 3) {
-                        Object client = param.args[0];
-                        Object request = param.args[1];
+        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 23338));
+        hookAllConstructors(findClass(classRealCall, context.getClassLoader()), new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (param.args.length == 3) {
+                    Object client = param.args[0];
+                    Object request = param.args[1];
 
-                        Field urlField = request.getClass().getDeclaredField(fieldHttpUrl);
-                        urlField.setAccessible(true);
-                        Field proxyField = client.getClass().getDeclaredField(fieldProxy);
-                        proxyField.setAccessible(true);
+                    Field urlField = request.getClass().getDeclaredField(fieldHttpUrl);
+                    urlField.setAccessible(true);
+                    Field proxyField = client.getClass().getDeclaredField(fieldProxy);
+                    proxyField.setAccessible(true);
 
-                        Object urlObj = urlField.get(request);
-                        if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")) {
-                            proxyField.set(client, proxy);
-                        } else {
-                            proxyField.set(client, null);
-                        }
+                    Object urlObj = urlField.get(request);
+                    if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")) {
+                        proxyField.set(client, proxy);
+                    } else {
+                        proxyField.set(client, null);
                     }
                 }
-            });
-        } else {
-            findAndHookMethod(classMainActivity, context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    initScript(context);
-                }
-            });
+            }
+        });
 
-            findAndHookMethod(classMainActivity, context.getClassLoader(), "onDestroy", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    Command stop = new Command(0, STOP_PROXY);
-                    Tools.shell(context, stop);
-                    dataPath = null;
-                }
-            });
-        }
+        if (isPlayProcess)
+            return;
+
+        findAndHookMethod(classMainActivity, context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                initScript(context);
+            }
+        });
+
+        findAndHookMethod(classMainActivity, context.getClassLoader(), "onDestroy", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) {
+                Command stop = new Command(0, STOP_PROXY);
+                Tools.shell(context, stop);
+                dataPath = null;
+            }
+        });
     }
 
     private void initScript(final Context c) {

@@ -25,6 +25,7 @@ import com.raincat.dolby_beta.dialog.ProfileDialog;
 import com.raincat.dolby_beta.dialog.SidebarCutDialog;
 import com.raincat.dolby_beta.dialog.SignSongDialog;
 import com.raincat.dolby_beta.utils.CloudMusicPackage;
+import com.raincat.dolby_beta.utils.FileUnits;
 import com.raincat.dolby_beta.utils.Tools;
 
 import java.io.File;
@@ -145,7 +146,6 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         Preference script = findPreference(getString(R.string.script_key));
         script.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
-                    .putExtra(Intent.EXTRA_MIME_TYPES, "application/zip")
                     .setType("*/*")
                     .addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SCRIPT);
@@ -282,15 +282,15 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
             if (requestCode == NODE) {
                 Uri uri = data.getData();
                 if (uri != null && uri.getPath() != null && uri.getPath().toLowerCase().endsWith("node")) {
-                    share.edit().putString("node", uri.getPath()).apply();
-                    findPreference(getString(R.string.node_key)).setSummary(uri.getPath());
+                    share.edit().putString("node", FileUnits.getPath(context, uri)).apply();
+                    findPreference(getString(R.string.node_key)).setSummary(FileUnits.getPath(context, uri));
                 } else
                     Toast.makeText(context, "你选择的不是node文件！", Toast.LENGTH_SHORT).show();
             } else if (requestCode == SCRIPT) {
                 Uri uri = data.getData();
                 if (uri != null && uri.getPath() != null && uri.getPath().toLowerCase().endsWith("zip")) {
-                    share.edit().putString("script", uri.getPath()).apply();
-                    findPreference(getString(R.string.script_key)).setSummary(uri.getPath());
+                    share.edit().putString("script", FileUnits.getPath(context, uri)).apply();
+                    findPreference(getString(R.string.script_key)).setSummary(FileUnits.getPath(context, uri));
                 } else
                     Toast.makeText(context, "你选择的不是ZIP文件！", Toast.LENGTH_SHORT).show();
             }
