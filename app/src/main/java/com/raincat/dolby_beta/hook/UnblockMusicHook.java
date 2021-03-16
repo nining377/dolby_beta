@@ -2,6 +2,7 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.utils.Setting;
@@ -38,19 +39,19 @@ public class UnblockMusicHook {
     private static String dataPath;
 
     private final String classMainActivity = "com.netease.cloudmusic.activity.MainActivity";
-    private String classRealCall = "okhttp3.RealCall";
+    private String classRealCall ;
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
 
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
-        if (versionCode == 110) {
-            classRealCall = "okhttp3.z";
-            fieldHttpUrl = "a";
-            fieldProxy = "d";
-        } else if (versionCode >= 7001080) {
+        if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
         } else if (versionCode >= 138) {
             classRealCall = "okhttp3.RealCall";
+        } else {
+            classRealCall = "okhttp3.z";
+            fieldHttpUrl = "a";
+            fieldProxy = "d";
         }
 
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 23338));
@@ -68,7 +69,10 @@ public class UnblockMusicHook {
 
                     Object urlObj = urlField.get(request);
                     if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")) {
-                        proxyField.set(client, proxy);
+                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
+                            Tools.showToastOnLooper(context, "node未运行，请保证脚本与Node文件路径正确！");
+                        } else
+                            proxyField.set(client, proxy);
                     } else {
                         proxyField.set(client, null);
                     }
@@ -82,6 +86,7 @@ public class UnblockMusicHook {
         findAndHookMethod(classMainActivity, context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) {
+                ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
                 initScript(context);
             }
         });
@@ -137,6 +142,7 @@ public class UnblockMusicHook {
                         Tools.showToastOnLooper(c, "运行失败，错误为：" + line);
                     } else if (line.contains("HTTP Server running")) {
                         Tools.showToastOnLooper(c, "UnblockNeteaseMusic运行成功");
+                        ExtraDao.getInstance(context).saveExtra("ScriptRunning", "1");
                     }
                 }
             };
