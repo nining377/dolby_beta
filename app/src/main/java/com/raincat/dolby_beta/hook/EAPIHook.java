@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.utils.CloudMusicPackage;
 import com.raincat.dolby_beta.utils.Setting;
-import com.raincat.dolby_beta.utils.Tools;
 
 import org.json.JSONObject;
 
@@ -72,7 +71,7 @@ public class EAPIHook extends EAPIBase {
                     //解除灰色
                     if (Setting.isGrayEnabled() || Setting.isProxyEnabled())
                         modified = modifyByRegex(modified == null ? original : modified);
-                } else if (path.contains("login") || path.contains("captcha")) {
+                } else if (path.contains("login") || path.contains("register")) {
                     Object response = httpResponse.getResponseObject();
                     CloudMusicPackage.OKHttp3Response okHttp3Response = new CloudMusicPackage.OKHttp3Response(response);
                     Object header = okHttp3Response.getHeadersObject();

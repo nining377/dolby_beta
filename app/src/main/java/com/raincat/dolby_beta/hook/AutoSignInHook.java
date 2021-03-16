@@ -97,7 +97,12 @@ public class AutoSignInHook {
      */
     private void sign(Context context) {
         HashMap<String, Object> header = new HashMap<>();
-        header.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
+        String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+        if (cookie.equals("-1")) {
+            Tools.showToastOnLooper(context, "签到失败，请重新登录以获取cookie");
+            return;
+        }
+        header.put("Cookie", cookie);
 
         HashMap<String, Object> param = new HashMap<>();
         param.put("type", "1");
@@ -126,6 +131,7 @@ public class AutoSignInHook {
             String cookie = ExtraDao.getInstance(context).getExtra("cookie");
             if (cookie.equals("-1")) {
                 Tools.showToastOnLooper(context, "打卡失败，请重新登录以获取cookie");
+                return;
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.CHINA);

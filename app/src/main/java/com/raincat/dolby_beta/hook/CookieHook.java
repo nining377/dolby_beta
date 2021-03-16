@@ -23,7 +23,7 @@ public class CookieHook {
                         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                         String cookie = ExtraDao.getInstance(context).getExtra("cookie");
                         if (cookie.equals("-1") || cookie.length() == 0) {
-                            Toast.makeText(context, "cookie获取失败，请重新登录账号以刷新数据", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "获取失败，请重新登录以获取cookie", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         ClipData clipData = ClipData.newPlainText(null, ExtraDao.getInstance(context).getExtra("cookie"));

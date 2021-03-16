@@ -30,7 +30,12 @@ class EAPIBase {
             return original;
 
         HashMap<String, Object> header = new HashMap<>();
-        header.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
+        String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+        if (cookie.equals("-1")) {
+            Tools.showToastOnLooper(context, "收藏失败，请重新登录以获取cookie");
+            return original;
+        }
+        header.put("Cookie", cookie);
 
         HashMap<String, Object> param = new HashMap<>();
         String trackIds = data.get("trackIds");
@@ -67,7 +72,12 @@ class EAPIBase {
         String trackId = null;
 
         HashMap<String, Object> header = new HashMap<>();
-        header.put("Cookie", ExtraDao.getInstance(context).getExtra("cookie"));
+        String cookie = ExtraDao.getInstance(context).getExtra("cookie");
+        if (cookie.equals("-1")) {
+            Tools.showToastOnLooper(context, "红心收藏失败，请重新登录以获取cookie");
+            return original;
+        }
+        header.put("Cookie", cookie);
 
         //获取我喜欢的音乐列表
         Gson gson = new Gson();

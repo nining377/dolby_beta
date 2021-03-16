@@ -8,8 +8,8 @@ android {
         applicationId "com.raincat.dolby_beta"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 201
-        versionName "2.0.1"
+        versionCode 202
+        versionName "2.0.2"
     }
     buildTypes {
         release {
