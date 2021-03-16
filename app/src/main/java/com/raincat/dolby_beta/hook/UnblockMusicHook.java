@@ -68,7 +68,8 @@ public class UnblockMusicHook {
                     proxyField.setAccessible(true);
 
                     Object urlObj = urlField.get(request);
-                    if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")) {
+                    if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")
+                            || urlObj.toString().contains("eapi/privilege") || urlObj.toString().contains("eapi/album/privilege")) {
                         if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
                             Tools.showToastOnLooper(context, "node未运行，请保证脚本与Node文件路径正确！");
                         } else
