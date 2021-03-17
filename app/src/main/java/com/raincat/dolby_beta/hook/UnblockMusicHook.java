@@ -2,7 +2,6 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.utils.Setting;
@@ -13,6 +12,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -43,6 +43,13 @@ public class UnblockMusicHook {
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
 
+    private final List<String> proxyUrlList = Arrays.asList(
+            // Should be enough for most cases
+            "song/enhance/player/url", "song/enhance/download/url",
+            // But needed for whatever reason on some devices
+            "eapi/privilege", "eapi/album/privilege", "eapi/artist/top/song",
+            "eapi/v1/playlist", "eapi/v1/search", "eapi/v6/playlist");
+
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
         if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
@@ -68,13 +75,15 @@ public class UnblockMusicHook {
                     proxyField.setAccessible(true);
 
                     Object urlObj = urlField.get(request);
-                    if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")
-                            || urlObj.toString().contains("eapi/privilege") || urlObj.toString().contains("eapi/album/privilege")) {
-                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
-                            Tools.showToastOnLooper(context, "node未运行，请保证脚本与Node文件路径正确！");
-                        } else
+                    boolean isMatched = false;
+                    for (String url : proxyUrlList) {
+                        if (urlObj.toString().contains(url)) {
+                            isMatched = true;
                             proxyField.set(client, proxy);
-                    } else {
+                            break;
+                        }
+                    }
+                    if (!isMatched) {
                         proxyField.set(client, null);
                     }
                 }
