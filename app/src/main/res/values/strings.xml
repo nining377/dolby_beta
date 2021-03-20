@@ -42,6 +42,11 @@
     <string name="quality_title">优先获取无损音质</string>
     <string name="quality_summary">仅能从酷我音源获取无损音质</string>
 
+    <string name="white_key" translatable="false">white</string>
+    <string name="white_default_value">true</string>
+    <string name="white_title">白名单模式</string>
+    <string name="white_summary">白名单：仅对播放及下载api进行代理，其他功能（不变灰等）由杜比大喇叭完成\n~建议仅在白名单模式无效时关闭选项~</string>
+
     <string name="script_key" translatable="false">script</string>
     <string name="script_title">脚本ZIP压缩包路径</string>
 

@@ -35,7 +35,7 @@ public class ExtraDao {
     /**
      * 保存额外记录
      */
-    public void saveExtra(String key, String value) {
+    public synchronized void saveExtra(String key, String value) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
             ContentValues values = new ContentValues();
@@ -49,7 +49,7 @@ public class ExtraDao {
     /**
      * 获取某个额外记录
      */
-    public String getExtra(String key) {
+    public synchronized String getExtra(String key) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (db.isOpen()) {
             Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + EXTRA_KEY + " = '" + key + "'", null);
@@ -65,7 +65,7 @@ public class ExtraDao {
     /**
      * 删除一个人的某条额外记录
      */
-    public void deleteExtra(String key) {
+    public synchronized void deleteExtra(String key) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
             db.delete(TABLE_NAME, EXTRA_KEY + " = ? ", new String[]{key});
@@ -76,7 +76,7 @@ public class ExtraDao {
     /**
      * 删除所有额外记录
      */
-    public void deleteAllExtra() {
+    public synchronized void deleteAllExtra() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
             db.delete(TABLE_NAME, null, null);

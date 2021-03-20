@@ -76,6 +76,13 @@ public class Setting {
         return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.quality_key), defaultValue);
     }
 
+    public static boolean isWhiteEnabled() {
+        String valueString = getModuleResString(R.string.white_default_value);
+        boolean defaultValue = Boolean.parseBoolean(valueString);
+
+        return getModuleSharedPreferences().getBoolean(getModuleResString(R.string.white_key), defaultValue);
+    }
+
     public static boolean isForceEnabled() {
         String valueString = getModuleResString(R.string.force_default_value);
         boolean defaultValue = Boolean.parseBoolean(valueString);

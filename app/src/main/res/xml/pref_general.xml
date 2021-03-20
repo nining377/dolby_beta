@@ -58,6 +58,13 @@
             android:summary="@string/quality_summary"
             android:title="@string/quality_title" />
 
+        <CheckBoxPreference
+            android:defaultValue="@string/white_default_value"
+            android:dependency="@string/proxy_key"
+            android:key="@string/white_key"
+            android:summary="@string/white_summary"
+            android:title="@string/white_title" />
+
         <Preference
             android:dependency="@string/proxy_key"
             android:key="@string/script_key"
