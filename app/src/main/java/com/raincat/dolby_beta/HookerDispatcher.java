@@ -2,6 +2,7 @@ package com.raincat.dolby_beta;
 
 import android.content.Context;
 
+import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
 import com.raincat.dolby_beta.hook.BlackHook;
@@ -74,8 +75,10 @@ public class HookerDispatcher implements IHookerDispatcher {
                         if (processName.equals(CloudMusicPackage.PACKAGE_NAME)) {
                             CloudMusicPackage.init(neteaseContext);
                             //UnblockMusic代理
-                            if (Setting.isProxyEnabled())
+                            if (Setting.isProxyEnabled()) {
+                                ExtraDao.getInstance(neteaseContext).saveExtra("ScriptRunning", "0");
                                 new UnblockMusicHook(neteaseContext, CloudMusicPackage.versionCode, false);
+                            }
                             //黑胶
                             if (Setting.isBlackEnabled()) {
                                 Tools.deleteDirectory(CloudMusicPackage.CACHE_PATH);

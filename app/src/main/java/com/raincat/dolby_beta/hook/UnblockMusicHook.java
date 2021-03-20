@@ -1,5 +1,6 @@
 package com.raincat.dolby_beta.hook;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -20,14 +21,12 @@ import javax.net.ssl.SSLSocketFactory;
 import de.robv.android.xposed.XC_MethodHook;
 
 import static de.robv.android.xposed.XposedBridge.hookAllConstructors;
-import static de.robv.android.xposed.XposedBridge.log;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
 /**
  * <pre>
  *     author : RainCat
- *     org    : Shenzhen JingYu Network Technology Co., Ltd.
  *     e-mail : nining377@gmail.com
  *     time   : 2021/03/10
  *     desc   : 音乐代理hook
@@ -41,6 +40,8 @@ public class UnblockMusicHook {
 
     private static String dataPath;
     private static SSLSocketFactory socketFactory;
+    private static Object objectProxy;
+    private static Object objectSSLSocketFactory;
 
     private final String classMainActivity = "com.netease.cloudmusic.activity.MainActivity";
     private String classRealCall;
@@ -49,7 +50,6 @@ public class UnblockMusicHook {
     private String fieldSSLSocketFactory;
 
     private final List<String> whiteUrlList = Arrays.asList(
-            // Should be enough for most cases
             "song/enhance/player/url", "song/enhance/download/url");
 
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
@@ -79,8 +79,6 @@ public class UnblockMusicHook {
                     urlField.setAccessible(true);
                     Field proxyField = client.getClass().getDeclaredField(fieldProxy);
                     proxyField.setAccessible(true);
-                    Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
-                    sslSocketFactoryField.setAccessible(true);
 
                     Object urlObj = urlField.get(request);
 
@@ -90,17 +88,27 @@ public class UnblockMusicHook {
                                 if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("1"))
                                     proxyField.set(client, proxy);
                                 else
-                                    Tools.showToastOnLooper(context, "node未成功运行，请到模块内选择正确的脚本与Node路径！若已使用存储重定向等APP请保证网易云音乐也可访问到脚本路径！");
-                                return;
+                                    Tools.showToastOnLooper(context, "node未成功运行，请到模块内选择正确的脚本与Node路径，若已使用存储重定向等APP请保证网易云音乐也可访问到脚本路径！");
+                                break;
                             }
                         }
                     } else {
-                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0"))
-                            return;
-                        if (socketFactory == null)
-                            socketFactory = Tools.getSLLContext(dataPath + File.separator + "ca.crt").getSocketFactory();
-                        proxyField.set(client, proxy);
-                        sslSocketFactoryField.set(client, socketFactory);
+                        Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
+                        sslSocketFactoryField.setAccessible(true);
+                        if (objectProxy == null)
+                            objectProxy = proxyField.get(client);
+                        if (objectSSLSocketFactory == null)
+                            objectSSLSocketFactory = sslSocketFactoryField.get(client);
+
+                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
+                            proxyField.set(client, objectProxy);
+                            sslSocketFactoryField.set(client, objectSSLSocketFactory);
+                        } else {
+                            if (socketFactory == null)
+                                socketFactory = Tools.getSLLContext(dataPath + File.separator + "ca.crt").getSocketFactory();
+                            proxyField.set(client, proxy);
+                            sslSocketFactoryField.set(client, socketFactory);
+                        }
                     }
                 }
             }
@@ -112,14 +120,14 @@ public class UnblockMusicHook {
         findAndHookMethod(classMainActivity, context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) {
-                ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
-                initScript(context);
+                final Context neteaseContext = (Context) param.thisObject;
+                initScript(neteaseContext);
             }
         });
 
         findAndHookMethod(classMainActivity, context.getClassLoader(), "onDestroy", new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
+            protected void afterHookedMethod(MethodHookParam param) {
                 Command stop = new Command(0, STOP_PROXY);
                 Tools.shell(context, stop);
             }
@@ -165,16 +173,18 @@ public class UnblockMusicHook {
             @Override
             public void commandOutput(int id, String line) {
                 if (line.contains("Error")) {
+                    ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
                     Tools.showToastOnLooper(c, "运行失败，错误为：" + line);
                 } else if (line.contains("HTTP Server running")) {
                     ExtraDao.getInstance(context).saveExtra("ScriptRunning", "1");
                     Tools.showToastOnLooper(c, "UnblockNeteaseMusic运行成功");
                 } else if (line.contains("Killed")) {
                     ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
-                    Tools.showToastOnLooper(c, "Node被Killed，可能手机运存已耗尽，正在尝试重启……");
-                    startScrip(c);
+                    if (!((Activity) c).isFinishing()) {
+                        Tools.showToastOnLooper(c, "Node被Killed，可能手机运存已耗尽，正在尝试重启……");
+                        startScrip(c);
+                    }
                 }
-                log("日志：" + line);
             }
         };
         Tools.shell(c, start);

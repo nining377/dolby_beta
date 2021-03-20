@@ -12,7 +12,6 @@ import android.provider.MediaStore;
 /**
  * <pre>
  *     author : RainCat
- *     org    : Shenzhen JingYu Network Technology Co., Ltd.
  *     e-mail : nining377@gmail.com
  *     time   : 2021/03/13
  *     desc   : 说明
