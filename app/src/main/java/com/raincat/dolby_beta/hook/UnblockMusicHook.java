@@ -52,6 +52,13 @@ public class UnblockMusicHook {
     private final List<String> whiteUrlList = Arrays.asList(
             "song/enhance/player/url", "song/enhance/download/url");
 
+    private final List<String> fullUrlList = Arrays.asList(
+            // Should be enough for most cases
+            "song/enhance/player/url", "song/enhance/download/url",
+            // But needed for whatever reason on some devices
+            "eapi/privilege", "eapi/album/privilege", "eapi/artist/top/song",
+            "eapi/v1/playlist", "eapi/v1/search", "eapi/v6/playlist");
+
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
         if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
@@ -93,21 +100,26 @@ public class UnblockMusicHook {
                             }
                         }
                     } else {
-                        Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
-                        sslSocketFactoryField.setAccessible(true);
-                        if (objectProxy == null)
-                            objectProxy = proxyField.get(client);
-                        if (objectSSLSocketFactory == null)
-                            objectSSLSocketFactory = sslSocketFactoryField.get(client);
+                        for (String url : fullUrlList) {
+                            if (urlObj.toString().contains(url)) {
+                                Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
+                                sslSocketFactoryField.setAccessible(true);
+                                if (objectProxy == null)
+                                    objectProxy = proxyField.get(client);
+                                if (objectSSLSocketFactory == null)
+                                    objectSSLSocketFactory = sslSocketFactoryField.get(client);
 
-                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
-                            proxyField.set(client, objectProxy);
-                            sslSocketFactoryField.set(client, objectSSLSocketFactory);
-                        } else {
-                            if (socketFactory == null)
-                                socketFactory = Tools.getSLLContext(dataPath + File.separator + "ca.crt").getSocketFactory();
-                            proxyField.set(client, proxy);
-                            sslSocketFactoryField.set(client, socketFactory);
+                                if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
+                                    proxyField.set(client, objectProxy);
+                                    sslSocketFactoryField.set(client, objectSSLSocketFactory);
+                                } else {
+                                    if (socketFactory == null)
+                                        socketFactory = Tools.getSLLContext(dataPath + File.separator + "ca.crt").getSocketFactory();
+                                    proxyField.set(client, proxy);
+                                    sslSocketFactoryField.set(client, socketFactory);
+                                }
+                                break;
+                            }
                         }
                     }
                 }
