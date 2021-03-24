@@ -52,6 +52,9 @@ public class UnblockMusicHook {
     private final List<String> whiteUrlList = Arrays.asList(
             "song/enhance/player/url", "song/enhance/download/url");
 
+    private final List<String> blackUrlList = Arrays.asList("eapi/playlist/subscribe",
+            "163yun.com");
+    
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
         if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
@@ -81,6 +84,12 @@ public class UnblockMusicHook {
                     proxyField.setAccessible(true);
 
                     Object urlObj = urlField.get(request);
+
+                    for (String url : blackUrlList) {
+                        if (urlObj.toString().contains(url)) {
+                            return;
+                        }
+                    }
 
                     if (Setting.isWhiteEnabled()) {
                         for (String url : whiteUrlList) {
