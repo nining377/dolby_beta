@@ -137,7 +137,7 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
 
         Preference update = findPreference(getString(R.string.github_key));
         update.setOnPreferenceClickListener(preference -> {
-            Uri uri = Uri.parse("https://github.com/nining377/dolby_beta");
+            Uri uri = Uri.parse("https://github.com/LittleRey/dolby_beta");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
             return false;
