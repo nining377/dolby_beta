@@ -209,7 +209,8 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         String method = null;
         if (isModuleActive()) {
             method = "Xposed / EdXposed";
-
+        } else if (isVXP()) {
+            method = "VirtualXposed";
         } else if (isExpModuleActive()) {
             method = "太极";
         }
@@ -236,7 +237,9 @@ public class MainActivity extends PreferenceActivity implements SharedPreference
         return false;
     }
 
-
+    private boolean isVXP() {
+        return System.getProperty("vxp") != null;
+    }
 
     private void showMessageDialog(final String title, final String message) {
         new AlertDialog.Builder(this)
