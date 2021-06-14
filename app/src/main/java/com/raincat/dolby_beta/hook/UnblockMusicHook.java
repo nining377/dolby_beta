@@ -53,7 +53,7 @@ public class UnblockMusicHook {
             "song/enhance/player/url", "song/enhance/download/url");
 
     private final List<String> blackUrlList = Arrays.asList("eapi/playlist/subscribe",
-            "163yun.com");
+            "163yun.com", "api.k.163.com");
     
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
         if (versionCode >= 7001080) {
