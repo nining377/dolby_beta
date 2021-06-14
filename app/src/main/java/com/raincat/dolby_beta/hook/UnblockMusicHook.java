@@ -36,7 +36,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class UnblockMusicHook {
     private final static String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
-    private final static String START_PROXY = "./node app.js -o kuwo qq migu kugou -a 127.0.0.1 -p 23338:23339";
+    private final static String START_PROXY = "./node app.js -o kuwo migu kugou qq -a 127.0.0.1 -p 23338:23339";
 
     private static String dataPath;
     private static SSLSocketFactory socketFactory;
