@@ -25,13 +25,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * <pre>
@@ -333,6 +343,37 @@ public class Tools {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取CA证书
+     */
+    public static SSLContext getSLLContext(String caPath) {
+        SSLContext sslContext = null;
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            File ca = new File(caPath);
+            InputStream certificate = new FileInputStream(ca);
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null);
+            String certificateAlias = Integer.toString(0);
+            keyStore.setCertificateEntry(certificateAlias, certificateFactory.generateCertificate(certificate));
+            sslContext = SSLContext.getInstance("TLS");
+            final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+            sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return sslContext;
     }
 
     /**

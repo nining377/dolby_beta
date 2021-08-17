@@ -1,5 +1,6 @@
 package com.raincat.dolby_beta.hook;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -12,7 +13,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -23,7 +27,6 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 /**
  * <pre>
  *     author : RainCat
- *     org    : Shenzhen JingYu Network Technology Co., Ltd.
  *     e-mail : nining377@gmail.com
  *     time   : 2021/03/10
  *     desc   : 音乐代理hook
@@ -33,26 +36,40 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class UnblockMusicHook {
     private final static String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
-    private final static String START_PROXY = "./node app.js -o kuwo qq migu kugou -p 23338";
+    private final static String START_PROXY = "./node app.js -o kuwo qq migu kugou -a 127.0.0.1 -p 23338:23339";
 
     private static String dataPath;
+    private static SSLSocketFactory socketFactory;
+    private static Object objectProxy;
+    private static Object objectSSLSocketFactory;
 
     private final String classMainActivity = "com.netease.cloudmusic.activity.MainActivity";
-    private String classRealCall ;
+    private String classRealCall;
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
+    private String fieldSSLSocketFactory;
 
+    private final List<String> whiteUrlList = Arrays.asList(
+            "song/enhance/player/url", "song/enhance/download/url");
+
+    private final List<String> blackUrlList = Arrays.asList("eapi/playlist/subscribe",
+            "163yun.com");
+    
     public UnblockMusicHook(Context context, int versionCode, boolean isPlayProcess) {
         if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
+            fieldSSLSocketFactory = "sslSocketFactoryOrNull";
         } else if (versionCode >= 138) {
             classRealCall = "okhttp3.RealCall";
+            fieldSSLSocketFactory = "sslSocketFactory";
         } else {
             classRealCall = "okhttp3.z";
+            fieldSSLSocketFactory = "o";
             fieldHttpUrl = "a";
             fieldProxy = "d";
         }
 
+        dataPath = context.getFilesDir().getAbsolutePath() + File.separator + "script";
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 23338));
         hookAllConstructors(findClass(classRealCall, context.getClassLoader()), new XC_MethodHook() {
             @Override
@@ -67,13 +84,40 @@ public class UnblockMusicHook {
                     proxyField.setAccessible(true);
 
                     Object urlObj = urlField.get(request);
-                    if (urlObj.toString().contains("song/enhance/player/url") || urlObj.toString().contains("song/enhance/download/url")) {
-                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
-                            Tools.showToastOnLooper(context, "node未运行，请保证脚本与Node文件路径正确！");
-                        } else
-                            proxyField.set(client, proxy);
+
+                    for (String url : blackUrlList) {
+                        if (urlObj.toString().contains(url)) {
+                            return;
+                        }
+                    }
+
+                    if (Setting.isWhiteEnabled()) {
+                        for (String url : whiteUrlList) {
+                            if (urlObj.toString().contains(url)) {
+                                if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("1"))
+                                    proxyField.set(client, proxy);
+                                else
+                                    Tools.showToastOnLooper(context, "node未成功运行，请到模块内选择正确的脚本与Node路径，若已使用存储重定向等APP请保证网易云音乐也可访问到脚本路径！");
+                                break;
+                            }
+                        }
                     } else {
-                        proxyField.set(client, null);
+                        Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
+                        sslSocketFactoryField.setAccessible(true);
+                        if (objectProxy == null)
+                            objectProxy = proxyField.get(client);
+                        if (objectSSLSocketFactory == null)
+                            objectSSLSocketFactory = sslSocketFactoryField.get(client);
+
+                        if (ExtraDao.getInstance(context).getExtra("ScriptRunning").equals("0")) {
+                            proxyField.set(client, objectProxy);
+                            sslSocketFactoryField.set(client, objectSSLSocketFactory);
+                        } else {
+                            if (socketFactory == null)
+                                socketFactory = Tools.getSLLContext(dataPath + File.separator + "ca.crt").getSocketFactory();
+                            proxyField.set(client, proxy);
+                            sslSocketFactoryField.set(client, socketFactory);
+                        }
                     }
                 }
             }
@@ -85,25 +129,21 @@ public class UnblockMusicHook {
         findAndHookMethod(classMainActivity, context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) {
-                ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
-                initScript(context);
+                final Context neteaseContext = (Context) param.thisObject;
+                initScript(neteaseContext);
             }
         });
 
         findAndHookMethod(classMainActivity, context.getClassLoader(), "onDestroy", new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
+            protected void afterHookedMethod(MethodHookParam param) {
                 Command stop = new Command(0, STOP_PROXY);
                 Tools.shell(context, stop);
-                dataPath = null;
             }
         });
     }
 
     private void initScript(final Context c) {
-        if (dataPath != null)
-            return;
-
         long scriptLastUpdateTime = Long.parseLong(ExtraDao.getInstance(c).getExtra("script_time"));
         long nodeSize = Long.parseLong(ExtraDao.getInstance(c).getExtra("node_size"));
         String scriptFilePath = Setting.getScriptFile(), nodeFilePath = Setting.getNodeFile();
@@ -115,7 +155,6 @@ public class UnblockMusicHook {
         else if (!nodeFile.exists())
             Tools.showToastOnLooper(c, "node文件不存在！");
         else {
-            dataPath = c.getFilesDir().getAbsolutePath() + File.separator + "script";
             File dataFile = new File(dataPath);
             if (!dataFile.exists())
                 dataFile.mkdirs();
@@ -134,19 +173,30 @@ public class UnblockMusicHook {
                 Tools.shell(c, auth);
             }
 
-            Command start = new Command(0, STOP_PROXY, "cd " + dataPath, START_PROXY) {
-                @Override
-                public void commandOutput(int id, String line) {
-                    if (line.contains("Error")) {
-                        Tools.showToastOnLooper(c, "运行失败，错误为：" + line);
-                    } else if (line.contains("HTTP Server running")) {
-                        Tools.showToastOnLooper(c, "UnblockNeteaseMusic运行成功");
-                        ExtraDao.getInstance(context).saveExtra("ScriptRunning", "1");
+            startScrip(c);
+        }
+    }
+
+    private void startScrip(final Context c) {
+        Command start = new Command(0, STOP_PROXY, "cd " + dataPath, START_PROXY) {
+            @Override
+            public void commandOutput(int id, String line) {
+                if (line.contains("Error")) {
+                    ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
+                    Tools.showToastOnLooper(c, "运行失败，错误为：" + line);
+                } else if (line.contains("HTTP Server running")) {
+                    ExtraDao.getInstance(context).saveExtra("ScriptRunning", "1");
+                    Tools.showToastOnLooper(c, "UnblockNeteaseMusic运行成功");
+                } else if (line.contains("Killed")) {
+                    ExtraDao.getInstance(context).saveExtra("ScriptRunning", "0");
+                    if (!((Activity) c).isFinishing()) {
+                        Tools.showToastOnLooper(c, "Node被Killed，可能手机运存已耗尽，正在尝试重启……");
+                        startScrip(c);
                     }
                 }
-            };
-            Tools.shell(c, start);
-        }
+            }
+        };
+        Tools.shell(c, start);
     }
 
     /**
