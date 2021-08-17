@@ -2,7 +2,6 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.raincat.dolby_beta.db.ExtraDao;
 import com.raincat.dolby_beta.utils.Setting;
@@ -156,11 +155,11 @@ public class UnblockMusicHook {
     private void quality() {
         List<String> scriptList = Tools.readFileFromSD(dataPath + File.separator + "src" + File.separator + "provider" + File.separator + "select.js");
         for (int i = 0; i < scriptList.size(); i++) {
-            if (scriptList.get(i).contains("ENABLE_FLAC")) {
+            if (scriptList.get(i).contains("env.ENABLE_FLAC")) {
                 if (Setting.isQualityEnabled())
-                    scriptList.set(i, "module.exports.ENABLE_FLAC = 'true'");
+                    scriptList.set(i, "(process.env.ENABLE_FLAC || 'true').toLowerCase() === 'true';");
                 else
-                    scriptList.set(i, "module.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === 'true'");
+                    scriptList.set(i, "(process.env.ENABLE_FLAC || '').toLowerCase() === 'true';");
                 break;
             }
         }
@@ -175,9 +174,9 @@ public class UnblockMusicHook {
         for (int i = 0; i < scriptList.size(); i++) {
             if (scriptList.get(i).contains("item.code") && scriptList.get(i).contains("item.freeTrialInfo")) {
                 if (Setting.isForceEnabled())
-                    scriptList.set(i, "\t\tif ((item.code != 200 || item.freeTrialInfo || item.br <= 128000) && (target == 0 || item.id == target)) {");
+                    scriptList.set(i, "\t\t(item.code != 200 || item.freeTrialInfo || item.br <= 128000) &&");
                 else
-                    scriptList.set(i, "\t\tif ((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)) {");
+                    scriptList.set(i, "\t\t(item.code != 200 || item.freeTrialInfo) &&");
                 break;
             }
         }
