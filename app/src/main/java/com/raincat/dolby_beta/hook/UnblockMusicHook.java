@@ -50,7 +50,7 @@ public class UnblockMusicHook {
     private String fieldSSLSocketFactory;
 
     private final List<String> whiteUrlList = Arrays.asList(
-            "song/enhance/player/url", "song/enhance/download/url");
+            "song/enhance/player/url", "song/enhance/download/url", "bilivideo.com");
 
     private final List<String> blackUrlList = Arrays.asList("eapi/playlist/subscribe",
             "163yun.com");
