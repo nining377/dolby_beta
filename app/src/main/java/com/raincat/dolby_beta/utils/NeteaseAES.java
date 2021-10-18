@@ -5,16 +5,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class NeteaseAES {
-    String s = "{\"c\": [{\"id\": 11}]}";
-    // 加密
-
     /**
      * AES 加密的具体算法为:AES-128-CBC，输出格式为 base64 AES 加密时需要指定 iv：0102030405060708
      *
      * @param sSrc 加密后的参数值
      * @param sKey 随机数值
-     * @return
-     * @throws Exception
      */
     public static String Encrypt(String sSrc, String sKey) throws Exception {
         if (sKey == null) {
@@ -59,8 +54,7 @@ public class NeteaseAES {
             byte[] encrypted1 = NeteaseBase64.decode(sSrc);// 先用base64解密
             try {
                 byte[] original = cipher.doFinal(encrypted1);
-                String originalString = new String(original);
-                return originalString;
+                return new String(original);
             } catch (Exception e) {
                 System.out.println(e.toString());
                 return null;
@@ -86,11 +80,8 @@ public class NeteaseAES {
 
     /**
      * 这里的数其实就是相当于一个常量.因为输入的量都是固定了.所以没有必要进行修改.
-     *
-     * @return
      */
     public static String get_encSecKey() {
-        String encSecKey = "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f831f6394d5a3fd2e3881736d94a02ca919d952872e7d0a50ebfa1769a7a62d512f5f1ca21aec60bc3819a9c3ffca5eca9a0dba6d6f7249b06f5965ecfff3695b54e1c28f3f624750ed39e7de08fc8493242e26dbc4484a01c76f739e135637c";
-        return encSecKey;
+        return "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f831f6394d5a3fd2e3881736d94a02ca919d952872e7d0a50ebfa1769a7a62d512f5f1ca21aec60bc3819a9c3ffca5eca9a0dba6d6f7249b06f5965ecfff3695b54e1c28f3f624750ed39e7de08fc8493242e26dbc4484a01c76f739e135637c";
     }
 }

@@ -17,21 +17,14 @@ public class SignDbOpenHelper  extends SQLiteOpenHelper {
     private static SignDbOpenHelper instance;
 
     private static final String SONG_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
-            + SignDao.TABLE_NAME_1 + " ("
+            + SignDao.TABLE_NAME + " ("
             + SignDao.SIGNED_SONG_ID + " BIGINT PRIMARY KEY, "
-            + SignDao.SIGNED_LIST_ID + " BIGINT , "
             + SignDao.SIGNED_USER_ID + " VARCHAR(20) ); ";
-
-    private static final String LIST_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
-            + SignDao.TABLE_NAME_2 + " ("
-            + SignDao.SIGNED_USER_ID + " VARCHAR(20) , "
-            + SignDao.SIGNED_LIST_ID + " BIGINT PRIMARY KEY ); ";
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SONG_TABLE_CREATE);
-        db.execSQL(LIST_TABLE_CREATE);
     }
 
     private SignDbOpenHelper(Context context) {

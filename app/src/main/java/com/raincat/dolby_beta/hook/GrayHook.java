@@ -2,6 +2,8 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 
+import com.raincat.dolby_beta.helper.SettingHelper;
+
 import de.robv.android.xposed.XC_MethodReplacement;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -18,6 +20,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class GrayHook {
     public GrayHook(Context context) {
+        if (SettingHelper.getInstance().isEnable(SettingHelper.proxy_gray_key))
             findAndHookMethod(findClass("com.netease.cloudmusic.meta.MusicInfo", context.getClassLoader()),
                     "hasCopyRight", XC_MethodReplacement.returnConstant(true));
     }

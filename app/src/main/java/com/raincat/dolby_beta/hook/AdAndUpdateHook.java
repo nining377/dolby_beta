@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.raincat.dolby_beta.utils.Setting;
+import com.raincat.dolby_beta.helper.SettingHelper;
 
 import java.lang.reflect.Field;
 
@@ -30,9 +30,6 @@ public class AdAndUpdateHook {
     private static String httpUrlFieldString = "url";
     private static String urlFieldString = "url";
 
-    private static boolean removeAd = true;
-    private static boolean removeUpdate = true;
-
     public AdAndUpdateHook(Context context, final int versionCode) {
         if (versionCode < 138) {
             okHttpClientClassString = "okhttp3.x";
@@ -40,8 +37,6 @@ public class AdAndUpdateHook {
             httpUrlFieldString = "a";
             urlFieldString = "j";
         }
-        removeAd = Setting.isBlackEnabled();
-        removeUpdate = Setting.isUpdateEnabled();
 
         //去广告和升级
         Class<?> okHttpClientClass = findClassIfExists(okHttpClientClassString, context.getClassLoader());
@@ -55,9 +50,8 @@ public class AdAndUpdateHook {
                         httpUrl.setAccessible(true);
                         Object urlObj = httpUrl.get(request);
                         //加了一个反营销版权保护的URL，暂时作用未知
-                        if (urlObj.toString().contains("appcustomconfig/get") || (removeAd && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4"))) || (removeUpdate && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
-                            if (urlObj.toString().contains("music.126.net"))
-                                return;
+                        if (urlObj.toString().contains("appcustomconfig/get") || (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && !urlObj.toString().contains("music.126.net") && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4")))
+                                || (SettingHelper.getInstance().isEnable(SettingHelper.update_key) && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
                             Field url = urlObj.getClass().getDeclaredField(urlFieldString);
                             boolean urlAccessible = url.isAccessible();
                             url.setAccessible(true);
@@ -69,14 +63,16 @@ public class AdAndUpdateHook {
                 }
             });
 
-        if (removeAd && XposedHelpers.findClassIfExists("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader()) != null)
-            findAndHookMethod("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader(),
-                    "onCreate", Bundle.class, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) {
-                            ((Activity) param.thisObject).finish();
-                            param.setResult(null);
-                        }
-                    });
+        Class<?> loadingAdActivityClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader());
+        if (loadingAdActivityClass != null)
+            findAndHookMethod(loadingAdActivityClass, "onCreate", Bundle.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) {
+                    if (SettingHelper.getInstance().isEnable(SettingHelper.black_key)) {
+                        ((Activity) param.thisObject).finish();
+                        param.setResult(null);
+                    }
+                }
+            });
     }
 }

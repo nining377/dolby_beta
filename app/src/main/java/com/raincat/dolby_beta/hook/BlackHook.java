@@ -2,6 +2,7 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 
@@ -46,6 +47,8 @@ public class BlackHook {
             findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
                     "isBlackVip", XC_MethodReplacement.returnConstant(true));
             findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
+                    "isAnnualVip", XC_MethodReplacement.returnConstant(true));
+            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
                     "getBlackVipExpireTime", XC_MethodReplacement.returnConstant(System.currentTimeMillis() + 31536000000L));
 
             //音乐包
@@ -71,14 +74,25 @@ public class BlackHook {
         findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
                 "getPlayMaxLevel", XC_MethodReplacement.returnConstant(999000));
         findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
+                "getDownMaxLevel", XC_MethodReplacement.returnConstant(999000));
+        findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
                 "getFee", XC_MethodReplacement.returnConstant(0));
         findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
                 "getPayed", XC_MethodReplacement.returnConstant(0));
-        findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
-                "getFlag", XC_MethodReplacement.returnConstant(0));
         XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
                 "isFee", XC_MethodReplacement.returnConstant(false));
         findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.SongPrivilege", context.getClassLoader()),
                 "canShare", XC_MethodReplacement.returnConstant(true));
+        findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.SongPrivilege", context.getClassLoader()),
+                "getFreeLevel", XC_MethodReplacement.returnConstant(999000));
+        findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.ResourcePrivilege", context.getClassLoader()),
+                "getFlag", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        //云盘歌曲&运算0x8不等于0
+                        param.setResult(((int) param.getResult() & 0x8) == 0 ? 0 : param.getResult());
+                    }
+                });
     }
 }

@@ -18,19 +18,13 @@
 
 -keep class net.androidwing.hotxposed.* {*;}
 -keep class com.raincat.dolby_beta.MainHook
--keep class com.raincat.dolby_beta.model.UserInfo* { *; }
--keep class com.raincat.dolby_beta.model.DailyRecommend* { *; }
--keep class com.raincat.dolby_beta.model.PlaylistDetail* { *; }
+-keep class com.raincat.dolby_beta.helper.ScriptHelper
+
+# 跳过所有Json实体类
+-keep public class **.*model*.** {*;}
 
 -keep class com.raincat.dolby_beta.HookerDispatcher* {
   void dispatch(*);
-}
--keep class com.raincat.dolby_beta.HookerDispatcherSelf* {
-  void dispatch(*);
-}
-
--keepclassmembernames class com.raincat.dolby_beta.ui.MainActivity {
-    boolean isModuleActive();
 }
 
 -keep public class android.app.**

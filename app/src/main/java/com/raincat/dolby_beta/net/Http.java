@@ -1,6 +1,7 @@
 package com.raincat.dolby_beta.net;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import java.io.BufferedReader;
@@ -20,12 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 /**
- * <pre>
- *     author : RainCat
- *     time   : 2019/10/28
- *     desc   : http
- *     version: 1.0
- * </pre>
+ * Http
+ * Created by Administrator on 2018/3/29 0029.
  */
 public class Http {
     private Request mRequest = new Request();
@@ -109,6 +106,7 @@ public class Http {
             if (request.method.equals("POST")) {
                 connection.setDoInput(true);// 设置是否从httpUrlConnection读入，默认情况下是true;
                 connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);//设置超时不自动重试
             }
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -120,7 +118,7 @@ public class Http {
                 }
             connection.connect();
 
-            if (request.method.equals("POST")) {
+            if (request.method.equals("POST") && !TextUtils.isEmpty(request.param)) {
                 DataOutputStream out = new DataOutputStream(connection.getOutputStream());
                 out.writeBytes(request.param);
                 out.flush();

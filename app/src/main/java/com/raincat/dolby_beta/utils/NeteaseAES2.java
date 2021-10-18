@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * <pre>
  *     author : RainCat
+ *     e-mail : nining377@gmail.com
  *     time   : 2020/03/24
  *     desc   : EAPI加解密
  *     version: 1.0
@@ -33,7 +34,6 @@ public class NeteaseAES2 {
 
     /**
      * @param sSrc 参数值
-     * @return
      */
     // 解密
     public static String Decrypt(String sSrc) {
@@ -52,9 +52,6 @@ public class NeteaseAES2 {
 
     /**
      * hex转byte数组
-     *
-     * @param hex
-     * @return
      */
     public static byte[] hexToByte(String hex) {
         int m = 0, n = 0;
@@ -64,22 +61,19 @@ public class NeteaseAES2 {
             m = i * 2 + 1;
             n = m + 1;
             int intVal = Integer.decode("0x" + hex.substring(i * 2, m) + hex.substring(m, n));
-            ret[i] = Byte.valueOf((byte) intVal);
+            ret[i] = (byte) intVal;
         }
         return ret;
     }
 
     /**
      * byte数组转hex
-     *
-     * @param bytes
-     * @return
      */
     public static String byteToHex(byte[] bytes) {
         String strHex = "";
         StringBuilder sb = new StringBuilder("");
-        for (int n = 0; n < bytes.length; n++) {
-            strHex = Integer.toHexString(bytes[n] & 0xFF);
+        for (byte aByte : bytes) {
+            strHex = Integer.toHexString(aByte & 0xFF);
             sb.append((strHex.length() == 1) ? "0" + strHex : strHex); // 每个字节由两个字符表示，位数不够，高位补0
         }
         return sb.toString().trim().toUpperCase();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+
 /**
  * <pre>
  *     author : RainCat
@@ -25,11 +26,12 @@ public class ExtraDao {
         dbHelper = ExtraDbOpenHelper.getInstance(context);
     }
 
-    public static synchronized ExtraDao getInstance(Context context) {
-        if (dao == null) {
-            dao = new ExtraDao(context);
-        }
+    public static synchronized ExtraDao getInstance() {
         return dao;
+    }
+
+    public static void init(Context context) {
+        dao = new ExtraDao(context);
     }
 
     /**
@@ -50,16 +52,16 @@ public class ExtraDao {
      * 获取某个额外记录
      */
     public synchronized String getExtra(String key) {
+        String extra = "-1";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (db.isOpen()) {
             Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + EXTRA_KEY + " = '" + key + "'", null);
-            while (cursor.moveToNext()) {
-                return cursor.getString(cursor.getColumnIndex(EXTRA_VALUE));
-            }
+            if (cursor.moveToNext())
+                extra = cursor.getString(cursor.getColumnIndex(EXTRA_VALUE));
             cursor.close();
         }
         db.close();
-        return "-1";
+        return extra;
     }
 
     /**

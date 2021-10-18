@@ -1,6 +1,7 @@
 package com.raincat.dolby_beta.hook;
 
-import com.raincat.dolby_beta.utils.CloudMusicPackage;
+
+import com.raincat.dolby_beta.helper.ClassHelper;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ import static de.robv.android.xposed.XposedBridge.hookMethod;
 
 public class DownloadMD5Hook {
     public DownloadMD5Hook() {
-        hookMethod(CloudMusicPackage.Transfer.getCheckMd5Method(), new XC_MethodHook() {
+        hookMethod(ClassHelper.Transfer.getCheckMd5Method(), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 final Object[] array = (Object[]) param.args[3];
@@ -33,7 +34,7 @@ public class DownloadMD5Hook {
             }
         });
 
-        hookMethod(CloudMusicPackage.Transfer.getCheckDownloadStatusMethod(), new XC_MethodHook() {
+        hookMethod(ClassHelper.Transfer.getCheckDownloadStatusMethod(), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 Method[] methods = param.args[0].getClass().getDeclaredMethods();
@@ -50,21 +51,19 @@ public class DownloadMD5Hook {
 
     private String fileToMD5(String filePath) {
         try (InputStream inputStream = new FileInputStream(filePath)) {
-            // Create an FileInputStream instance according to the filepath
-            byte[] buffer = new byte[1024]; // The buffer to read the file
-            MessageDigest digest = MessageDigest.getInstance("MD5"); // Get a MD5 instance
-            int numRead = 0; // Record how many bytes have been read
+            byte[] buffer = new byte[1024];
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            int numRead = 0;
             while (numRead != -1) {
                 numRead = inputStream.read(buffer);
                 if (numRead > 0)
-                    digest.update(buffer, 0, numRead); // Update the digest
+                    digest.update(buffer, 0, numRead);
             }
-            byte[] md5Bytes = digest.digest(); // Complete the hash computing
-            return convertHashToString(md5Bytes); // Call the function to convert to hex digits
+            byte[] md5Bytes = digest.digest();
+            return convertHashToString(md5Bytes);
         } catch (Exception e) {
             return null;
         }
-        // Close the InputStream
     }
 
     /**

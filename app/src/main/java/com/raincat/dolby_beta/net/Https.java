@@ -14,7 +14,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -24,11 +23,13 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * <pre>
  *     author : RainCat
+ *     e-mail : nining377@gmail.com
  *     time   : 2019/10/28
  *     desc   : https
  *     version: 1.0
  * </pre>
  */
+
 public class Https {
     private Request mRequest = new Request();
     private static ExecutorService exec = Executors.newFixedThreadPool(10);
@@ -42,7 +43,7 @@ public class Https {
     public Https(final String method, final String url, final HashMap<String, Object> param, final HashMap<String, Object> header) {
         StringBuilder stringBuilder = new StringBuilder();
         if (param != null)
-            for (Map.Entry entry : param.entrySet()) {
+            for (Map.Entry<String,Object> entry : param.entrySet()) {
                 stringBuilder.append(entry.getKey());
                 stringBuilder.append("=");
                 stringBuilder.append(Uri.encode(entry.getValue().toString()));
@@ -62,11 +63,7 @@ public class Https {
     }
 
     private String doHttp(final Request request) {
-        FutureTask<Pair<Integer, String>> future = new FutureTask<>(new Callable<Pair<Integer, String>>() {
-            public Pair<Integer, String> call() {
-                return post(request);
-            }
-        });
+        FutureTask<Pair<Integer, String>> future = new FutureTask<>(() -> post(request));
         exec.execute(future);
         try {
             Pair<Integer, String> pair = future.get();
@@ -99,6 +96,7 @@ public class Https {
             if (request.method.equals("POST")) {
                 connection.setDoInput(true);// 设置是否从httpUrlConnection读入，默认情况下是true;
                 connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);//设置超时不自动重试
             }
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

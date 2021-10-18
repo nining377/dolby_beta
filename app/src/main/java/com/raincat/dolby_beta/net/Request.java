@@ -3,13 +3,10 @@ package com.raincat.dolby_beta.net;
 import java.util.HashMap;
 
 /**
- * <pre>
- *     author : RainCat
- *     time   : 2019/10/28
- *     desc   : 请求
- *     version: 1.0
- * </pre>
+ * 请求封装
+ * Created by Administrator on 2018/3/29 0029.
  */
+
 class Request {
     String method = "";
     String url = "";
