@@ -36,7 +36,7 @@ public class UserProfileHook {
                     if (nickName.equals("未登录") || nickName.length() == 0)
                         return;
                     if ((boolean) XposedHelpers.callMethod(param.thisObject, "isMe") && ExtraHelper.getExtraDate(ExtraHelper.USER_ID).equals("-1"))
-                        ExtraHelper.setExtraDate(ExtraHelper.USER_ID, XposedHelpers.callMethod(param.thisObject, "getUserId") + "");
+                        ExtraHelper.setExtraDate(ExtraHelper.USER_ID, XposedHelpers.callMethod(param.thisObject, "getUserId"));
                 }
             });
         }

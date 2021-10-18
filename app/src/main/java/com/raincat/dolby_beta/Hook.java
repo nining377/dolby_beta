@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Environment;
 
 import com.raincat.dolby_beta.helper.ClassHelper;
 import com.raincat.dolby_beta.helper.ExtraHelper;
 import com.raincat.dolby_beta.helper.FileHelper;
+import com.raincat.dolby_beta.helper.NotificationHelper;
 import com.raincat.dolby_beta.helper.SettingHelper;
 import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -47,9 +50,11 @@ public class Hook {
     public boolean playProcessInit = false;
     public boolean mainProcessInit = false;
     //主线程反编译dex完成后通知可以对play进程进行hook了
-    private final String msg_hookPlayProcess = "hookPlayProcess";
+    private final String msg_hook_play_process = "hookPlayProcess";
     //play进程初始化完成通知主线程
-    private final String msg_playProcessInitFinish = "playProcessInitFinish";
+    private final String msg_play_process_init_finish = "playProcessInitFinish";
+    //脚本发信息
+    public static final String msg_send_notification = "sendNotification";
 
     public Hook(XC_LoadPackage.LoadPackageParam lpparam) {
         XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.NeteaseMusicApplication", lpparam.classLoader),
@@ -98,27 +103,35 @@ public class Hook {
 
                                 mainProcessInit = true;
                                 if (mainProcessInit && playProcessInit)
-                                    context.sendBroadcast(new Intent(msg_hookPlayProcess));
+                                    context.sendBroadcast(new Intent(msg_hook_play_process));
                             });
                             IntentFilter intentFilter = new IntentFilter();
-                            intentFilter.addAction(msg_playProcessInitFinish);
+                            intentFilter.addAction(msg_play_process_init_finish);
+                            intentFilter.addAction(msg_send_notification);
                             context.registerReceiver(new BroadcastReceiver() {
                                 @Override
                                 public void onReceive(Context c, Intent intent) {
-                                    playProcessInit = true;
-                                    if (mainProcessInit && playProcessInit)
-                                        context.sendBroadcast(new Intent(msg_hookPlayProcess));
+                                    if (msg_play_process_init_finish.equals(intent.getAction())) {
+                                        playProcessInit = true;
+                                        if (mainProcessInit && playProcessInit)
+                                            context.sendBroadcast(new Intent(msg_hook_play_process));
+                                    } else if (msg_send_notification.equals(intent.getAction())) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                            NotificationHelper.getInstance(context).sendUnLockNotification(context, 0x10, "UnblockNeteaseMusic产生致命错误", "UnblockNeteaseMusic产生致命错误", intent.getStringExtra("content"));
+                                        else
+                                            XposedBridge.log("UnblockNeteaseMusic产生致命错误：" + intent.getStringExtra("content"));
+                                    }
                                 }
                             }, intentFilter);
                         } else if (processName.equals(PACKAGE_NAME + ":play") && SettingHelper.getInstance().getSetting(SettingHelper.master_key)) {
                             //音源代理
                             new ProxyHook(context, versionCode, true);
                             IntentFilter intentFilter = new IntentFilter();
-                            intentFilter.addAction(msg_hookPlayProcess);
+                            intentFilter.addAction(msg_hook_play_process);
                             context.registerReceiver(new BroadcastReceiver() {
                                 @Override
                                 public void onReceive(Context c, Intent intent) {
-                                    if (msg_hookPlayProcess.equals(intent.getAction())) {
+                                    if (msg_hook_play_process.equals(intent.getAction())) {
                                         ClassHelper.getCacheClassList(context, versionCode, () -> {
                                             new EAPIHook(context);
                                             new CdnHook(context, versionCode);
@@ -126,7 +139,7 @@ public class Hook {
                                     }
                                 }
                             }, intentFilter);
-                            context.sendBroadcast(new Intent(msg_playProcessInitFinish));
+                            context.sendBroadcast(new Intent(msg_play_process_init_finish));
                         }
                     }
                 });

@@ -26,6 +26,6 @@ public class UserHelper {
         String userInfo = new Http("GET", "https://music.163.com/api/nuser/account/get", headers, (String) null).getResult();
         Gson gson = new Gson();
         UserInfoBean userInfoBean = gson.fromJson(userInfo, UserInfoBean.class);
-        ExtraHelper.setExtraDate(ExtraHelper.USER_ID, userInfoBean.getProfile().getUserId() + "");
+        ExtraHelper.setExtraDate(ExtraHelper.USER_ID, userInfoBean.getProfile().getUserId());
     }
 }

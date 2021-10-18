@@ -1,12 +1,12 @@
 package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.raincat.dolby_beta.helper.ExtraHelper;
 import com.raincat.dolby_beta.helper.ScriptHelper;
 import com.raincat.dolby_beta.helper.SettingHelper;
+import com.raincat.dolby_beta.utils.Tools;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -86,11 +86,16 @@ public class ProxyHook {
         });
 
         if (isPlayProcess)
-            findAndHookMethod("com.netease.cloudmusic.service.PlayService", context.getClassLoader(), "onStartCommand", Intent.class, int.class, int.class, new XC_MethodHook() {
+            findAndHookMethod("com.netease.cloudmusic.service.PlayService", context.getClassLoader(), "onCreate", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    ScriptHelper.initScript(context, false);
-                    ScriptHelper.startScript(context);
+                    int retry = Integer.parseInt(ExtraHelper.getExtraDate(ExtraHelper.SCRIPT_RETRY));
+                    if (retry > 0) {
+                        ScriptHelper.initScript(context, false);
+                        ScriptHelper.startScript(context);
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, --retry);
+                    } else
+                        Tools.showToastOnLooper(context, "重试次数过多，UnblockNeteaseMusic运行失败！");
                 }
             });
 
@@ -99,6 +104,7 @@ public class ProxyHook {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
+                    ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
                 }
             });
     }

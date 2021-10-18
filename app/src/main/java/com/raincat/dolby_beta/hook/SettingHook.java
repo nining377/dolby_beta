@@ -186,7 +186,7 @@ public class SettingHook {
     private void showSettingDialog(final Context context) {
         dialogRoot = new BaseDialogItem(context);
         dialogRoot.setOrientation(LinearLayout.VERTICAL);
-        ScrollView scrollView=new ScrollView(context);
+        ScrollView scrollView = new ScrollView(context);
         scrollView.setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.addView(dialogRoot);
@@ -254,6 +254,8 @@ public class SettingHook {
     }
 
     private void restartApplication(Context context) {
+        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
+        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoListist = activityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoListist) {

@@ -28,6 +28,8 @@ public class ExtraHelper {
     public static final String SIGN_SONG_TIME = "sign_song_time";
     //脚本运行情况
     public static final String SCRIPT_STATUS = "script_status";
+    //脚本运行重试
+    public static final String SCRIPT_RETRY = "script_retry";
 
     //初始化数据库
     public static void init(Context context) {

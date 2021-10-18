@@ -1,9 +1,10 @@
 package com.raincat.dolby_beta.helper;
 
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import com.raincat.dolby_beta.Hook;
 import com.raincat.dolby_beta.net.HTTPSTrustManager;
 import com.raincat.dolby_beta.utils.Tools;
 
@@ -23,8 +24,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-
-import de.robv.android.xposed.XposedBridge;
 
 /**
  * <pre>
@@ -125,6 +124,7 @@ public class ScriptHelper {
                 scriptList.add("-o");
                 scriptList.addAll(Arrays.asList(origin));
                 startNodeWithArguments(scriptList.toArray(new String[0]));
+                ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
             }).start();
         }
     }
@@ -135,11 +135,12 @@ public class ScriptHelper {
      * @param level 日志级别
      */
     private static void getLogcatInfo(int level, String tag, String text) {
-        if (level == 4 && (text.contains("mERROR ") || text.contains("Port ") || text.contains("Please "))) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                NotificationHelper.getInstance(neteaseContext).sendUnLockNotification(neteaseContext, 0x08, false, false, "UnblockNeteaseMusic产生错误", "UnblockNeteaseMusic产生错误", text, 0);
-            else
-                XposedBridge.log("UnblockNeteaseMusic产生错误：" + text);
+        if (level != 4 || text.contains("lock"))
+            return;
+        if (text.contains("Error:") || text.contains("Port ") || text.contains("Please ")) {
+            Intent intent = new Intent(Hook.msg_send_notification);
+            intent.putExtra("content", text);
+            neteaseContext.sendBroadcast(intent);
         } else if (text.contains("HTTP Server running")) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
             Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
