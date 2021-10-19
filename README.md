@@ -27,6 +27,8 @@
 
 [杜比大喇叭β版](https://wwi.lanzoui.com/b0cqxgwje) 访问密码：brdb
 
+[网易云音乐模块内嵌版（无需安装模块，适合不想用太极等框架的非root用户）](https://www.lanzouw.com/b0crkhyzg) 访问密码：3qvw
+
 ## TODO
 
 -   尽可能保证不因模块造成crash（改版网易云往往经过二次混淆，将得不到适配）
