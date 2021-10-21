@@ -20,7 +20,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
  * </pre>
  */
 public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
-    private final boolean hotXposed = true;
+    private final boolean hotXposed = false;
 
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Exception {

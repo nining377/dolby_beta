@@ -21,6 +21,7 @@ import com.raincat.dolby_beta.helper.SettingHelper;
 import com.raincat.dolby_beta.utils.Tools;
 import com.raincat.dolby_beta.view.BaseDialogInputItem;
 import com.raincat.dolby_beta.view.BaseDialogItem;
+import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
 import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
 import com.raincat.dolby_beta.view.proxy.ProxyFlacView;
@@ -269,6 +270,7 @@ public class SettingHook {
         dialogBeautyRoot = new BaseDialogItem(context);
         dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);
         dialogBeautyRoot.addView(new BeautyTitleView(context));
+        dialogBeautyRoot.addView(new BeautyTabHideView(context));
         new AlertDialog.Builder(context)
                 .setView(dialogBeautyRoot)
                 .setCancelable(true)

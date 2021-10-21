@@ -101,7 +101,7 @@ public class ScriptHelper {
                     loadSuccess = true;
                     break;
                 } catch (UnsatisfiedLinkError ex) {
-                    Tools.showToastOnLooper(context, "node加载失败，请重新释放脚本！");
+                    ex.printStackTrace();
                 }
             }
         }

@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class SettingHelper {
     public static final String refresh_setting = "β_refresh_setting";
     public static final String proxy_setting = "β_proxy_setting";
-    public static final String beauty_setting = "β_proxy_setting";
+    public static final String beauty_setting = "β_beauty_setting";
 
     public static final String master_key = "β_master_key";
     public static final String master_title = "总开关";
@@ -84,6 +84,10 @@ public class SettingHelper {
     public static final String beauty_key = "β_beauty_key";
     public static final String beauty_title = "美化设置";
 
+    public static final String beauty_tab_hide_key = "β_beauty_tab_hide_key";
+    public static final String beauty_tab_hide_title = "精简Tab";
+    public static final String beauty_tab_hide_sub = "首页仅保留“我的”与“发现”";
+
     private static SettingHelper instance;
 
     private SharedPreferences sharedPreferences;
@@ -117,6 +121,8 @@ public class SettingHelper {
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));
+
+        settingMap.put(beauty_tab_hide_key, sharedPreferences.getBoolean(beauty_tab_hide_key, false));
     }
 
     public void setSetting(String key, boolean value) {

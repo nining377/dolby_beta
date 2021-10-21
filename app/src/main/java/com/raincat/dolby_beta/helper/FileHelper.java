@@ -199,7 +199,7 @@ public class FileHelper {
             ZipEntry entry;
             while (e.hasMoreElements()) {
                 entry = e.nextElement();
-                if (entry.getName().contains(fileName) && !entry.isDirectory()) {
+                if (entry.getName().contains(fileParentName) && entry.getName().contains(fileName) && !entry.isDirectory()) {
                     is = zipFile.getInputStream(entry);
                     File dstFile = new File(outPathString + "/" + fileName);
                     FileOutputStream fos = new FileOutputStream(dstFile);

@@ -1,6 +1,7 @@
 package com.raincat.dolby_beta.helper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
@@ -225,6 +226,7 @@ public class ClassHelper {
     public static class MainActivitySuperClass {
         private static Class<?> clazz;
         private static Method[] methods;
+        private static Method method;
 
         public static Class<?> getClazz(Context context) {
             if (clazz == null) {
@@ -234,11 +236,77 @@ public class ClassHelper {
             return clazz;
         }
 
-        public static Method[] getTabItem() {
+        public static Method[] getTabItemStringMethods() {
             if (methods == null && clazz != null) {
                 methods = findMethodsByExactParameters(clazz, void.class, String[].class);
             }
             return methods;
+        }
+
+        public static Method getViewPagerInitMethod(Context context) {
+            if (method == null) {
+                List<Method> methodList = Arrays.asList(findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader()).getDeclaredMethods());
+
+                method = Stream.of(methodList)
+                        .filter(m -> m.getParameterTypes().length == 1)
+                        .filter(m -> m.getReturnType() == void.class)
+                        .filter(m -> m.getParameterTypes()[0] == Intent.class)
+                        .filter(m -> Modifier.isPrivate(m.getModifiers()))
+                        .findFirst()
+                        .get();
+            }
+            return method;
+        }
+    }
+
+    public static class BottomTabView {
+        private static Class<?> clazz;
+        private static Method initMethod, refreshMethod;
+
+        public static Class<?> getClazz() {
+            if (clazz == null) {
+                try {
+                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.[a-z]\\.[a-z]$");
+                    Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.v1\\.[a-z]\\.[a-z]$");
+                    List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(m -> Modifier.isFinal(m.getModifiers()))
+                            .filter(m -> !Modifier.isInterface(m.getModifiers()))
+                            .filter(m -> !Modifier.isStatic(m.getModifiers()))
+                            .filter(m -> !Modifier.isAbstract(m.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ArrayList.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == boolean.class))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == ArrayList.class))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == String[].class))
+                            .findFirst()
+                            .get();
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
+                }
+            }
+            return clazz;
+        }
+
+        public static Method getTabInitMethod() {
+            if (initMethod == null) {
+                Method[] methods = findMethodsByExactParameters(clazz, ArrayList.class);
+                if (methods.length != 0)
+                    initMethod = methods[0];
+            }
+            return initMethod;
+        }
+
+        public static Method getTabRefreshMethod() {
+            if (refreshMethod == null) {
+                Method[] methods = findMethodsByExactParameters(clazz, void.class, List.class);
+                if (methods.length != 0)
+                    refreshMethod = methods[0];
+            }
+            return refreshMethod;
         }
     }
 

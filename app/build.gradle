@@ -8,8 +8,8 @@ android {
         applicationId "com.raincat.dolby_beta"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 321
-        versionName "3.2.1"
+        versionCode 330
+        versionName "3.3.0"
 
         externalNativeBuild {
             cmake {
@@ -26,8 +26,8 @@ android {
     buildTypes {
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false" //不显示log
-            shrinkResources true //资源压缩
-            minifyEnabled true //混淆
+            shrinkResources false //资源压缩
+            minifyEnabled false //混淆
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

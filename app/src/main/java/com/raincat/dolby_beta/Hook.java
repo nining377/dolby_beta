@@ -96,6 +96,8 @@ public class Hook {
                             new InternalDialogHook(context, versionCode);
                             new TestHook(context);
                             ClassHelper.getCacheClassList(context, versionCode, () -> {
+                                //精简tab
+                                new HideTabHook(context, versionCode);
                                 //获取账号信息
                                 new UserProfileHook(context);
                                 //网络访问
@@ -103,7 +105,6 @@ public class Hook {
                                 //下载MD5校验
                                 new DownloadMD5Hook();
                                 new CdnHook(context, versionCode);
-//                                new HideTabHook(context, versionCode);
 
                                 mainProcessInit = true;
                                 if (mainProcessInit && playProcessInit)
