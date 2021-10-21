@@ -19,15 +19,15 @@ android {
         }
 
         ndk {
-            abiFilters "armeabi-v7a"//, "arm64-v8a"
+            abiFilters "armeabi-v7a", "arm64-v8a"
         }
     }
 
     buildTypes {
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false" //不显示log
-            shrinkResources false //资源压缩
-            minifyEnabled false //混淆
+            shrinkResources true //资源压缩
+            minifyEnabled true //混淆
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -72,4 +72,6 @@ dependencies {
     implementation 'org.smali:dexlib2:2.3.4'
     implementation 'com.google.guava:guava:28.2-android'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation project(':hotxposed')
 }

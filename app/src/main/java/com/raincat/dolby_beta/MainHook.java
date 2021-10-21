@@ -1,6 +1,10 @@
 package com.raincat.dolby_beta;
 
+import android.text.TextUtils;
+
 import com.raincat.dolby_beta.helper.ScriptHelper;
+
+import net.androidwing.hotxposed.HotXposed;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -16,12 +20,15 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
  * </pre>
  */
 public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
-    private final static String PACKAGE_NAME = "com.netease.cloudmusic";
+    private final boolean hotXposed = true;
 
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Exception {
-        if (lpparam.packageName.equals(PACKAGE_NAME)) {
-            new Hook(lpparam);
+        if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic")) {
+            if (hotXposed)
+                HotXposed.hook(HookerDispatcher.class, lpparam);
+            else
+                new Hook(lpparam);
         }
     }
 

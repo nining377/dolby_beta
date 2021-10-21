@@ -222,6 +222,26 @@ public class ClassHelper {
         }
     }
 
+    public static class MainActivitySuperClass {
+        private static Class<?> clazz;
+        private static Method[] methods;
+
+        public static Class<?> getClazz(Context context) {
+            if (clazz == null) {
+                Class<?> mainActivityClass = findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader());
+                clazz = mainActivityClass.getSuperclass();
+            }
+            return clazz;
+        }
+
+        public static Method[] getTabItem() {
+            if (methods == null && clazz != null) {
+                methods = findMethodsByExactParameters(clazz, void.class, String[].class);
+            }
+            return methods;
+        }
+    }
+
     public static class OKHttp3Response {
         private static Class<?> clazz;
 

@@ -19,10 +19,12 @@ import com.raincat.dolby_beta.hook.CdnHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
 import com.raincat.dolby_beta.hook.GrayHook;
+import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
+import com.raincat.dolby_beta.hook.TestHook;
 import com.raincat.dolby_beta.hook.UserProfileHook;
 import com.raincat.dolby_beta.utils.Tools;
 
@@ -92,6 +94,7 @@ public class Hook {
                             new MagiskFixHook(context);
                             //去掉内测与听歌识曲弹窗
                             new InternalDialogHook(context, versionCode);
+                            new TestHook(context);
                             ClassHelper.getCacheClassList(context, versionCode, () -> {
                                 //获取账号信息
                                 new UserProfileHook(context);
@@ -100,6 +103,7 @@ public class Hook {
                                 //下载MD5校验
                                 new DownloadMD5Hook();
                                 new CdnHook(context, versionCode);
+//                                new HideTabHook(context, versionCode);
 
                                 mainProcessInit = true;
                                 if (mainProcessInit && playProcessInit)

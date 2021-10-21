@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 29
+  buildToolsVersion '29.0.3'
+  defaultConfig {
+    minSdkVersion 14
+    targetSdkVersion 29
+    versionCode 1
+    versionName "1.0"
+
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  compileOnly 'de.robv.android.xposed:api:82'
+  implementation 'androidx.appcompat:appcompat:1.2.0'
+}

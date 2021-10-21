@@ -21,6 +21,7 @@ import com.raincat.dolby_beta.helper.SettingHelper;
 import com.raincat.dolby_beta.utils.Tools;
 import com.raincat.dolby_beta.view.BaseDialogInputItem;
 import com.raincat.dolby_beta.view.BaseDialogItem;
+import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
 import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
 import com.raincat.dolby_beta.view.proxy.ProxyFlacView;
 import com.raincat.dolby_beta.view.proxy.ProxyGrayView;
@@ -28,6 +29,7 @@ import com.raincat.dolby_beta.view.proxy.ProxyMasterView;
 import com.raincat.dolby_beta.view.proxy.ProxyOriginalView;
 import com.raincat.dolby_beta.view.proxy.ProxyPortView;
 import com.raincat.dolby_beta.view.proxy.ProxyTitleView;
+import com.raincat.dolby_beta.view.setting.BeautyView;
 import com.raincat.dolby_beta.view.setting.BlackView;
 import com.raincat.dolby_beta.view.setting.DexView;
 import com.raincat.dolby_beta.view.setting.MasterView;
@@ -58,7 +60,7 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 public class SettingHook {
     private String switchViewName = "";
     private TextView titleView, subView;
-    private LinearLayout dialogRoot, dialogProxyRoot;
+    private LinearLayout dialogRoot, dialogProxyRoot, dialogBeautyRoot;
 
     private BroadcastReceiver broadcastReceiver;
 
@@ -160,6 +162,7 @@ public class SettingHook {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(SettingHelper.refresh_setting);
         intentFilter.addAction(SettingHelper.proxy_setting);
+        intentFilter.addAction(SettingHelper.beauty_setting);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -175,8 +178,15 @@ public class SettingHook {
                             else if (dialogProxyRoot.getChildAt(i) instanceof BaseDialogInputItem)
                                 ((BaseDialogInputItem) dialogProxyRoot.getChildAt(i)).refresh();
                         }
+                    if (dialogBeautyRoot != null)
+                        for (int i = 0; i < dialogBeautyRoot.getChildCount(); i++) {
+                            if (dialogBeautyRoot.getChildAt(i) instanceof BaseDialogItem)
+                                ((BaseDialogItem) dialogBeautyRoot.getChildAt(i)).refresh();
+                        }
                 } else if (intent.getAction().equals(SettingHelper.proxy_setting)) {
                     showProxyDialog(context);
+                } else if (intent.getAction().equals(SettingHelper.beauty_setting)) {
+                    showBeautyDialog(context);
                 }
             }
         };
@@ -206,10 +216,11 @@ public class SettingHook {
         signSongSelfView.setBaseOnView(masterView);
         ProxyView proxyView = new ProxyView(context);
         proxyView.setBaseOnView(masterView);
+        BeautyView beautyView = new BeautyView(context);
+        beautyView.setBaseOnView(masterView);
 
         dialogRoot.addView(new TitleView(context));
         dialogRoot.addView(masterView);
-//        dialogRoot.addView(new CookieView(context));
         dialogRoot.addView(dexView);
         dialogRoot.addView(blackView);
         dialogRoot.addView(updateView);
@@ -217,6 +228,7 @@ public class SettingHook {
         dialogRoot.addView(signSongDailyView);
         dialogRoot.addView(signSongSelfView);
         dialogRoot.addView(proxyView);
+        dialogRoot.addView(beautyView);
         new AlertDialog.Builder(context)
                 .setView(scrollView)
                 .setCancelable(false)
@@ -248,6 +260,17 @@ public class SettingHook {
         dialogProxyRoot.addView(proxyOriginalView);
         new AlertDialog.Builder(context)
                 .setView(dialogProxyRoot)
+                .setCancelable(true)
+                .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
+                .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
+    }
+
+    private void showBeautyDialog(final Context context) {
+        dialogBeautyRoot = new BaseDialogItem(context);
+        dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);
+        dialogBeautyRoot.addView(new BeautyTitleView(context));
+        new AlertDialog.Builder(context)
+                .setView(dialogBeautyRoot)
                 .setCancelable(true)
                 .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
                 .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();

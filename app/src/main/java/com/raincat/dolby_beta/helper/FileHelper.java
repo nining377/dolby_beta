@@ -186,7 +186,7 @@ public class FileHelper {
     /**
      * 解压一个文件
      */
-    public static boolean unzipFile(String zipFileString, String outPathString, String fileName) {
+    public static boolean unzipFile(String zipFileString, String outPathString, String fileParentName, String fileName) {
         try {
             File outPath = new File(outPathString);
             if (!outPath.exists()) {

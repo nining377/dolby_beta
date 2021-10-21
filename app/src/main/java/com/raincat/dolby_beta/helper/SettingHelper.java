@@ -19,11 +19,10 @@ import java.util.HashMap;
 public class SettingHelper {
     public static final String refresh_setting = "β_refresh_setting";
     public static final String proxy_setting = "β_proxy_setting";
+    public static final String beauty_setting = "β_proxy_setting";
 
     public static final String master_key = "β_master_key";
     public static final String master_title = "总开关";
-
-    public static final String cookie_title = "获取Cookie";
 
     public static final String dex_key = "β_dex_key";
     public static final String dex_title = "启用DEX缓存";
@@ -81,6 +80,9 @@ public class SettingHelper {
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
     public static final String proxy_cover_sub = "当更新后或者发现UnblockNeteaseMusic运行不正常时可尝试重新释放脚本";
+
+    public static final String beauty_key = "β_beauty_key";
+    public static final String beauty_title = "美化设置";
 
     private static SettingHelper instance;
 

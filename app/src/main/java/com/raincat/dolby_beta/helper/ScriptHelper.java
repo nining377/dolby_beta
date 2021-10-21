@@ -59,10 +59,15 @@ public class ScriptHelper {
      */
     public static void initScript(Context context, boolean cover) {
         File unblockFile = new File(getScriptPath(context));
-        if (cover || !unblockFile.exists())
-            if (FileHelper.unzipFile(modulePath, getScriptPath(context), "UnblockNeteaseMusic.zip")) {
+        if (cover || !unblockFile.exists()) {
+            if (FileHelper.unzipFile(modulePath, getScriptPath(context), "assets", "UnblockNeteaseMusic.zip")) {
                 FileHelper.unzipFiles(getScriptPath(context) + "/UnblockNeteaseMusic.zip", getScriptPath(context));
             }
+            String bit = context.getApplicationInfo().nativeLibraryDir.endsWith("64") ? "arm64-v8a" : "armeabi-v7a";
+            FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libc++_shared.so");
+            FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnative-lib.so");
+            FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnode.so");
+        }
         initNative(context);
     }
 
@@ -82,6 +87,7 @@ public class ScriptHelper {
         } catch (UnsatisfiedLinkError e) {
             String nodePath = modulePath.substring(0, modulePath.lastIndexOf('/'));
             final String[] libPath = new String[]{
+                    getScriptPath(context) + "/lib%s.so",
                     nodePath + "/lib/arm64/lib%s.so",
                     nodePath + "/lib/arm/lib%s.so",
                     modulePath + "!/lib/arm64-v8a/lib%s.so",
@@ -95,10 +101,7 @@ public class ScriptHelper {
                     loadSuccess = true;
                     break;
                 } catch (UnsatisfiedLinkError ex) {
-                    if (ex.toString().contains("32-bit")) {
-                        int neteaseBit = context.getApplicationInfo().nativeLibraryDir.endsWith("arm64") ? 64 : 32;
-                        Tools.showToastOnLooper(context, "node加载失败，请安装" + neteaseBit + "位的大喇叭！");
-                    }
+                    Tools.showToastOnLooper(context, "node加载失败，请重新释放脚本！");
                 }
             }
         }
@@ -143,6 +146,7 @@ public class ScriptHelper {
             neteaseContext.sendBroadcast(intent);
         } else if (text.contains("HTTP Server running")) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
+            ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
             Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
         }
     }
