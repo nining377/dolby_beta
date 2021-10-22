@@ -19,6 +19,7 @@ import com.raincat.dolby_beta.hook.CdnHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
 import com.raincat.dolby_beta.hook.GrayHook;
+import com.raincat.dolby_beta.hook.HideSidebarHook;
 import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
@@ -98,6 +99,8 @@ public class Hook {
                             ClassHelper.getCacheClassList(context, versionCode, () -> {
                                 //精简tab
                                 new HideTabHook(context, versionCode);
+                                //精简侧边栏
+                                new HideSidebarHook(context, versionCode);
                                 //获取账号信息
                                 new UserProfileHook(context);
                                 //网络访问

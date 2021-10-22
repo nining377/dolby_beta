@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * <pre>
@@ -20,6 +21,7 @@ public class SettingHelper {
     public static final String refresh_setting = "β_refresh_setting";
     public static final String proxy_setting = "β_proxy_setting";
     public static final String beauty_setting = "β_beauty_setting";
+    public static final String sidebar_setting = "β_sidebar_setting";
 
     public static final String master_key = "β_master_key";
     public static final String master_title = "总开关";
@@ -75,7 +77,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "kuwo migu qq kugou";
+    public static final String proxy_original_default = "pyncmd kuwo qq";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -86,12 +88,17 @@ public class SettingHelper {
 
     public static final String beauty_tab_hide_key = "β_beauty_tab_hide_key";
     public static final String beauty_tab_hide_title = "精简Tab";
-    public static final String beauty_tab_hide_sub = "首页仅保留“我的”与“发现”";
+    public static final String beauty_tab_hide_sub = "首页仅保留“我的”与“发现”，并默认显示“我的";
+
+    public static final String beauty_sidebar_hide_key = "β_beauty_sidebar_hide_key";
+    public static final String beauty_sidebar_hide_title = "精简侧边栏";
+    public static final String beauty_sidebar_hide_sub = "部分Item需配合“设置”->“侧边栏管理”开关生效";
 
     private static SettingHelper instance;
 
     private SharedPreferences sharedPreferences;
     private HashMap<String, Boolean> settingMap;
+    private HashMap<String, Boolean> sidebarSettingMap;
 
     public static SettingHelper getInstance() {
         return instance;
@@ -132,6 +139,21 @@ public class SettingHelper {
 
     public boolean getSetting(String key) {
         return settingMap.get(key);
+    }
+
+    public HashMap<String, Boolean> getSidebarSetting(LinkedHashMap<String, String> map) {
+        if (sidebarSettingMap == null) {
+            sidebarSettingMap = new HashMap<>();
+            for (String key : map.keySet()) {
+                sidebarSettingMap.put(key, sharedPreferences.getBoolean(key, false));
+            }
+        }
+        return sidebarSettingMap;
+    }
+
+    public void setSidebarSetting(String key, boolean value) {
+        sidebarSettingMap.put(key, value);
+        sharedPreferences.edit().putBoolean(key, value).apply();
     }
 
     public boolean isEnable(String key) {

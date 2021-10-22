@@ -18,9 +18,12 @@ import android.widget.TextView;
 
 import com.raincat.dolby_beta.helper.ExtraHelper;
 import com.raincat.dolby_beta.helper.SettingHelper;
+import com.raincat.dolby_beta.model.SidebarEnum;
 import com.raincat.dolby_beta.utils.Tools;
 import com.raincat.dolby_beta.view.BaseDialogInputItem;
 import com.raincat.dolby_beta.view.BaseDialogItem;
+import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
+import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
 import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
@@ -42,7 +45,10 @@ import com.raincat.dolby_beta.view.setting.TitleView;
 import com.raincat.dolby_beta.view.setting.UpdateView;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
@@ -61,7 +67,7 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 public class SettingHook {
     private String switchViewName = "";
     private TextView titleView, subView;
-    private LinearLayout dialogRoot, dialogProxyRoot, dialogBeautyRoot;
+    private LinearLayout dialogRoot, dialogProxyRoot, dialogBeautyRoot, dialogSidebarRoot;
 
     private BroadcastReceiver broadcastReceiver;
 
@@ -164,6 +170,7 @@ public class SettingHook {
         intentFilter.addAction(SettingHelper.refresh_setting);
         intentFilter.addAction(SettingHelper.proxy_setting);
         intentFilter.addAction(SettingHelper.beauty_setting);
+        intentFilter.addAction(SettingHelper.sidebar_setting);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -188,6 +195,8 @@ public class SettingHook {
                     showProxyDialog(context);
                 } else if (intent.getAction().equals(SettingHelper.beauty_setting)) {
                     showBeautyDialog(context);
+                } else if (intent.getAction().equals(SettingHelper.sidebar_setting)) {
+                    showSidebarDialog(context);
                 }
             }
         };
@@ -271,8 +280,32 @@ public class SettingHook {
         dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);
         dialogBeautyRoot.addView(new BeautyTitleView(context));
         dialogBeautyRoot.addView(new BeautyTabHideView(context));
+        dialogBeautyRoot.addView(new BeautySidebarHideView(context));
         new AlertDialog.Builder(context)
                 .setView(dialogBeautyRoot)
+                .setCancelable(true)
+                .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
+                .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
+    }
+
+    private void showSidebarDialog(final Context context) {
+        dialogSidebarRoot = new BaseDialogItem(context);
+        dialogSidebarRoot.setOrientation(LinearLayout.VERTICAL);
+        ScrollView scrollView = new ScrollView(context);
+        scrollView.setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
+        scrollView.setVerticalScrollBarEnabled(false);
+        scrollView.addView(dialogSidebarRoot);
+
+        final LinkedHashMap<String, String> sidebarMap = SidebarEnum.getSidebarEnum();
+        final HashMap<String, Boolean> sidebarSettingMap = SettingHelper.getInstance().getSidebarSetting(sidebarMap);
+        for (Map.Entry<String, String> entry : sidebarMap.entrySet()) {
+            BeautySidebarHideItem item = new BeautySidebarHideItem(context);
+            item.initData(sidebarMap, sidebarSettingMap, entry.getKey());
+            dialogSidebarRoot.addView(item);
+        }
+
+        new AlertDialog.Builder(context)
+                .setView(scrollView)
                 .setCancelable(true)
                 .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
                 .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();

@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
@@ -307,6 +308,38 @@ public class ClassHelper {
                     refreshMethod = methods[0];
             }
             return refreshMethod;
+        }
+    }
+
+    public static class SidebarItem {
+        private static Class<?> clazz;
+
+        public static Class<?> getClazz() {
+            if (clazz == null) {
+                try {
+                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.account\\.[a-z]$");
+                    Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.sidebar\\.account\\.[a-z]$");
+                    List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(m -> Modifier.isFinal(m.getModifiers()))
+                            .filter(m -> !Modifier.isInterface(m.getModifiers()))
+                            .filter(m -> !Modifier.isStatic(m.getModifiers()))
+                            .filter(m -> !Modifier.isAbstract(m.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == int.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == List.class))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == List.class))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == Throwable.class))
+                            .findFirst()
+                            .get();
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
+                }
+                XposedBridge.log("测试：" + clazz.getName());
+            }
+            return clazz;
         }
     }
 
