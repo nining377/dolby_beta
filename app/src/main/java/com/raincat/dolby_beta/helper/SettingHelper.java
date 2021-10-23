@@ -90,6 +90,12 @@ public class SettingHelper {
     public static final String beauty_tab_hide_title = "精简Tab";
     public static final String beauty_tab_hide_sub = "首页仅保留“我的”与“发现”，并默认显示“我的";
 
+    public static final String beauty_bubble_hide_key = "β_beauty_bubble_hide_key";
+    public static final String beauty_bubble_hide_title = "移除小红点";
+
+    public static final String beauty_banner_hide_key = "β_beauty_banner_hide_key";
+    public static final String beauty_banner_hide_title = "移除发现页与歌单广场Banner";
+
     public static final String beauty_sidebar_hide_key = "β_beauty_sidebar_hide_key";
     public static final String beauty_sidebar_hide_title = "精简侧边栏";
     public static final String beauty_sidebar_hide_sub = "部分Item需配合“设置”->“侧边栏管理”开关生效";
@@ -130,6 +136,8 @@ public class SettingHelper {
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));
 
         settingMap.put(beauty_tab_hide_key, sharedPreferences.getBoolean(beauty_tab_hide_key, false));
+        settingMap.put(beauty_bubble_hide_key, sharedPreferences.getBoolean(beauty_bubble_hide_key, false));
+        settingMap.put(beauty_banner_hide_key, sharedPreferences.getBoolean(beauty_banner_hide_key, false));
     }
 
     public void setSetting(String key, boolean value) {

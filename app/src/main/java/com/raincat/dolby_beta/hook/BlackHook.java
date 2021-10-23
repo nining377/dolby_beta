@@ -2,9 +2,12 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 
+import com.raincat.dolby_beta.helper.ExtraHelper;
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
@@ -13,7 +16,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
  * <pre>
  *     author : RainCat
  *     time   : 2019/10/26
- *     desc   : 黑胶
+ *     desc   : 黑胶，100黑胶，220音乐包
  *     version: 1.0
  * </pre>
  */
@@ -21,17 +24,26 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class BlackHook {
     public BlackHook(Context context, int versionCode) {
         if (versionCode < 138) {
-            //黑胶
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()),
-                    "isVipPro", XC_MethodReplacement.returnConstant(true));
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()),
-                    "getVipProExpireTime", XC_MethodReplacement.returnConstant(System.currentTimeMillis() + 31536000000L));
+            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), "setVipType", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                        param.args[0] = 100;
+                }
+            });
 
-            //音乐包
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()),
-                    "isVip", XC_MethodReplacement.returnConstant(true));
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()),
-                    "getExpireTime", XC_MethodReplacement.returnConstant(System.currentTimeMillis() + 31536000000L));
+            final String[] timeMethod = new String[]{"setVipProExpireTime", "setExpireTime"};
+            for (String time : timeMethod) {
+                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), time, long.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                            param.args[0] = System.currentTimeMillis() + 31536000000L;
+                    }
+                });
+            }
 
             //主题
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
@@ -43,19 +55,42 @@ public class BlackHook {
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
                     "s", XC_MethodReplacement.returnConstant(false));
         } else {
-            //黑胶
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "isBlackVip", XC_MethodReplacement.returnConstant(true));
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "isAnnualVip", XC_MethodReplacement.returnConstant(true));
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "getBlackVipExpireTime", XC_MethodReplacement.returnConstant(System.currentTimeMillis() + 31536000000L));
+            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setBlackVipType", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                        param.args[0] = 100;
+                }
+            });
+            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setMusicPackageType", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                        param.args[0] = 220;
+                }
+            });
+            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setRedVipAnnualCount", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                        param.args[0] = 100;
+                }
+            });
 
-            //音乐包
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "isWhateverMusicPackage", XC_MethodReplacement.returnConstant(true));
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "getMusicPackageExpireTime", XC_MethodReplacement.returnConstant(System.currentTimeMillis() + 31536000000L));
+            final String[] timeMethod = new String[]{"setBlackVipExpireTime", "setMusicPackageExpireTime"};
+            for (String time : timeMethod) {
+                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), time, long.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
+                            param.args[0] = System.currentTimeMillis() + 31536000000L;
+                    }
+                });
+            }
 
             //主题
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),

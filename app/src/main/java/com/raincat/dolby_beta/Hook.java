@@ -19,6 +19,8 @@ import com.raincat.dolby_beta.hook.CdnHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
 import com.raincat.dolby_beta.hook.GrayHook;
+import com.raincat.dolby_beta.hook.HideBannerHook;
+import com.raincat.dolby_beta.hook.HideBubbleHook;
 import com.raincat.dolby_beta.hook.HideSidebarHook;
 import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
@@ -101,6 +103,10 @@ public class Hook {
                                 new HideTabHook(context, versionCode);
                                 //精简侧边栏
                                 new HideSidebarHook(context, versionCode);
+                                //移除Banner
+                                new HideBannerHook(context, versionCode);
+                                //隐藏小红点
+                                new HideBubbleHook(context);
                                 //获取账号信息
                                 new UserProfileHook(context);
                                 //网络访问
