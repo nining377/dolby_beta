@@ -85,7 +85,7 @@ public class ScriptHelper {
             System.loadLibrary(libName[2]);
             loadSuccess = true;
         } catch (UnsatisfiedLinkError e) {
-            String nodePath = modulePath.substring(0, modulePath.lastIndexOf('/'));
+            String nodePath = TextUtils.isEmpty(modulePath) ? "" : modulePath.substring(0, modulePath.lastIndexOf('/'));
             final String[] libPath = new String[]{
                     getScriptPath(context) + "/lib%s.so",
                     nodePath + "/lib/arm64/lib%s.so",
@@ -140,7 +140,7 @@ public class ScriptHelper {
     private static void getLogcatInfo(int level, String tag, String text) {
         if (level != 4 || text.contains("lock"))
             return;
-        if (text.contains("Error:") || text.contains("Port ") || text.contains("Please ")) {
+        if ((text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
             Intent intent = new Intent(Hook.msg_send_notification);
             intent.putExtra("content", text);
             neteaseContext.sendBroadcast(intent);

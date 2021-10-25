@@ -30,8 +30,9 @@ public class EAPIHook {
         XposedBridge.hookMethod(ClassHelper.HttpResponse.getResultMethod(), new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                //代理未开启
-                if (!SettingHelper.getInstance().isEnable(SettingHelper.black_key))
+                //代理和黑胶都未开启
+                if (!SettingHelper.getInstance().isEnable(SettingHelper.black_key)
+                        && !SettingHelper.getInstance().isEnable(SettingHelper.proxy_master_key))
                     return;
                 //返回参数不对
                 if ((!(param.getResult() instanceof String) && !(param.getResult() instanceof JSONObject)))
