@@ -20,20 +20,16 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
  * </pre>
  */
 public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
-    private final boolean hotXposed = false;
-
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Exception {
         if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic")) {
-            if (hotXposed)
-                HotXposed.hook(HookerDispatcher.class, lpparam);
-            else
-                new Hook(lpparam);
+            HotXposed.hook(HookerDispatcher.class, lpparam);
+//                new Hook(lpparam);
         }
     }
 
     @Override
-    public void initZygote(StartupParam startupParam) throws Throwable {
+    public void initZygote(StartupParam startupParam) {
         ScriptHelper.modulePath = startupParam.modulePath;
     }
 }

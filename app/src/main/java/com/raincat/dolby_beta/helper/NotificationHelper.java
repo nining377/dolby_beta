@@ -85,42 +85,6 @@ public class NotificationHelper {
         mNotificationManager.notify(appId, notification);
     }
 
-    @RequiresApi(api = 26)
-    private void deleteNoNumberNotification(NotificationManager nm, String newChannelId) {
-        List<NotificationChannel> notificationChannels = nm.getNotificationChannels();
-        if (notificationChannels != null && notificationChannels.size() != 0) {
-
-            for (NotificationChannel channel : notificationChannels) {
-                if (channel.getId() != null && !channel.getId().equals(newChannelId)) {
-                    int notificationNumbers = this.getNotificationNumbers(nm, channel.getId());
-                    if (notificationNumbers == 0) {
-                        nm.deleteNotificationChannel(channel.getId());
-                    }
-                }
-            }
-        }
-    }
-
-    @RequiresApi(api = 26)
-    private int getNotificationNumbers(NotificationManager mNotificationManager, String channelId) {
-        if (mNotificationManager != null && !TextUtils.isEmpty(channelId)) {
-            int numbers = 0;
-            StatusBarNotification[] activeNotifications = mNotificationManager.getActiveNotifications();
-            int length = activeNotifications.length;
-
-            for (StatusBarNotification item : activeNotifications) {
-                Notification notification = item.getNotification();
-                if (notification != null && channelId.equals(notification.getChannelId())) {
-                    ++numbers;
-                }
-            }
-
-            return numbers;
-        } else {
-            return -1;
-        }
-    }
-
     /**
      * 取消该通知
      *

@@ -44,7 +44,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  *     author : RainCat
  *     e-mail : nining377@gmail.com
  *     time   : 2021/09/22
- *     desc   : 说明
+ *     desc   : hook入口
  *     version: 1.0
  * </pre>
  */
@@ -58,7 +58,7 @@ public class Hook {
     private final String msg_hook_play_process = "hookPlayProcess";
     //play进程初始化完成通知主线程
     private final String msg_play_process_init_finish = "playProcessInitFinish";
-    //脚本发信息
+    //发通知
     public static final String msg_send_notification = "sendNotification";
 
     public Hook(XC_LoadPackage.LoadPackageParam lpparam) {

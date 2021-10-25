@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
@@ -337,7 +336,6 @@ public class ClassHelper {
                 } catch (NoSuchElementException e) {
                     e.printStackTrace();
                 }
-                XposedBridge.log("测试：" + clazz.getName());
             }
             return clazz;
         }
