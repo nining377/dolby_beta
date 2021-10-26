@@ -27,7 +27,6 @@ import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
-import com.raincat.dolby_beta.hook.TestHook;
 import com.raincat.dolby_beta.hook.UserProfileHook;
 import com.raincat.dolby_beta.utils.Tools;
 
@@ -97,7 +96,7 @@ public class Hook {
                             new MagiskFixHook(context);
                             //去掉内测与听歌识曲弹窗
                             new InternalDialogHook(context, versionCode);
-                            new TestHook(context);
+//                            new TestHook(context);
                             ClassHelper.getCacheClassList(context, versionCode, () -> {
                                 //精简tab
                                 new HideTabHook(context, versionCode);
