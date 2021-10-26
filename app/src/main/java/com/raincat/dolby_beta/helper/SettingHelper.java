@@ -30,6 +30,10 @@ public class SettingHelper {
     public static final String dex_title = "启用DEX缓存";
     public static final String dex_sub = "加快模块加载速度，但同版本号的内测版与稳定版互装可能会有兼容性问题";
 
+    public static final String warn_key = "β_warn_key";
+    public static final String warn_title = "开启Hook警告";
+    public static final String warn_sub = "当模块出现部分类无法Hook时在通知栏上显示，方便定位排查问题";
+
     public static final String black_key = "β_black_key";
     public static final String black_title = "本地黑胶";
     public static final String black_sub = "去广告、鲸云音效、个性换肤等（自定义启动图等需要访问网易服务器的设置不可用）";
@@ -126,6 +130,7 @@ public class SettingHelper {
 
         settingMap.put(master_key, sharedPreferences.getBoolean(master_key, true));
         settingMap.put(dex_key, sharedPreferences.getBoolean(dex_key, true));
+        settingMap.put(warn_key, sharedPreferences.getBoolean(warn_key, true));
         settingMap.put(black_key, sharedPreferences.getBoolean(black_key, true));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
         settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));

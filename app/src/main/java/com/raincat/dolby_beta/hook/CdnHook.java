@@ -23,7 +23,7 @@ public class CdnHook {
     public CdnHook(Context context, int versionCode) {
         if (versionCode < 138)
             return;
-        for (Method m : ClassHelper.HttpInterceptor.getMethodList())
+        for (Method m : ClassHelper.HttpInterceptor.getMethodList(context))
             XposedBridge.hookMethod(m, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

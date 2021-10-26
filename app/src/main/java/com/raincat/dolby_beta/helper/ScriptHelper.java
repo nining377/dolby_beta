@@ -142,7 +142,8 @@ public class ScriptHelper {
             return;
         if ((text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
             Intent intent = new Intent(Hook.msg_send_notification);
-            intent.putExtra("content", text);
+            intent.putExtra("message", text);
+            intent.putExtra("title", "UnblockNeteaseMusic产生致命错误");
             neteaseContext.sendBroadcast(intent);
         } else if (text.contains("HTTP Server running")) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");

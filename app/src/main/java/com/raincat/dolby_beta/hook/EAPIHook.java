@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 public class EAPIHook {
     public EAPIHook(final Context context) {
-        XposedBridge.hookMethod(ClassHelper.HttpResponse.getResultMethod(), new XC_MethodHook() {
+        XposedBridge.hookMethod(ClassHelper.HttpResponse.getResultMethod(context), new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 //代理和黑胶都未开启
@@ -43,8 +43,8 @@ public class EAPIHook {
                     return;
                 }
                 ClassHelper.HttpResponse httpResponse = new ClassHelper.HttpResponse(param.thisObject);
-                Object eapi = httpResponse.getEapi();
-                Uri uri = ClassHelper.HttpUrl.getUri(eapi);
+                Object eapi = httpResponse.getEapi(context);
+                Uri uri = ClassHelper.HttpUrl.getUri(context, eapi);
                 if (!uri.getPath().contains("/eapi/"))
                     return;
                 String path = uri.getPath();
@@ -55,9 +55,9 @@ public class EAPIHook {
                     original = EAPIHelper.modifyPlayer(original.replace("\"data\":", "\"data\":[").replace("},\"code\"", "}],\"code\""));
                     original = original.replace("[", "").replace("]", "");
                 } else if (path.contains("v1/playlist/manipulate/tracks")) {
-                    original = EAPIHelper.modifyManipulate(ClassHelper.HttpParams.getParams(eapi), original);
+                    original = EAPIHelper.modifyManipulate(ClassHelper.HttpParams.getParams(context, eapi), original);
                 } else if (path.contains("song/like")) {
-                    original = EAPIHelper.modifyLike(ClassHelper.HttpParams.getParams(eapi), original);
+                    original = EAPIHelper.modifyLike(ClassHelper.HttpParams.getParams(context, eapi), original);
                 } else if (path.contains("sound/mobile") || path.contains("page=audio_effect")) {
                     original = EAPIHelper.modifyEffect(original);
                 } else if (path.contains("batch")) {
@@ -82,7 +82,7 @@ public class EAPIHook {
                     original = original.replace("\"waitTime\":60,", "\"waitTime\":5,");
                     CloudDao.getInstance(context).saveSong(Integer.parseInt(jsonObject.getString("id")), original);
                 } else if (path.contains("cloud/pub/v2")) {
-                    String songid = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(eapi).get("params")).getString("songid");
+                    String songid = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
                     EAPIHelper.uploadCloud(songid);
                     original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
                 } else if (path.contains("album") || path.contains("artist") || path.contains("play")

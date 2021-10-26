@@ -112,7 +112,7 @@ public class Hook {
                                 //网络访问
                                 new EAPIHook(context);
                                 //下载MD5校验
-                                new DownloadMD5Hook();
+                                new DownloadMD5Hook(context);
                                 new CdnHook(context, versionCode);
 
                                 mainProcessInit = true;
@@ -131,9 +131,9 @@ public class Hook {
                                             context.sendBroadcast(new Intent(msg_hook_play_process));
                                     } else if (msg_send_notification.equals(intent.getAction())) {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                            NotificationHelper.getInstance(context).sendUnLockNotification(context, 0x10, "UnblockNeteaseMusic产生致命错误", "UnblockNeteaseMusic产生致命错误", intent.getStringExtra("content"));
-                                        else
-                                            XposedBridge.log("UnblockNeteaseMusic产生致命错误：" + intent.getStringExtra("content"));
+                                            NotificationHelper.getInstance(context).sendUnLockNotification(context, intent.getIntExtra("code", 0x10),
+                                                    intent.getStringExtra("title"), intent.getStringExtra("title"), intent.getStringExtra("message"));
+                                        XposedBridge.log(intent.getStringExtra("title") + "：" + intent.getStringExtra("message"));
                                     }
                                 }
                             }, intentFilter);

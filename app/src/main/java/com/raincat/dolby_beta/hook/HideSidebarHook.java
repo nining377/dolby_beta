@@ -53,8 +53,8 @@ public class HideSidebarHook {
             sidebarSettingMap = SettingHelper.getInstance().getSidebarSetting(SidebarEnum.getSidebarEnum());
         }
 
-        if (versionCode >= 7003010 && ClassHelper.SidebarItem.getClazz() != null) {
-            XposedBridge.hookAllConstructors(ClassHelper.SidebarItem.getClazz(), new XC_MethodHook() {
+        if (versionCode >= 7003010 && ClassHelper.SidebarItem.getClazz(context) != null) {
+            XposedBridge.hookAllConstructors(ClassHelper.SidebarItem.getClazz(context), new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);

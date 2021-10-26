@@ -31,8 +31,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.robv.android.xposed.XposedBridge;
-
 /**
  * <pre>
  *     author : RainCat

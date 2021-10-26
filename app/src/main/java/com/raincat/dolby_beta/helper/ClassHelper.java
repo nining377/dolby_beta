@@ -120,7 +120,7 @@ public class ClassHelper {
     public static class Cookie {
         private static Class<?> clazz, abstractClazz;
 
-        public static String getCookie() {
+        public static String getCookie(Context context) {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -129,27 +129,31 @@ public class ClassHelper {
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]\\.[a-z]\\.[a-z]$");
                 List<String> list = getFilteredClasses(pattern, null);
 
-                abstractClazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> c.getSuperclass() == Object.class)
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ConcurrentHashMap.class))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == SharedPreferences.class))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == File.class))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
-                        .findFirst()
-                        .get();
-
-                if (versionCode >= 154) {
-                    clazz = Stream.of(list)
+                try {
+                    abstractClazz = Stream.of(list)
                             .map(s -> findClass(s, classLoader))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
-                            .filter(m -> !Modifier.isInterface(m.getModifiers()))
-                            .filter(c -> c.getSuperclass() == abstractClazz)
+                            .filter(c -> c.getSuperclass() == Object.class)
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ConcurrentHashMap.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == SharedPreferences.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == File.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
                             .findFirst()
                             .get();
-                } else {
-                    clazz = abstractClazz;
+
+                    if (versionCode >= 154) {
+                        clazz = Stream.of(list)
+                                .map(s -> findClass(s, classLoader))
+                                .filter(c -> Modifier.isPublic(c.getModifiers()))
+                                .filter(m -> !Modifier.isInterface(m.getModifiers()))
+                                .filter(c -> c.getSuperclass() == abstractClazz)
+                                .findFirst()
+                                .get();
+                    } else {
+                        clazz = abstractClazz;
+                    }
+                } catch (NoSuchElementException e) {
+                    MessageHelper.sendNotification(context, MessageHelper.cookieClassNotFoundCode);
                 }
             }
 
@@ -172,12 +176,12 @@ public class ClassHelper {
         }
     }
 
-    public static class Transfer {
+    public static class DownloadTransfer {
         private static Method checkMd5Method;
         private static Method checkDownloadStatusMethod;
 
         //下载完后的MD5检查
-        public static Method getCheckMd5Method() {
+        public static Method getCheckMd5Method(Context context) {
             if (checkMd5Method == null) {
                 Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
@@ -192,14 +196,14 @@ public class ClassHelper {
                             .findFirst()
                             .get();
                 } catch (NoSuchElementException e) {
-                    throw new RuntimeException("can't find checkMd5Method");
+                    MessageHelper.sendNotification(context, MessageHelper.transferClassNotFoundCode);
                 }
             }
             return checkMd5Method;
         }
 
         //下载之前下载状态检查
-        public static Method getCheckDownloadStatusMethod() {
+        public static Method getCheckDownloadStatusMethod(Context context) {
             if (checkDownloadStatusMethod == null) {
                 Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
@@ -216,7 +220,7 @@ public class ClassHelper {
                             .findFirst()
                             .get();
                 } catch (NoSuchElementException e) {
-                    throw new RuntimeException("can't find checkDownloadStatusMethod");
+                    MessageHelper.sendNotification(context, MessageHelper.transferClassNotFoundCode);
                 }
             }
             return checkDownloadStatusMethod;
@@ -245,15 +249,18 @@ public class ClassHelper {
 
         public static Method getViewPagerInitMethod(Context context) {
             if (method == null) {
-                List<Method> methodList = Arrays.asList(findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader()).getDeclaredMethods());
-
-                method = Stream.of(methodList)
-                        .filter(m -> m.getParameterTypes().length == 1)
-                        .filter(m -> m.getReturnType() == void.class)
-                        .filter(m -> m.getParameterTypes()[0] == Intent.class)
-                        .filter(m -> Modifier.isPrivate(m.getModifiers()))
-                        .findFirst()
-                        .get();
+                try {
+                    List<Method> methodList = Arrays.asList(findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader()).getDeclaredMethods());
+                    method = Stream.of(methodList)
+                            .filter(m -> m.getParameterTypes().length == 1)
+                            .filter(m -> m.getReturnType() == void.class)
+                            .filter(m -> m.getParameterTypes()[0] == Intent.class)
+                            .filter(m -> Modifier.isPrivate(m.getModifiers()))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.tabClassNotFoundCode);
+                }
             }
             return method;
         }
@@ -263,7 +270,7 @@ public class ClassHelper {
         private static Class<?> clazz;
         private static Method initMethod, refreshMethod;
 
-        public static Class<?> getClazz() {
+        public static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.[a-z]\\.[a-z]$");
@@ -285,7 +292,7 @@ public class ClassHelper {
                             .findFirst()
                             .get();
                 } catch (NoSuchElementException e) {
-                    e.printStackTrace();
+                    MessageHelper.sendNotification(context, MessageHelper.tabClassNotFoundCode);
                 }
             }
             return clazz;
@@ -313,7 +320,7 @@ public class ClassHelper {
     public static class SidebarItem {
         private static Class<?> clazz;
 
-        public static Class<?> getClazz() {
+        public static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.account\\.[a-z]$");
@@ -334,7 +341,7 @@ public class ClassHelper {
                             .findFirst()
                             .get();
                 } catch (NoSuchElementException e) {
-                    e.printStackTrace();
+                    MessageHelper.sendNotification(context, MessageHelper.sidebarClassNotFoundCode);
                 }
             }
             return clazz;
@@ -350,34 +357,35 @@ public class ClassHelper {
             this.okHttp3Response = okHttp3Response;
         }
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern = Pattern.compile("^okhttp3\\.[a-zA-Z]{1,8}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
-                }
 
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> Modifier.isFinal(c.getModifiers()))
-                        .filter(c -> c.getInterfaces().length == 1)
-                        .filter(c -> c.getInterfaces()[0] == Closeable.class)
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == int.class))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
-                        .findFirst()
-                        .get();
+                try {
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> Modifier.isFinal(c.getModifiers()))
+                            .filter(c -> c.getInterfaces().length == 1)
+                            .filter(c -> c.getInterfaces()[0] == Closeable.class)
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == int.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return clazz;
         }
 
-        public Object getHeadersObject() throws IllegalAccessException {
-            Field[] fields = getClazz().getDeclaredFields();
+        public Object getHeadersObject(Context context) throws IllegalAccessException, NullPointerException {
+            Field[] fields = getClazz(context).getDeclaredFields();
             Field dataField = Stream.of(fields)
-                    .filter(f -> Stream.of(f.getType()).anyMatch(pf -> pf == OKHttp3Header.getClazz()))
+                    .filter(f -> Stream.of(f.getType()).anyMatch(pf -> pf == OKHttp3Header.getClazz(context)))
                     .filter(f -> Stream.of(f.getType().getDeclaredFields()).anyMatch(pf -> pf.getType() == String[].class))
                     .findFirst().get();
 
@@ -395,28 +403,29 @@ public class ClassHelper {
             this.okHttp3Header = okHttp3Header;
         }
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern = Pattern.compile("^okhttp3\\.[a-zA-Z]{1,7}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
-                }
 
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> Modifier.isFinal(c.getModifiers()))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String[].class))
-                        .findFirst()
-                        .get();
+                try {
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> Modifier.isFinal(c.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String[].class))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return clazz;
         }
 
-        public String[] getHeaders() throws IllegalAccessException {
-            Field[] fields = getClazz().getDeclaredFields();
+        public String[] getHeaders(Context context) throws IllegalAccessException, NullPointerException {
+            Field[] fields = getClazz(context).getDeclaredFields();
             Field dataField = Stream.of(fields)
                     .filter(f -> Stream.of(f.getType()).anyMatch(pf -> pf == String[].class))
                     .findFirst().get();
@@ -439,7 +448,7 @@ public class ClassHelper {
             this.httpResponse = httpResponse;
         }
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -447,25 +456,26 @@ public class ClassHelper {
                 else
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]\\.[a-z]\\.[a-z]$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
-                }
 
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> Modifier.isFinal(c.getModifiers()))
-                        .filter(c -> c.getSuperclass() == Object.class)
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == OKHttp3Response.getClazz()))
-                        .findFirst()
-                        .get();
+                try {
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> Modifier.isFinal(c.getModifiers()))
+                            .filter(c -> c.getSuperclass() == Object.class)
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == OKHttp3Response.getClazz(context)))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return clazz;
         }
 
-        public Object getResponseObject() throws IllegalAccessException {
-            Field[] fields = getClazz().getDeclaredFields();
+        public Object getResponseObject(Context context) throws IllegalAccessException, NullPointerException {
+            Field[] fields = getClazz(context).getDeclaredFields();
             Field dataField = Stream.of(fields)
                     .filter(f -> Stream.of(f.getType().getInterfaces()).anyMatch(i -> i == Closeable.class))
                     .filter(f -> Stream.of(f.getType().getDeclaredFields()).anyMatch(pf -> pf.getType().getName().startsWith("okhttp3")))
@@ -475,8 +485,8 @@ public class ClassHelper {
             return dataField.get(httpResponse);
         }
 
-        public Object getEapi() throws IllegalAccessException {
-            Field[] fields = getClazz().getDeclaredFields();
+        public Object getEapi(Context context) throws IllegalAccessException, NullPointerException {
+            Field[] fields = getClazz(context).getDeclaredFields();
             Field dataField = Stream.of(fields)
                     .filter(c -> Modifier.isAbstract(c.getType().getModifiers()))
                     .filter(c -> c.getType().getSuperclass() == Object.class)
@@ -487,14 +497,17 @@ public class ClassHelper {
             return dataField.get(httpResponse);
         }
 
-        public static Method getResultMethod() {
+        public static Method getResultMethod(Context context) {
             if (getResultMethod == null) {
-                List<Method> methodList = Arrays.asList(getClazz().getDeclaredMethods());
-
-                getResultMethod = Stream.of(methodList)
-                        .filter(m -> m.getExceptionTypes().length == 2)
-                        .findFirst()
-                        .get();
+                try {
+                    List<Method> methodList = Arrays.asList(getClazz(context).getDeclaredMethods());
+                    getResultMethod = Stream.of(methodList)
+                            .filter(m -> m.getExceptionTypes().length == 2)
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return getResultMethod;
         }
@@ -506,7 +519,7 @@ public class ClassHelper {
     public static class HttpUrl {
         private static Class<?> clazz;
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -514,24 +527,25 @@ public class ClassHelper {
                 else
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]\\.[a-z]\\.[a-z]$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
-                }
 
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> c.getSuperclass() == Object.class)
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType().getName().startsWith("okhttp3")))
-                        .findFirst()
-                        .get();
+                try {
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> c.getSuperclass() == Object.class)
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType().getName().startsWith("okhttp3")))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return clazz;
         }
 
-        public static Uri getUri(Object eapi) throws IllegalAccessException {
-            Field uriField = XposedHelpers.findFirstFieldByExactType(getClazz(), Uri.class);
+        public static Uri getUri(Context context, Object eapi) throws IllegalAccessException, NullPointerException {
+            Field uriField = XposedHelpers.findFirstFieldByExactType(getClazz(context), Uri.class);
             uriField.setAccessible(true);
             return (Uri) uriField.get(eapi);
         }
@@ -544,7 +558,7 @@ public class ClassHelper {
         private static Class<?> clazz;
         private static Field paramsMap;
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
@@ -552,25 +566,26 @@ public class ClassHelper {
                 else
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]\\.[a-z]\\.[a-z]$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
-                }
 
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i == Serializable.class))
-                        .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == LinkedHashMap.class))
-                        .findFirst()
-                        .get();
+                try {
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i == Serializable.class))
+                            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == LinkedHashMap.class))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
+                }
             }
             return clazz;
         }
 
-        static Field getParamsMapField() {
+        static Field getParamsMapField(Context context) {
             if (paramsMap == null) {
-                Field[] fields = getClazz().getDeclaredFields();
+                Field[] fields = getClazz(context).getDeclaredFields();
                 paramsMap = Stream.of(fields)
                         .filter(c -> Stream.of(c.getType()).anyMatch(m -> m == LinkedHashMap.class))
                         .findFirst().get();
@@ -579,17 +594,17 @@ public class ClassHelper {
             return paramsMap;
         }
 
-        public static LinkedHashMap<String, String> getParams(Object eapi) throws IllegalAccessException {
-            List<Method> list = new ArrayList<>(Arrays.asList(findMethodsByExactParameters(eapi.getClass(), getClazz())));
+        public static LinkedHashMap<String, String> getParams(Context context, Object eapi) throws IllegalAccessException, NullPointerException {
+            List<Method> list = new ArrayList<>(Arrays.asList(findMethodsByExactParameters(eapi.getClass(), getClazz(context))));
             if (list != null && list.size() != 0) {
                 Object params = XposedHelpers.callMethod(eapi, list.get(0).getName());
-                LinkedHashMap<String, String> map = (LinkedHashMap<String, String>) getParamsMapField().get(params);
-                Uri uri = HttpUrl.getUri(eapi);
+                LinkedHashMap<String, String> map = (LinkedHashMap<String, String>) getParamsMapField(context).get(params);
+                Uri uri = HttpUrl.getUri(context, eapi);
                 for (String name : uri.getQueryParameterNames()) {
                     String val = uri.getQueryParameter(name);
                     map.put(name, val != null ? val : "");
                 }
-                return (LinkedHashMap<String, String>) getParamsMapField().get(params);
+                return (LinkedHashMap<String, String>) getParamsMapField(context).get(params);
             }
             return new LinkedHashMap<>();
         }
@@ -602,35 +617,35 @@ public class ClassHelper {
         private static Class<?> clazz;
         private static List<Method> methodList;
 
-        static Class<?> getClazz() {
+        static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 Pattern pattern;
                 if (versionCode < 154)
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.[a-z]\\.[a-z]\\.[a-z]");
                 else
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]");
-                List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
-                if (list.isEmpty()) {
-                    throw new RuntimeException("init failed");
+                try {
+                    List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> c.getInterfaces().length == 1)
+                            .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i.getName().contains("Interceptor")))
+                            .filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType().getName().contains("Pair")))
+                            .findFirst()
+                            .get();
+                } catch (Exception e) {
+                    MessageHelper.sendNotification(context, MessageHelper.coreClassNotFoundCode);
                 }
-
-                clazz = Stream.of(list)
-                        .map(s -> findClass(s, classLoader))
-                        .filter(c -> c.getInterfaces().length == 1)
-                        .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i.getName().contains("Interceptor")))
-                        .filter(c -> !Modifier.isAbstract(c.getModifiers()))
-                        .filter(c -> Modifier.isPublic(c.getModifiers()))
-                        .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType().getName().contains("Pair")))
-                        .findFirst()
-                        .get();
             }
             return clazz;
         }
 
-        public static List<Method> getMethodList() {
+        public static List<Method> getMethodList(Context context) {
             if (methodList == null) {
                 methodList = new ArrayList<>();
-                methodList.addAll(Stream.of(getClazz().getDeclaredMethods())
+                methodList.addAll(Stream.of(getClazz(context).getDeclaredMethods())
                         .filter(m -> m.getExceptionTypes().length == 1)
                         .filter(m -> m.getParameterTypes().length == 5)
                         .filter(m -> m.getReturnType().getName().contains("Response"))

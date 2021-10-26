@@ -61,7 +61,7 @@ public class HideTabHook {
         }
 
         if (versionCode >= 8000010) {
-            Class<?> bottomTabViewClass = ClassHelper.BottomTabView.getClazz();
+            Class<?> bottomTabViewClass = ClassHelper.BottomTabView.getClazz(context);
             if (bottomTabViewClass != null) {
                 findAndHookMethod(bottomTabViewClass, ClassHelper.BottomTabView.getTabInitMethod().getName(), new XC_MethodHook() {
                     @Override

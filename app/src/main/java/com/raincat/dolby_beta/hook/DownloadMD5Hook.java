@@ -1,6 +1,8 @@
 package com.raincat.dolby_beta.hook;
 
 
+import android.content.Context;
+
 import com.raincat.dolby_beta.helper.ClassHelper;
 
 import java.io.FileInputStream;
@@ -23,8 +25,8 @@ import static de.robv.android.xposed.XposedBridge.hookMethod;
  */
 
 public class DownloadMD5Hook {
-    public DownloadMD5Hook() {
-        hookMethod(ClassHelper.Transfer.getCheckMd5Method(), new XC_MethodHook() {
+    public DownloadMD5Hook(Context context) {
+        hookMethod(ClassHelper.DownloadTransfer.getCheckMd5Method(context), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 final Object[] array = (Object[]) param.args[3];
@@ -34,7 +36,7 @@ public class DownloadMD5Hook {
             }
         });
 
-        hookMethod(ClassHelper.Transfer.getCheckDownloadStatusMethod(), new XC_MethodHook() {
+        hookMethod(ClassHelper.DownloadTransfer.getCheckDownloadStatusMethod(context), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 Method[] methods = param.args[0].getClass().getDeclaredMethods();

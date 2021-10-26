@@ -49,7 +49,7 @@ public class UserProfileHook {
                     super.afterHookedMethod(param);
                     new Thread(() -> {
                         if (ExtraHelper.getExtraDate(ExtraHelper.COOKIE).equals("-1"))
-                            ExtraHelper.setExtraDate(ExtraHelper.COOKIE, ClassHelper.Cookie.getCookie());
+                            ExtraHelper.setExtraDate(ExtraHelper.COOKIE, ClassHelper.Cookie.getCookie(context));
                         if (ExtraHelper.getExtraDate(ExtraHelper.USER_ID).equals("-1"))
                             UserHelper.getUserInfo();
                     }).start();

@@ -45,6 +45,7 @@ import com.raincat.dolby_beta.view.setting.SignSongSelfView;
 import com.raincat.dolby_beta.view.setting.SignView;
 import com.raincat.dolby_beta.view.setting.TitleView;
 import com.raincat.dolby_beta.view.setting.UpdateView;
+import com.raincat.dolby_beta.view.setting.WarnView;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -216,6 +217,8 @@ public class SettingHook {
         MasterView masterView = new MasterView(context);
         DexView dexView = new DexView(context);
         dexView.setBaseOnView(masterView);
+        WarnView warnView = new WarnView(context);
+        warnView.setBaseOnView(masterView);
         BlackView blackView = new BlackView(context);
         blackView.setBaseOnView(masterView);
         UpdateView updateView = new UpdateView(context);
@@ -234,6 +237,7 @@ public class SettingHook {
         dialogRoot.addView(new TitleView(context));
         dialogRoot.addView(masterView);
         dialogRoot.addView(dexView);
+        dialogRoot.addView(warnView);
         dialogRoot.addView(blackView);
         dialogRoot.addView(updateView);
         dialogRoot.addView(signView);
