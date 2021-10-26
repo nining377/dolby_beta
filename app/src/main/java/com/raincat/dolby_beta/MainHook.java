@@ -23,8 +23,8 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Exception {
         if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic")) {
-            HotXposed.hook(HookerDispatcher.class, lpparam);
-//                new Hook(lpparam);
+//            HotXposed.hook(HookerDispatcher.class, lpparam);
+                new Hook(lpparam);
         }
     }
 
