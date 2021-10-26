@@ -8,8 +8,8 @@ android {
         applicationId "com.raincat.dolby_beta"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 332
-        versionName "3.3.2"
+        versionCode 333
+        versionName "3.3.3"
 
         externalNativeBuild {
             cmake {

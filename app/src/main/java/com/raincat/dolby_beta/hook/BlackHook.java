@@ -76,7 +76,7 @@ public class BlackHook {
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
                     if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                        param.args[0] = 100;
+                        param.args[0] = 1;
                 }
             });
 
