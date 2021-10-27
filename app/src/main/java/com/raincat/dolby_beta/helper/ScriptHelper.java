@@ -140,7 +140,7 @@ public class ScriptHelper {
     private static void getLogcatInfo(int level, String tag, String text) {
         if (level != 4 || text.contains("lock"))
             return;
-        if ((text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
+        if ((!text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
             Intent intent = new Intent(Hook.msg_send_notification);
             intent.putExtra("message", text);
             intent.putExtra("title", "UnblockNeteaseMusic产生致命错误");
