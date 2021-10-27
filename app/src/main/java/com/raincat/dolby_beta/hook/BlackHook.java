@@ -2,7 +2,11 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.raincat.dolby_beta.helper.ExtraHelper;
+import com.raincat.dolby_beta.model.UserPrivilegeBean;
+
+import org.json.JSONObject;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -55,42 +59,27 @@ public class BlackHook {
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
                     "s", XC_MethodReplacement.returnConstant(false));
         } else {
-            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setBlackVipType", int.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                        param.args[0] = 100;
-                }
-            });
-            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setMusicPackageType", int.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                        param.args[0] = 220;
-                }
-            });
-            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), "setRedVipAnnualCount", int.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                        param.args[0] = 100;
-                }
-            });
-
-            final String[] timeMethod = new String[]{"setBlackVipExpireTime", "setMusicPackageExpireTime"};
-            for (String time : timeMethod) {
-                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()), time, long.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                            param.args[0] = System.currentTimeMillis() + 31536000000L;
-                    }
-                });
-            }
+            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
+                    "fromJson", JSONObject.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            JSONObject object = (JSONObject) param.args[0];
+                            if (object.optInt("code") == 200 && !object.isNull("data") && !object.getJSONObject("data").isNull("userId") &&
+                                    object.getJSONObject("data").optLong("userId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID))) {
+                                Gson gson = new Gson();
+                                UserPrivilegeBean userPrivilegeBean = gson.fromJson(object.toString(), UserPrivilegeBean.class);
+                                userPrivilegeBean.getData().getAssociator().setExpireTime(System.currentTimeMillis() + 31536000000L);
+                                userPrivilegeBean.getData().getAssociator().setVipCode(100);
+                                userPrivilegeBean.getData().getMusicPackage().setExpireTime(System.currentTimeMillis() + 31536000000L);
+                                userPrivilegeBean.getData().getMusicPackage().setVipCode(220);
+                                userPrivilegeBean.getData().setRedVipAnnualCount(1);
+                                userPrivilegeBean.getData().setRedVipLevel(9);
+                                object = new JSONObject(gson.toJson(userPrivilegeBean));
+                                param.args[0] = object;
+                            }
+                        }
+                    });
 
             //主题
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
