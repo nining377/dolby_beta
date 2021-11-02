@@ -11,7 +11,6 @@ import com.raincat.dolby_beta.view.BaseDialogItem;
 /**
  * <pre>
  *     author : RainCat
- *     org    : Shenzhen JinYu Network Technology Co., Ltd.
  *     e-mail : nining377@gmail.com
  *     time   : 2021/11/02
  *     desc   : 关于
