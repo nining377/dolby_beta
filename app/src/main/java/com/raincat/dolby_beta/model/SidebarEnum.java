@@ -34,7 +34,7 @@ public class SidebarEnum {
         }
         if (tempMap.size() != 0) {
             for (String key : tempMap.values()) {
-                if (key.equals("DYNAMIC_ITEM") || key.equals("PROFILE") || key.equals("CHILD_MODE") ||
+                if (key.equals("SETTING") || key.equals("DYNAMIC_ITEM") || key.equals("PROFILE") || key.equals("CHILD_MODE") ||
                         key.equals("CLASSICAL") || key.equals("AVATAR") || key.equals("DYNAMIC_CONTAINER") || key.equals("SMALL_ICE"))
                     continue;
                 if (key.equals("GROUP")) {

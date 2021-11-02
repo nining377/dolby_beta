@@ -28,26 +28,17 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class BlackHook {
     public BlackHook(Context context, int versionCode) {
         if (versionCode < 138) {
-            XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), "setVipType", int.class, new XC_MethodHook() {
+            XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), "setUserPoint", new XC_MethodHook() {
                 @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                        param.args[0] = 100;
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID))) {
+                        XposedHelpers.callMethod(param.thisObject, "setVipType", 100);
+                        XposedHelpers.callMethod(param.thisObject, "setVipProExpireTime", System.currentTimeMillis() + 31536000000L);
+                        XposedHelpers.callMethod(param.thisObject, "setExpireTime", System.currentTimeMillis() + 31536000000L);
+                    }
                 }
             });
-
-            final String[] timeMethod = new String[]{"setVipProExpireTime", "setExpireTime"};
-            for (String time : timeMethod) {
-                XposedHelpers.findAndHookMethod(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), time, long.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        if ((long) XposedHelpers.callMethod(param.thisObject, "getUserId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID)))
-                            param.args[0] = System.currentTimeMillis() + 31536000000L;
-                    }
-                });
-            }
 
             //主题
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),

@@ -35,6 +35,7 @@ import com.raincat.dolby_beta.view.proxy.ProxyMasterView;
 import com.raincat.dolby_beta.view.proxy.ProxyOriginalView;
 import com.raincat.dolby_beta.view.proxy.ProxyPortView;
 import com.raincat.dolby_beta.view.proxy.ProxyTitleView;
+import com.raincat.dolby_beta.view.setting.AboutView;
 import com.raincat.dolby_beta.view.setting.BeautyView;
 import com.raincat.dolby_beta.view.setting.BlackView;
 import com.raincat.dolby_beta.view.setting.DexView;
@@ -245,6 +246,7 @@ public class SettingHook {
         dialogRoot.addView(signSongSelfView);
         dialogRoot.addView(proxyView);
         dialogRoot.addView(beautyView);
+        dialogRoot.addView(new AboutView(context));
         new AlertDialog.Builder(context)
                 .setView(scrollView)
                 .setCancelable(false)
@@ -315,8 +317,7 @@ public class SettingHook {
         new AlertDialog.Builder(context)
                 .setView(scrollView)
                 .setCancelable(true)
-                .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
-                .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
+                .setPositiveButton("确定", (dialogInterface, i) -> refresh()).show();
     }
 
     private void restartApplication(Context context) {
