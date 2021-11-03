@@ -17,7 +17,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  * Created  on 2018/3/30.
  */
 public class HotXposed {
-    public static void hook(Class clazz, XC_LoadPackage.LoadPackageParam lpparam)
+    public static void hook(Class<?> clazz, XC_LoadPackage.LoadPackageParam lpparam)
             throws Exception {
         String packageName = clazz.getName().replace("." + clazz.getSimpleName(), "");
         File apkFile = getApkFile(packageName, lpparam);
@@ -30,7 +30,7 @@ public class HotXposed {
         filterNotify(lpparam);
 
         PathClassLoader classLoader = new PathClassLoader(apkFile.getAbsolutePath(), lpparam.getClass().getClassLoader());
-        Class cls = classLoader.loadClass(clazz.getName());
+        Class<?> cls = classLoader.loadClass(clazz.getName());
         if (cls != null) {
             Method method = cls.getDeclaredMethod("dispatch", XC_LoadPackage.LoadPackageParam.class);
             method.setAccessible(true);
@@ -44,7 +44,7 @@ public class HotXposed {
             XposedHelpers.findAndHookMethod(lpparam.classLoader.loadClass("de.robv.android.xposed.installer.util.NotificationUtil"),
                     "showModulesUpdatedNotification", new XC_MethodHook() {
                         @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) {
                             param.setResult(new Object());
                         }
 
