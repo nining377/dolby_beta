@@ -100,6 +100,9 @@ public class SettingHelper {
     public static final String beauty_banner_hide_key = "β_beauty_banner_hide_key";
     public static final String beauty_banner_hide_title = "移除发现页与歌单广场Banner";
 
+    public static final String beauty_comment_hot_key = "β_beauty_comment_hot_key";
+    public static final String beauty_comment_hot_title = "评论区优先显示“最热”内容";
+
     public static final String beauty_sidebar_hide_key = "β_beauty_sidebar_hide_key";
     public static final String beauty_sidebar_hide_title = "精简侧边栏";
     public static final String beauty_sidebar_hide_sub = "部分Item需配合“设置”->“侧边栏管理”开关生效";
@@ -143,6 +146,7 @@ public class SettingHelper {
         settingMap.put(beauty_tab_hide_key, sharedPreferences.getBoolean(beauty_tab_hide_key, false));
         settingMap.put(beauty_bubble_hide_key, sharedPreferences.getBoolean(beauty_bubble_hide_key, false));
         settingMap.put(beauty_banner_hide_key, sharedPreferences.getBoolean(beauty_banner_hide_key, false));
+        settingMap.put(beauty_comment_hot_key, sharedPreferences.getBoolean(beauty_comment_hot_key, false));
     }
 
     public void setSetting(String key, boolean value) {
@@ -152,6 +156,10 @@ public class SettingHelper {
 
     public boolean getSetting(String key) {
         return settingMap.get(key);
+    }
+
+    public boolean isEnable(String key) {
+        return settingMap.get(master_key) && settingMap.get(key);
     }
 
     public HashMap<String, Boolean> getSidebarSetting(LinkedHashMap<String, String> map) {
@@ -167,10 +175,6 @@ public class SettingHelper {
     public void setSidebarSetting(String key, boolean value) {
         sidebarSettingMap.put(key, value);
         sharedPreferences.edit().putBoolean(key, value).apply();
-    }
-
-    public boolean isEnable(String key) {
-        return settingMap.get(master_key) && settingMap.get(key);
     }
 
     public String getSignId() {

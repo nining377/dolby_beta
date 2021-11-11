@@ -16,6 +16,7 @@ import com.raincat.dolby_beta.hook.AdAndUpdateHook;
 import com.raincat.dolby_beta.hook.AutoSignInHook;
 import com.raincat.dolby_beta.hook.BlackHook;
 import com.raincat.dolby_beta.hook.CdnHook;
+import com.raincat.dolby_beta.hook.CommentHotClickHook;
 import com.raincat.dolby_beta.hook.DownloadMD5Hook;
 import com.raincat.dolby_beta.hook.EAPIHook;
 import com.raincat.dolby_beta.hook.GrayHook;
@@ -98,6 +99,12 @@ public class Hook {
                             new InternalDialogHook(context, versionCode);
 //                            new TestHook(context);
                             ClassHelper.getCacheClassList(context, versionCode, () -> {
+                                //获取账号信息
+                                new UserProfileHook(context);
+                                //网络访问
+                                new EAPIHook(context);
+                                //下载MD5校验
+                                new DownloadMD5Hook(context);
                                 //精简tab
                                 new HideTabHook(context, versionCode);
                                 //精简侧边栏
@@ -106,12 +113,8 @@ public class Hook {
                                 new HideBannerHook(context, versionCode);
                                 //隐藏小红点
                                 new HideBubbleHook(context);
-                                //获取账号信息
-                                new UserProfileHook(context);
-                                //网络访问
-                                new EAPIHook(context);
-                                //下载MD5校验
-                                new DownloadMD5Hook(context);
+                                //打开评论后优先显示最热评论
+                                new CommentHotClickHook(context);
                                 new CdnHook(context, versionCode);
 
                                 mainProcessInit = true;

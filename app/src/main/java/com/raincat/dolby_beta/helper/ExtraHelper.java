@@ -30,6 +30,8 @@ public class ExtraHelper {
     public static final String SCRIPT_STATUS = "script_status";
     //脚本运行重试
     public static final String SCRIPT_RETRY = "script_retry";
+    //APP版本号
+    public static final String APP_VERSION = "app_version";
 
     //初始化数据库
     public static void init(Context context) {

@@ -24,6 +24,7 @@ import com.raincat.dolby_beta.view.BaseDialogInputItem;
 import com.raincat.dolby_beta.view.BaseDialogItem;
 import com.raincat.dolby_beta.view.beauty.BeautyBannerHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyBubbleHideView;
+import com.raincat.dolby_beta.view.beauty.BeautyCommentHotView;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
@@ -290,6 +291,7 @@ public class SettingHook {
         dialogBeautyRoot.addView(new BeautyTabHideView(context));
         dialogBeautyRoot.addView(new BeautyBannerHideView(context));
         dialogBeautyRoot.addView(new BeautyBubbleHideView(context));
+        dialogBeautyRoot.addView(new BeautyCommentHotView(context));
         dialogBeautyRoot.addView(new BeautySidebarHideView(context));
         new AlertDialog.Builder(context)
                 .setView(dialogBeautyRoot)

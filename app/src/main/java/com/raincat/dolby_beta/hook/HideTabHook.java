@@ -63,7 +63,7 @@ public class HideTabHook {
         if (versionCode >= 8000010) {
             Class<?> bottomTabViewClass = ClassHelper.BottomTabView.getClazz(context);
             if (bottomTabViewClass != null) {
-                findAndHookMethod(bottomTabViewClass, ClassHelper.BottomTabView.getTabInitMethod().getName(), new XC_MethodHook() {
+                findAndHookMethod(bottomTabViewClass, ClassHelper.BottomTabView.getTabInitMethod(context).getName(), new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
@@ -75,7 +75,7 @@ public class HideTabHook {
                     }
                 });
 
-                findAndHookMethod(bottomTabViewClass, ClassHelper.BottomTabView.getTabRefreshMethod().getName(), List.class, new XC_MethodHook() {
+                findAndHookMethod(bottomTabViewClass, ClassHelper.BottomTabView.getTabRefreshMethod(context).getName(), List.class, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         super.beforeHookedMethod(param);

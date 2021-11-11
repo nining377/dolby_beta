@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.raincat.dolby_beta.BuildConfig;
 import com.raincat.dolby_beta.Hook;
 import com.raincat.dolby_beta.net.HTTPSTrustManager;
 import com.raincat.dolby_beta.utils.Tools;
@@ -59,7 +60,7 @@ public class ScriptHelper {
      */
     public static void initScript(Context context, boolean cover) {
         File unblockFile = new File(getScriptPath(context));
-        if (cover || !unblockFile.exists()) {
+        if (cover || !unblockFile.exists() || !(BuildConfig.VERSION_CODE + "").equals(ExtraHelper.getExtraDate(ExtraHelper.APP_VERSION))) {
             if (FileHelper.unzipFile(modulePath, getScriptPath(context), "assets", "UnblockNeteaseMusic.zip")) {
                 FileHelper.unzipFiles(getScriptPath(context) + "/UnblockNeteaseMusic.zip", getScriptPath(context));
             }
@@ -67,6 +68,7 @@ public class ScriptHelper {
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libc++_shared.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnative-lib.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnode.so");
+            ExtraHelper.setExtraDate(ExtraHelper.APP_VERSION, BuildConfig.VERSION_CODE);
         }
         initNative(context);
     }
@@ -114,7 +116,7 @@ public class ScriptHelper {
         if (loadSuccess) {
             new Thread(() -> {
                 setEnv("ENABLE_FLAC", SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key) + "");
-                setEnv("MIN_BR", "128000");
+                setEnv("MIN_BR", "96000");
 
                 String[] origin = SettingHelper.getInstance().getProxyOriginal().split(" ");
                 ArrayList<String> scriptList = new ArrayList<>();

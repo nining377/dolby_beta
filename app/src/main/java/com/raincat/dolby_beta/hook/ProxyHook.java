@@ -45,7 +45,7 @@ public class ProxyHook {
     private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
 
     public ProxyHook(Context context, int versionCode, boolean isPlayProcess) {
-        if (!SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)) {
+        if (!SettingHelper.getInstance().isEnable(SettingHelper.proxy_master_key)) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
             return;
         }
@@ -91,7 +91,7 @@ public class ProxyHook {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     int retry = Integer.parseInt(ExtraHelper.getExtraDate(ExtraHelper.SCRIPT_RETRY));
                     if (retry > 0) {
-                        ScriptHelper.initScript(context, false);
+                        ScriptHelper.initScript(context, retry == 1);
                         ScriptHelper.startScript(context);
                         ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, --retry);
                     } else

@@ -17,7 +17,7 @@ import com.raincat.dolby_beta.Hook;
 
 public class MessageHelper {
     public static void sendNotification(Context context, int code) {
-        if (!SettingHelper.getInstance().getSetting(SettingHelper.warn_key))
+        if (!SettingHelper.getInstance().isEnable(SettingHelper.warn_key))
             return;
         Intent intent = new Intent(Hook.msg_send_notification);
         intent.putExtra("code", cookieClassNotFoundCode);

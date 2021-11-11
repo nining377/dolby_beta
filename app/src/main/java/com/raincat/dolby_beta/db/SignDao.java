@@ -54,7 +54,7 @@ public class SignDao {
     /**
      * 获取已打卡歌曲
      */
-    public HashMap<Long, Integer> getSong( String userId) {
+    public HashMap<Long, Integer> getSong(String userId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         HashMap<Long, Integer> longMap = new HashMap<>();
         if (db.isOpen()) {

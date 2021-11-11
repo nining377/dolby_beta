@@ -74,7 +74,6 @@ public class EAPIHook {
                         original = original.replace("-\\", "").replace("\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":\"", "\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":")
                                 .replace("\"message\":\"\"}\"", "\"message\":\"\"}");
                     }
-                    original = EAPIHelper.modifyByRegex(original);
                 } else if (path.contains("upload/cloud/info/v2")) {
                     JSONObject jsonObject = new JSONObject(original);
                     jsonObject = jsonObject.getJSONObject("privateCloud");
@@ -85,9 +84,6 @@ public class EAPIHook {
                     String songid = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
                     EAPIHelper.uploadCloud(songid);
                     original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
-                } else if (path.contains("album") || path.contains("artist") || path.contains("play")
-                        || path.contains("radio") || path.contains("song") || path.contains("search")) {
-                    original = EAPIHelper.modifyByRegex(original);
                 }
 
                 param.setResult(param.getResult() instanceof JSONObject ? new JSONObject(original) : original);

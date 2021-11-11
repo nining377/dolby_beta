@@ -287,8 +287,8 @@ public class ClassHelper {
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ArrayList.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == boolean.class))
-                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == ArrayList.class))
-                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == String[].class))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == ArrayList.class && Modifier.isFinal(m.getModifiers()) && m.getParameterTypes().length == 0))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == String[].class && Modifier.isFinal(m.getModifiers()) && m.getParameterTypes().length == 0))
                             .findFirst()
                             .get();
                 } catch (NoSuchElementException e) {
@@ -298,20 +298,24 @@ public class ClassHelper {
             return clazz;
         }
 
-        public static Method getTabInitMethod() {
+        public static Method getTabInitMethod(Context context) {
             if (initMethod == null) {
                 Method[] methods = findMethodsByExactParameters(clazz, ArrayList.class);
                 if (methods.length != 0)
                     initMethod = methods[0];
+                else
+                    MessageHelper.sendNotification(context, MessageHelper.tabClassNotFoundCode);
             }
             return initMethod;
         }
 
-        public static Method getTabRefreshMethod() {
+        public static Method getTabRefreshMethod(Context context) {
             if (refreshMethod == null) {
                 Method[] methods = findMethodsByExactParameters(clazz, void.class, List.class);
                 if (methods.length != 0)
                     refreshMethod = methods[0];
+                else
+                    MessageHelper.sendNotification(context, MessageHelper.tabClassNotFoundCode);
             }
             return refreshMethod;
         }
@@ -342,6 +346,40 @@ public class ClassHelper {
                             .get();
                 } catch (NoSuchElementException e) {
                     MessageHelper.sendNotification(context, MessageHelper.sidebarClassNotFoundCode);
+                }
+            }
+            return clazz;
+        }
+    }
+
+    /**
+     * 评论
+     */
+    public static class CommentDataClass {
+        private static Class<?> clazz;
+
+        public static Class<?> getClazz(Context context) {
+            if (clazz == null) {
+                try {
+                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.comment2\\.[a-z]\\.[a-z]$");
+                    List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    clazz = Stream.of(list)
+                            .map(s -> findClass(s, classLoader))
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(m -> !Modifier.isInterface(m.getModifiers()))
+                            .filter(m -> !Modifier.isStatic(m.getModifiers()))
+                            .filter(m -> !Modifier.isAbstract(m.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == int.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == List.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ArrayList.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == Intent.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
+                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == boolean.class))
+                            .findFirst()
+                            .get();
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
                 }
             }
             return clazz;

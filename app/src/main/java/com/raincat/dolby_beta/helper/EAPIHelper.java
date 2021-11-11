@@ -139,25 +139,12 @@ public class EAPIHelper {
     }
 
     private static final Pattern REX_TYPE = Pattern.compile("\"type\":\\d+");
-    private static final Pattern REX_PL = Pattern.compile("\"pl\":(?!999000)\\d+");
-    private static final Pattern REX_DL = Pattern.compile("\"dl\":(?!999000)\\d+");
-    private static final Pattern REX_SUBP = Pattern.compile("\"subp\":\\d+");
 
     /**
      * 音效
      */
     public static String modifyEffect(String originalContent) {
         originalContent = REX_TYPE.matcher(originalContent).replaceAll("\"type\":1");
-        return originalContent;
-    }
-
-    /**
-     * 解除灰色歌曲无法播放及收藏
-     */
-    public static String modifyByRegex(String originalContent) {
-        originalContent = REX_PL.matcher(originalContent).replaceAll("\"pl\":320000");
-        originalContent = REX_DL.matcher(originalContent).replaceAll("\"dl\":320000");
-        originalContent = REX_SUBP.matcher(originalContent).replaceAll("\"subp\":1");
         return originalContent;
     }
 
