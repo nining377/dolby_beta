@@ -67,7 +67,7 @@ public class Hook {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         final Context context = (Context) param.thisObject;
-                        final int versionCode = context.getPackageManager().getPackageInfo(PACKAGE_NAME, 0).versionCode;
+                        final int versionCode = 140;
                         //初始化仓库
                         ExtraHelper.init(context);
                         //初始化设置
