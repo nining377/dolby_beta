@@ -50,7 +50,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class Hook {
-    private final static String PACKAGE_NAME = "com.netease.cloudmusic.lite";
+    private final static String PACKAGE_NAME = "com.netease.cloudmusic";
     //进程初始化状态
     public boolean playProcessInit = false;
     public boolean mainProcessInit = false;
