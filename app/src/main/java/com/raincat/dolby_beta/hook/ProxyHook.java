@@ -53,7 +53,7 @@ public class ProxyHook {
         if (versionCode >= 7001080) {
             classRealCall = "okhttp3.internal.connection.RealCall";
             fieldSSLSocketFactory = "sslSocketFactoryOrNull";
-        } else if (versionCode >= 138) {
+        } else if (versionCode >= 114) {
             classRealCall = "okhttp3.RealCall";
             fieldSSLSocketFactory = "sslSocketFactory";
         } else {
