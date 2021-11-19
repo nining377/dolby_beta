@@ -25,6 +25,8 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic")) {
 //            HotXposed.hook(HookerDispatcher.class, lpparam);
                 new Hook(lpparam);
+        }else if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic.lite")) {
+            new Hooklite(lpparam);
         }
     }
 
