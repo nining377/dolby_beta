@@ -39,7 +39,7 @@ android {
                 if (buildType.name == 'release') {
                     def createTime = new Date().format("YYYYMMdd", TimeZone.getTimeZone("GMT+08:00"))
                     // app包名称
-                    outputFileName = "dolby_beta_" + defaultConfig.versionName + "_" + createTime + "-" + buildType.name + ".apk"
+                   outputFileName = "release.apk"
                 }
             }
     }

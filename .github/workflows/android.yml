@@ -20,10 +20,10 @@ jobs:
           java-version: 1.8
 
     - name: Build with Gradle
-      run: chmod +x gradlew &&./gradlew assembleDebug
+      run: chmod +x gradlew &&./gradlew assemblerelease
       
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/debug.apk
+        name: app-release
+        path: release/release.apk

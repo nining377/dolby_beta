@@ -179,10 +179,12 @@ public class Hook {
         //广告缓存路径
         String CACHE_PATH = Environment.getExternalStorageDirectory() + "/netease/cloudmusic/Ad";
         String CACHE_PATH2 = Environment.getExternalStorageDirectory() + "/Android/data/com.netease.cloudmusic/cache/Ad";
+
         String TINKER_PATH = "data/data/" + PACKAGE_NAME + "/tinker";
 
         FileHelper.deleteDirectory(CACHE_PATH);
         FileHelper.deleteDirectory(CACHE_PATH2);
+
 
         File tinkerFile = new File(TINKER_PATH);
         if (tinkerFile.exists() && tinkerFile.isDirectory())
