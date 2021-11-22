@@ -18,19 +18,13 @@ JavaVM *global_VM;
 jclass global_class;
 
 //转换
-jstring char_to_jstring(JNIEnv *env, const char *pat) {
-    //定义java String类 strClass
-    jclass strClass = (env)->FindClass("java/lang/String");
-    //获取String(byte[],String)的构造器,用于将本地byte[]数组转换为一个新String
-    jmethodID ctorID = (env)->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+jbyteArray char_to_jbyteArray(JNIEnv *env, const char *pat) {
     //建立byte数组
     jbyteArray bytes = (env)->NewByteArray(strlen(pat));
     //将char* 转换为byte数组
     (env)->SetByteArrayRegion(bytes, 0, strlen(pat), (jbyte *) pat);
-    // 设置String, 保存语言类型,用于byte数组转换至String时的参数
-    jstring encoding = (env)->NewStringUTF("GB2312");
-    //将byte数组转换为java String,并输出
-    return (jstring) (env)->NewObject(strClass, ctorID, bytes, encoding);
+//    (env)->DeleteLocalRef(bytes);
+    return bytes;
 }
 
 //日志回调
@@ -42,13 +36,12 @@ void logcat_callback(int prio, const char *text) {
             return;
         }
 
-    jmethodID javaCallback = env->GetStaticMethodID(global_class, "getLogcatInfo",
-                                                    "(ILjava/lang/String;Ljava/lang/String;)V");
+    jmethodID javaCallback = env->GetStaticMethodID(global_class, "getLogcatInfo", "(I[B[B)V");
     if (javaCallback == nullptr) {
         return;
     }
-    env->CallStaticVoidMethod(global_class, javaCallback, prio, char_to_jstring(env, ADBTAG),
-                              char_to_jstring(env, text));
+    env->CallStaticVoidMethod(global_class, javaCallback, prio, char_to_jbyteArray(env, ADBTAG),
+                              char_to_jbyteArray(env, text));
 }
 
 void *thread_stderr_func(void *) {

@@ -33,15 +33,15 @@ public class UserInfoBean {
     }
 
     public static class ProfileBean {
-        private int userId = -1;
+        private long userId = -1;
         private int userType = 0;
         private String nickname = "";
 
-        public int getUserId() {
+        public long getUserId() {
             return userId;
         }
 
-        public void setUserId(int userId) {
+        public void setUserId(long userId) {
             this.userId = userId;
         }
 

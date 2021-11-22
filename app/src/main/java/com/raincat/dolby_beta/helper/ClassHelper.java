@@ -362,7 +362,9 @@ public class ClassHelper {
             if (clazz == null) {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.comment2\\.[a-z]\\.[a-z]$");
+                    Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.comment\\.[a-z]\\.[a-z]$");
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
                     clazz = Stream.of(list)
                             .map(s -> findClass(s, classLoader))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))

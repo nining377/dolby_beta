@@ -36,7 +36,7 @@ public class NeteaseSongListBean {
     }
 
     public static class DataBean {
-        private int id;
+        private long id;
         private String url;
         private int br;
         private int size;
@@ -54,11 +54,11 @@ public class NeteaseSongListBean {
         private String level;
         private String encodeType;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 

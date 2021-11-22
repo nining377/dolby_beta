@@ -67,9 +67,13 @@ public class SettingHelper {
     public static final String proxy_master_key = "β_proxy_master_key";
     public static final String proxy_master_title = "代理开关";
 
+    public static final String proxy_priority_key = "β_proxy_priority_key";
+    public static final String proxy_priority_title = "音质优先";
+    public static final String proxy_priority_sub = "音质优先：使用外部音源提高音质，不可避免的会增大匹配错误概率\n匹配度优先：尽可能采用网易云音源，但非会员很多曲目只有128K/96K";
+
     public static final String proxy_flac_key = "β_proxy_flac_key";
-    public static final String proxy_flac_title = "无损音质";
-    public static final String proxy_flac_sub = "尽可能获取高音质，但并不是100%能获取到无损音质，且此设置会增大匹配错误概率";
+    public static final String proxy_flac_title = "无损音质优先";
+    public static final String proxy_flac_sub = "使用外部音源时优先获取无损音质，但并不是100%能获取到无损音质";
 
     public static final String proxy_gray_key = "β_proxy_gray_key";
     public static final String proxy_gray_title = "不变灰";
@@ -140,6 +144,7 @@ public class SettingHelper {
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
+        settingMap.put(proxy_priority_key, sharedPreferences.getBoolean(proxy_priority_key, false));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));
 

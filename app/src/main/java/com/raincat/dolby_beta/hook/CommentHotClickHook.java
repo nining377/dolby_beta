@@ -47,6 +47,8 @@ public class CommentHotClickHook {
             });
 
             Class<?> sortTypeListClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.module.comment2.meta.SortTypeList", context.getClassLoader());
+            if (sortTypeListClass == null)
+                sortTypeListClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.music.biz.comment.meta.SortTypeList", context.getClassLoader());
             if (sortTypeListClass != null)
                 XposedHelpers.findAndHookMethod(sortTypeListClass, "parseList", JSONArray.class, new XC_MethodHook() {
                     @Override

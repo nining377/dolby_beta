@@ -12,6 +12,7 @@ import com.raincat.dolby_beta.utils.Tools;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -116,12 +117,13 @@ public class ScriptHelper {
         if (loadSuccess) {
             new Thread(() -> {
                 setEnv("ENABLE_FLAC", SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key) + "");
-                setEnv("MIN_BR", "96000");
+                setEnv("MIN_BR", SettingHelper.getInstance().getSetting(SettingHelper.proxy_priority_key) ? "256000" : "96000");
+                setEnv("NODE_TLS_REJECT_UNAUTHORIZED", "0");
 
                 String[] origin = SettingHelper.getInstance().getProxyOriginal().split(" ");
                 ArrayList<String> scriptList = new ArrayList<>();
                 scriptList.add("node");
-                scriptList.add(getScriptPath(context) + "/app.js");
+                scriptList.add(getScriptPath(context) + "/precompiled/app.js");
                 scriptList.add("-a");
                 scriptList.add("127.0.0.1");
                 scriptList.add("-p");
@@ -139,8 +141,11 @@ public class ScriptHelper {
      *
      * @param level 日志级别
      */
-    private static void getLogcatInfo(int level, String tag, String text) {
-        if (level != 4 || text.contains("lock"))
+    private static void getLogcatInfo(int level, byte[] tag, byte[] textByte) {
+        if (level != 4 || textByte.length < 4)
+            return;
+        String text = new String(textByte, StandardCharsets.UTF_8);
+        if (text.contains("lock"))
             return;
         if ((!text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
             Intent intent = new Intent(Hook.msg_send_notification);

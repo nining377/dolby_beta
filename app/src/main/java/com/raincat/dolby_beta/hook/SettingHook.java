@@ -35,6 +35,7 @@ import com.raincat.dolby_beta.view.proxy.ProxyGrayView;
 import com.raincat.dolby_beta.view.proxy.ProxyMasterView;
 import com.raincat.dolby_beta.view.proxy.ProxyOriginalView;
 import com.raincat.dolby_beta.view.proxy.ProxyPortView;
+import com.raincat.dolby_beta.view.proxy.ProxyPriorityView;
 import com.raincat.dolby_beta.view.proxy.ProxyTitleView;
 import com.raincat.dolby_beta.view.setting.AboutView;
 import com.raincat.dolby_beta.view.setting.BeautyView;
@@ -259,6 +260,8 @@ public class SettingHook {
         dialogProxyRoot = new BaseDialogItem(context);
         dialogProxyRoot.setOrientation(LinearLayout.VERTICAL);
         ProxyMasterView proxyMasterView = new ProxyMasterView(context);
+        ProxyPriorityView proxyPriorityView = new ProxyPriorityView(context);
+        proxyPriorityView.setBaseOnView(proxyMasterView);
         ProxyFlacView proxyFlacView = new ProxyFlacView(context);
         proxyFlacView.setBaseOnView(proxyMasterView);
         ProxyGrayView proxyGrayView = new ProxyGrayView(context);
@@ -273,6 +276,7 @@ public class SettingHook {
         dialogProxyRoot.addView(new ProxyTitleView(context));
         dialogProxyRoot.addView(proxyMasterView);
         dialogProxyRoot.addView(proxyCoverView);
+        dialogProxyRoot.addView(proxyPriorityView);
         dialogProxyRoot.addView(proxyFlacView);
         dialogProxyRoot.addView(proxyGrayView);
         dialogProxyRoot.addView(proxyPortView);

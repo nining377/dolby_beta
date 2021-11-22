@@ -46,7 +46,7 @@ public class UserPrivilegeBean {
         private boolean oldCacheProtocol;
         private int redVipAnnualCount;
         private int redVipLevel;
-        private int userId;
+        private long userId;
 
         public AssociatorBean getAssociator() {
             if (associator == null)
@@ -100,11 +100,11 @@ public class UserPrivilegeBean {
             this.redVipLevel = redVipLevel;
         }
 
-        public int getUserId() {
+        public long getUserId() {
             return userId;
         }
 
-        public void setUserId(int userId) {
+        public void setUserId(long userId) {
             this.userId = userId;
         }
 

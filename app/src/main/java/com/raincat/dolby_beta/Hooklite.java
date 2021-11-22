@@ -38,6 +38,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
 public class Hooklite {
     private final static String PACKAGE_NAME = "com.netease.cloudmusic.lite";
     //进程初始化状态
@@ -148,15 +149,13 @@ public class Hooklite {
                         }
                     }
                 });
-
     }
+
     private void deleteAdAndTinker() throws IOException {
         //广告缓存路径
-
         String CACHE_PATH3 = Environment.getExternalStorageDirectory() + "/netease/cloudmusic/lite/Ad";
         String CACHE_PATH4 = Environment.getExternalStorageDirectory() + "/Android/data/com.netease.cloudmusic.lite/cache/Ad";
         String TINKER_PATH = "data/data/" + PACKAGE_NAME + "/tinker";
-
 
         FileHelper.deleteDirectory(CACHE_PATH3);
         FileHelper.deleteDirectory(CACHE_PATH4);
