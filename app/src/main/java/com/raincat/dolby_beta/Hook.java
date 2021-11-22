@@ -115,7 +115,7 @@ public class Hook {
                                 //隐藏小红点
                                 new HideBubbleHook(context);
                                 //黑胶停转，隐藏K歌按钮
-                                new PlayerActivityHook(context);
+                                new PlayerActivityHook(context, versionCode);
                                 //打开评论后优先显示最热评论
                                 new CommentHotClickHook(context);
                                 new CdnHook(context, versionCode);
