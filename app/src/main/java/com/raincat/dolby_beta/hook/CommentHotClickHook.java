@@ -27,7 +27,7 @@ public class CommentHotClickHook {
     public CommentHotClickHook(Context context) {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.beauty_comment_hot_key))
             return;
-        Class<?> commentDataClass = ClassHelper.CommentDataClass.getClazz(context);
+        Class<?> commentDataClass = ClassHelper.CommentDataClass.getClazz();
         if (commentDataClass != null) {
             XposedBridge.hookAllConstructors(commentDataClass, new XC_MethodHook() {
                 @Override

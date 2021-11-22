@@ -1,13 +1,16 @@
 package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.raincat.dolby_beta.helper.SettingHelper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -30,31 +33,52 @@ public class GrayHook {
 
         if (SettingHelper.getInstance().isEnable(SettingHelper.proxy_master_key)) {
             Class<?> songPrivilegeClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.meta.virtual.SongPrivilege", context.getClassLoader());
-            XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.meta.MusicInfo", context.getClassLoader()), "setSp", songPrivilegeClass, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
-                    Object object = param.args[0];
-                    Field[] fields = object.getClass().getDeclaredFields();
-                    int maxbr = 0;
-                    for (Field field : fields) {
-                        if (field.getType() == int.class && field.getName().equals("maxbr")) {
-                            field.setAccessible(true);
-                            maxbr = (int) field.get(object);
-                            break;
-                        }
+            if (songPrivilegeClass != null) {
+                Method method = null;
+                try {
+                    method = songPrivilegeClass.getMethod("setDownloadMaxbr", int.class);
+                } catch (NoSuchMethodException e) {
+                    try {
+                        method = songPrivilegeClass.getMethod("setFreeLevel", int.class);
+                    } catch (NoSuchMethodException ex) {
+                        Log.w("error", ex.getMessage());
                     }
-                    if (maxbr == 0)
-                        maxbr = 999000;
-
-                    XposedHelpers.callMethod(object, "setFreeLevel", maxbr);
-                    XposedHelpers.callMethod(object, "setSubPriv", 1);
-                    XposedHelpers.callMethod(object, "setDownMaxLevel", maxbr);
-                    XposedHelpers.callMethod(object, "setPlayMaxLevel", maxbr);
-                    XposedHelpers.callMethod(object, "setDownloadMaxbr", maxbr);
-                    XposedHelpers.callMethod(object, "setPlayMaxbr", maxbr);
                 }
-            });
+                if (method != null)
+                    XposedBridge.hookMethod(method, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            Object object = param.thisObject;
+                            long id = (long) XposedHelpers.callMethod(object, "getId");
+                            if (id == 0)
+                                return;
+
+                            Field[] fields = object.getClass().getDeclaredFields();
+                            int maxbr = 0;
+                            for (Field field : fields) {
+                                if (field.getType() == int.class && field.getName().equals("maxbr")) {
+                                    field.setAccessible(true);
+                                    maxbr = (int) field.get(object);
+                                    break;
+                                }
+                            }
+                            if (maxbr == 0)
+                                maxbr = 999000;
+
+                            try {
+                                param.args[0] = maxbr;
+                                XposedHelpers.callMethod(object, "setSubPriv", 1);
+                                XposedHelpers.callMethod(object, "setDownMaxLevel", maxbr);
+                                XposedHelpers.callMethod(object, "setPlayMaxLevel", maxbr);
+                                if (object.getClass().getDeclaredMethod("setPlayMaxbr", int.class) != null)
+                                    XposedHelpers.callMethod(object, "setPlayMaxbr", maxbr);
+                            } catch (Exception e) {
+                                Log.w("error", e.getMessage());
+                            }
+                        }
+                    });
+            }
         }
     }
 }

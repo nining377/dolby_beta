@@ -104,6 +104,15 @@ public class SettingHelper {
     public static final String beauty_banner_hide_key = "β_beauty_banner_hide_key";
     public static final String beauty_banner_hide_title = "移除发现页与歌单广场Banner";
 
+    public static final String beauty_ksong_hide_key = "β_beauty_ksong_key";
+    public static final String beauty_ksong_hide_title = "移除播放页K歌图标";
+
+    public static final String beauty_black_hide_key = "β_beauty_black_key";
+    public static final String beauty_black_hide_title = "播放页专辑图片外面的黑胶隐藏";
+
+    public static final String beauty_rotation_key = "β_beauty_rotation_key";
+    public static final String beauty_rotation_title = "播放页专辑图片停止转动";
+
     public static final String beauty_comment_hot_key = "β_beauty_comment_hot_key";
     public static final String beauty_comment_hot_title = "评论区优先显示“最热”内容";
 
@@ -151,6 +160,9 @@ public class SettingHelper {
         settingMap.put(beauty_tab_hide_key, sharedPreferences.getBoolean(beauty_tab_hide_key, false));
         settingMap.put(beauty_bubble_hide_key, sharedPreferences.getBoolean(beauty_bubble_hide_key, false));
         settingMap.put(beauty_banner_hide_key, sharedPreferences.getBoolean(beauty_banner_hide_key, false));
+        settingMap.put(beauty_ksong_hide_key, sharedPreferences.getBoolean(beauty_ksong_hide_key, false));
+        settingMap.put(beauty_rotation_key, sharedPreferences.getBoolean(beauty_rotation_key, false));
+        settingMap.put(beauty_black_hide_key, sharedPreferences.getBoolean(beauty_black_hide_key, false));
         settingMap.put(beauty_comment_hot_key, sharedPreferences.getBoolean(beauty_comment_hot_key, false));
     }
 

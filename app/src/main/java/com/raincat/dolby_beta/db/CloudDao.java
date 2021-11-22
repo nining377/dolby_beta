@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
 /**
  * <pre>
  *     author : RainCat
@@ -35,7 +34,7 @@ public class CloudDao {
     }
 
     /**
-     * 保存歌曲
+     * 保存歌曲记录
      */
     public void saveSong(int id, String value) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -49,7 +48,7 @@ public class CloudDao {
     }
 
     /**
-     * 获取某个歌曲
+     * 获取某个歌曲记录
      */
     public String getSong(int id) {
         String song = "";
@@ -59,7 +58,6 @@ public class CloudDao {
             if (cursor.moveToNext()) {
                 song = cursor.getString(cursor.getColumnIndex(SONG_VALUE));
             }
-
             deleteSong(id);
             cursor.close();
         }
@@ -68,7 +66,7 @@ public class CloudDao {
     }
 
     /**
-     * 删除一个人的某条歌曲
+     * 删除一个人的某条歌曲记录
      */
     private void deleteSong(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -79,7 +77,7 @@ public class CloudDao {
     }
 
     /**
-     * 删除所有歌曲
+     * 删除所有歌曲记录
      */
     public void deleteAllSong() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();

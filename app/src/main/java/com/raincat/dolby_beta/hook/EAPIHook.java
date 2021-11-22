@@ -12,6 +12,7 @@ import com.raincat.dolby_beta.helper.ClassHelper;
 import com.raincat.dolby_beta.helper.EAPIHelper;
 import com.raincat.dolby_beta.helper.SettingHelper;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -63,16 +64,23 @@ public class EAPIHook {
                 } else if (path.contains("batch")) {
                     if (original.contains("comment\\/banner\\/get")) {
                         JSONObject jsonObject = new JSONObject(original);
-                        jsonObject.put("/api/content/exposure/comment/banner/get", "{\"code\":200}");
+                        if (!jsonObject.isNull("/api/content/exposure/comment/banner/get")) {
+                            JSONObject object = new JSONObject();
+                            object.put("code", 200);
+                            object.put("data", new JSONObject());
+                            jsonObject.put("/api/content/exposure/comment/banner/get", object);
+                        }
+                        if (!jsonObject.isNull("/api/v1/content/exposure/comment/banner/get")) {
+                            JSONObject object = jsonObject.getJSONObject("/api/v1/content/exposure/comment/banner/get");
+                            JSONObject data = object.getJSONObject("data");
+                            data.put("count", 0);
+                            data.put("offset", 999999999);
+                            data.put("records", new JSONArray());
+                            data.put("message", "");
+                            object.put("data", data);
+                            jsonObject.put("/api/v1/content/exposure/comment/banner/get", object);
+                        }
                         original = jsonObject.toString();
-                        original = original.replace("\"{\\\"code\\\":200}\"", "{\"code\":200}");
-                    }
-                    if (original.contains("\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get")) {
-                        JSONObject jsonObject = new JSONObject(original);
-                        jsonObject.put("/api/v1/content/exposure/comment/banner/get", "{-\"code-\":200,-\"data-\":{-\"count-\":0,-\"offset-\":999999999,-\"records-\":[]},-\"message-\":-\"-\"}");
-                        original = jsonObject.toString();
-                        original = original.replace("-\\", "").replace("\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":\"", "\"\\/api\\/v1\\/content\\/exposure\\/comment\\/banner\\/get\":")
-                                .replace("\"message\":\"\"}\"", "\"message\":\"\"}");
                     }
                 } else if (path.contains("upload/cloud/info/v2")) {
                     JSONObject jsonObject = new JSONObject(original);

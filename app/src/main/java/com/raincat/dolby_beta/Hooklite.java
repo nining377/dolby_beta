@@ -26,6 +26,7 @@ import com.raincat.dolby_beta.hook.HideSidebarHook;
 import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
+import com.raincat.dolby_beta.hook.PlayerActivityHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
 import com.raincat.dolby_beta.hook.UserProfileHook;
@@ -105,6 +106,8 @@ public class Hooklite {
                                 new HideBubbleHook(context);
                                 //打开评论后优先显示最热评论
                                 new CommentHotClickHook(context);
+                                //黑胶停转，隐藏K歌按钮
+                                new PlayerActivityHook(context);
                                 new CdnHook(context, versionCode);
 
                                 mainProcessInit = true;

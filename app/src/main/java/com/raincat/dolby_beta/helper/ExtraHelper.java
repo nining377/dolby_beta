@@ -16,6 +16,13 @@ import com.raincat.dolby_beta.db.ExtraDao;
  */
 
 public class ExtraHelper {
+    //脚本运行情况
+    public static final String SCRIPT_STATUS = "script_status";
+    //脚本运行重试
+    public static final String SCRIPT_RETRY = "script_retry";
+    //APP版本号
+    public static final String APP_VERSION = "app_version";
+
     //用户id
     public static final String USER_ID = "user_id";
     //cookie
@@ -26,12 +33,6 @@ public class ExtraHelper {
     public static final String SIGN_TIME = "sign_time";
     //打卡时间
     public static final String SIGN_SONG_TIME = "sign_song_time";
-    //脚本运行情况
-    public static final String SCRIPT_STATUS = "script_status";
-    //脚本运行重试
-    public static final String SCRIPT_RETRY = "script_retry";
-    //APP版本号
-    public static final String APP_VERSION = "app_version";
 
     //初始化数据库
     public static void init(Context context) {

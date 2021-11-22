@@ -20,26 +20,26 @@ public class MessageHelper {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.warn_key))
             return;
         Intent intent = new Intent(Hook.msg_send_notification);
-        intent.putExtra("code", cookieClassNotFoundCode);
+        intent.putExtra("title", "错误");
         switch (code) {
             case cookieClassNotFoundCode:
-                intent.putExtra("title", "错误");
+                intent.putExtra("code", cookieClassNotFoundCode);
                 intent.putExtra("message", cookieClassNotFoundMessage);
                 break;
             case transferClassNotFoundCode:
-                intent.putExtra("title", "错误");
+                intent.putExtra("code", transferClassNotFoundCode);
                 intent.putExtra("message", transferClassNotFoundMessage);
                 break;
             case coreClassNotFoundCode:
-                intent.putExtra("title", "错误");
+                intent.putExtra("code", coreClassNotFoundCode);
                 intent.putExtra("message", coreClassNotFoundMessage);
                 break;
             case tabClassNotFoundCode:
-                intent.putExtra("title", "错误");
+                intent.putExtra("code", tabClassNotFoundCode);
                 intent.putExtra("message", tabClassNotFoundMessage);
                 break;
             case sidebarClassNotFoundCode:
-                intent.putExtra("title", "错误");
+                intent.putExtra("code", sidebarClassNotFoundCode);
                 intent.putExtra("message", sidebarClassNotFoundMessage);
                 break;
         }

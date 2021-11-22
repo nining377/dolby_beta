@@ -46,7 +46,6 @@ import static de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters;
  *     version: 1.0
  * </pre>
  */
-
 public class ClassHelper {
     //类加载器
     private static ClassLoader classLoader = null;
@@ -358,7 +357,7 @@ public class ClassHelper {
     public static class CommentDataClass {
         private static Class<?> clazz;
 
-        public static Class<?> getClazz(Context context) {
+        public static Class<?> getClazz() {
             if (clazz == null) {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.comment2\\.[a-z]\\.[a-z]$");

@@ -23,8 +23,11 @@ import com.raincat.dolby_beta.utils.Tools;
 import com.raincat.dolby_beta.view.BaseDialogInputItem;
 import com.raincat.dolby_beta.view.BaseDialogItem;
 import com.raincat.dolby_beta.view.beauty.BeautyBannerHideView;
+import com.raincat.dolby_beta.view.beauty.BeautyBlackHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyBubbleHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyCommentHotView;
+import com.raincat.dolby_beta.view.beauty.BeautyKSongHideView;
+import com.raincat.dolby_beta.view.beauty.BeautyRotationView;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
@@ -295,6 +298,9 @@ public class SettingHook {
         dialogBeautyRoot.addView(new BeautyTabHideView(context));
         dialogBeautyRoot.addView(new BeautyBannerHideView(context));
         dialogBeautyRoot.addView(new BeautyBubbleHideView(context));
+        dialogBeautyRoot.addView(new BeautyKSongHideView(context));
+        dialogBeautyRoot.addView(new BeautyBlackHideView(context));
+        dialogBeautyRoot.addView(new BeautyRotationView(context));
         dialogBeautyRoot.addView(new BeautyCommentHotView(context));
         dialogBeautyRoot.addView(new BeautySidebarHideView(context));
         new AlertDialog.Builder(context)
