@@ -26,6 +26,7 @@ import com.raincat.dolby_beta.hook.HideSidebarHook;
 import com.raincat.dolby_beta.hook.HideTabHook;
 import com.raincat.dolby_beta.hook.InternalDialogHook;
 import com.raincat.dolby_beta.hook.MagiskFixHook;
+import com.raincat.dolby_beta.hook.NightModeHook;
 import com.raincat.dolby_beta.hook.PlayerActivityHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
@@ -106,6 +107,8 @@ public class Hook {
                                 new EAPIHook(context);
                                 //下载MD5校验
                                 new DownloadMD5Hook(context);
+                                //夜间模式
+                                new NightModeHook(context, versionCode);
                                 //精简tab
                                 new HideTabHook(context, versionCode);
                                 //精简侧边栏

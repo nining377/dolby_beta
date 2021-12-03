@@ -55,7 +55,7 @@ public class AdAndUpdateHook {
                             Field url = urlObj.getClass().getDeclaredField(urlFieldString);
                             boolean urlAccessible = url.isAccessible();
                             url.setAccessible(true);
-                            url.set(urlObj, "https://33.123.21.14/");
+                            url.set(urlObj, "https://999.0.0.1/");
                             url.setAccessible(urlAccessible);
                             param.args[0] = request;
                         }

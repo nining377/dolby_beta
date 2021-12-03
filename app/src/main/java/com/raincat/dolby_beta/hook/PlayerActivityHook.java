@@ -15,7 +15,6 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
 
-
 /**
  * <pre>
  *     author : RainCat
@@ -62,7 +61,8 @@ public class PlayerActivityHook {
                             View coverView = null, imageView = null;
                             RelativeLayout rotationRelativeLayout = (RelativeLayout) playerDiscViewFlipper.getChildAt(i);
                             for (int j = 0; j < rotationRelativeLayout.getChildCount(); j++) {
-                                if (rotationRelativeLayout.getChildAt(j).getClass().getName().contains("ImageView"))
+                                if (rotationRelativeLayout.getChildAt(j).getClass().getName().contains("ImageView")
+                                        && rotationRelativeLayout.getChildAt(j).getClass().getName().contains("android"))
                                     coverView = rotationRelativeLayout.getChildAt(j);
                                 else {
                                     imageView = rotationRelativeLayout.getChildAt(j);

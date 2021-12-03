@@ -27,6 +27,7 @@ import com.raincat.dolby_beta.view.beauty.BeautyBlackHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyBubbleHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyCommentHotView;
 import com.raincat.dolby_beta.view.beauty.BeautyKSongHideView;
+import com.raincat.dolby_beta.view.beauty.BeautyNightModeView;
 import com.raincat.dolby_beta.view.beauty.BeautyRotationView;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
@@ -299,6 +300,7 @@ public class SettingHook {
         dialogBeautyRoot = new BaseDialogItem(context);
         dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);
         dialogBeautyRoot.addView(new BeautyTitleView(context));
+        dialogBeautyRoot.addView(new BeautyNightModeView(context));
         dialogBeautyRoot.addView(new BeautyTabHideView(context));
         dialogBeautyRoot.addView(new BeautyBannerHideView(context));
         dialogBeautyRoot.addView(new BeautyBubbleHideView(context));

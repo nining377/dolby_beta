@@ -98,6 +98,10 @@ public class SettingHelper {
     public static final String beauty_key = "β_beauty_key";
     public static final String beauty_title = "美化设置";
 
+    public static final String beauty_night_mode_key = "β_beauty_night_mode_key";
+    public static final String beauty_night_mode_title = "跟随系统切换夜间模式";
+    public static final String beauty_night_mode_sub = "自动根据系统深色模式状态切换夜间/日间模式";
+
     public static final String beauty_tab_hide_key = "β_beauty_tab_hide_key";
     public static final String beauty_tab_hide_title = "精简Tab";
     public static final String beauty_tab_hide_sub = "首页仅保留“我的”与“发现”，并默认显示“我的";
@@ -162,6 +166,7 @@ public class SettingHelper {
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));
 
+        settingMap.put(beauty_night_mode_key, sharedPreferences.getBoolean(beauty_night_mode_key, false));
         settingMap.put(beauty_tab_hide_key, sharedPreferences.getBoolean(beauty_tab_hide_key, false));
         settingMap.put(beauty_bubble_hide_key, sharedPreferences.getBoolean(beauty_bubble_hide_key, false));
         settingMap.put(beauty_banner_hide_key, sharedPreferences.getBoolean(beauty_banner_hide_key, false));
