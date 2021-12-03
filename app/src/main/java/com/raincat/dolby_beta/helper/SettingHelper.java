@@ -152,7 +152,7 @@ public class SettingHelper {
         settingMap.put(dex_key, sharedPreferences.getBoolean(dex_key, true));
         settingMap.put(warn_key, sharedPreferences.getBoolean(warn_key, true));
         settingMap.put(black_key, sharedPreferences.getBoolean(black_key, true));
-        settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, true));
+        settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, false));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
         settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
