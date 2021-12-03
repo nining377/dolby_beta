@@ -14,10 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.service.notification.StatusBarNotification;
-import android.text.TextUtils;
-
-import java.util.List;
 
 import androidx.annotation.RequiresApi;
 

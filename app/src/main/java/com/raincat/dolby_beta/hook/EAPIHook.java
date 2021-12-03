@@ -81,6 +81,30 @@ public class EAPIHook {
                             jsonObject.put("/api/v1/content/exposure/comment/banner/get", object);
                         }
                         original = jsonObject.toString();
+                    } else if (SettingHelper.getInstance().isEnable(SettingHelper.fix_comment_key) &&
+                            original.contains("\\/api\\/resource\\/comment\\/musiciansaid\\/authors")) {
+                        JSONObject jsonObject = new JSONObject(original);
+                        JSONObject object = jsonObject.getJSONObject("/api/resource/comment/musiciansaid/authors");
+                        JSONObject data = object.getJSONObject("data");
+                        JSONArray team = data.getJSONArray("team");
+                        for (int i = 0; i < team.length(); i++) {
+                            JSONObject o = team.getJSONObject(i);
+                            String s = o.optString("authorTypeText");
+                            if (s != null && s.equals("作者")) {
+                                long uid = o.optLong("uid");
+                                long artistId = o.optLong("artistId");
+                                if (uid > 2147483647) {
+                                    JSONObject artistJSONObject = jsonObject.getJSONObject("/api/auth/artist");
+                                    JSONObject authJSONObject = artistJSONObject.getJSONObject("auth");
+                                    while (uid > 2147483647)
+                                        uid = uid / 10;
+                                    authJSONObject.put(artistId + "", uid);
+                                    artistJSONObject.put("auth", authJSONObject);
+                                    jsonObject.put("/api/auth/artist", artistJSONObject);
+                                    original = jsonObject.toString();
+                                }
+                            }
+                        }
                     }
                 } else if (path.contains("upload/cloud/info/v2")) {
                     JSONObject jsonObject = new JSONObject(original);
@@ -89,11 +113,10 @@ public class EAPIHook {
                     original = original.replace("\"waitTime\":60,", "\"waitTime\":5,");
                     CloudDao.getInstance(context).saveSong(Integer.parseInt(jsonObject.getString("id")), original);
                 } else if (path.contains("cloud/pub/v2")) {
-                    String songid = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
-                    EAPIHelper.uploadCloud(songid);
-                    original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
+                    String songId = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
+                    EAPIHelper.uploadCloud(songId);
+                    original = CloudDao.getInstance(context).getSong(Integer.parseInt(songId));
                 }
-
                 param.setResult(param.getResult() instanceof JSONObject ? new JSONObject(original) : original);
             }
         });

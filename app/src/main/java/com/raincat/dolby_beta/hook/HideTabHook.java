@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 
+import static de.robv.android.xposed.XposedBridge.hookMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 /**
@@ -30,18 +30,17 @@ public class HideTabHook {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.beauty_tab_hide_key) || versionCode < 138)
             return;
 
-        Class<?> superClass = ClassHelper.MainActivitySuperClass.getClazz(context);
-        Method[] setTabItemMethods = ClassHelper.MainActivitySuperClass.getTabItemStringMethods();
-        if (superClass != null && setTabItemMethods.length != 0) {
+        Method[] setTabItemMethods = ClassHelper.MainActivitySuperClass.getTabItemStringMethods(context);
+        if (setTabItemMethods != null && setTabItemMethods.length != 0) {
             for (Method method : setTabItemMethods) {
-                findAndHookMethod(superClass, method.getName(), String[].class, new XC_MethodHook() {
+                hookMethod(method, new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(final MethodHookParam param) throws Throwable {
+                    protected void beforeHookedMethod(final MethodHookParam param) {
                         if (param.args[0] == null || ((String[]) param.args[0]).length < 2)
                             return;
                         String[] tabNames = (String[]) param.args[0];
                         String tabName = Arrays.toString(tabNames);
-                        if ((tabName.contains("我的") && tabName.contains("发现")) || (tabName.contains("mine") && tabName.contains("main"))) {
+                        if ((tabName.contains("我的") && tabName.contains("发现")) || (tabName.contains("mine") && tabName.contains("wow"))) {
                             String[] strings = new String[2];
                             System.arraycopy(tabNames, 0, strings, 0, 2);
                             param.args[0] = strings;
@@ -50,7 +49,7 @@ public class HideTabHook {
                 });
             }
 
-            XposedBridge.hookMethod(ClassHelper.MainActivitySuperClass.getViewPagerInitMethod(context), new XC_MethodHook() {
+            hookMethod(ClassHelper.MainActivitySuperClass.getViewPagerInitMethod(context), new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);

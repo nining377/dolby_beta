@@ -44,6 +44,7 @@ import com.raincat.dolby_beta.view.setting.AboutView;
 import com.raincat.dolby_beta.view.setting.BeautyView;
 import com.raincat.dolby_beta.view.setting.BlackView;
 import com.raincat.dolby_beta.view.setting.DexView;
+import com.raincat.dolby_beta.view.setting.FixCommentView;
 import com.raincat.dolby_beta.view.setting.MasterView;
 import com.raincat.dolby_beta.view.setting.ProxyView;
 import com.raincat.dolby_beta.view.setting.SignSongDailyView;
@@ -227,6 +228,8 @@ public class SettingHook {
         warnView.setBaseOnView(masterView);
         BlackView blackView = new BlackView(context);
         blackView.setBaseOnView(masterView);
+        FixCommentView fixCommentView = new FixCommentView(context);
+        fixCommentView.setBaseOnView(masterView);
         UpdateView updateView = new UpdateView(context);
         updateView.setBaseOnView(masterView);
         SignView signView = new SignView(context);
@@ -245,6 +248,7 @@ public class SettingHook {
         dialogRoot.addView(dexView);
         dialogRoot.addView(warnView);
         dialogRoot.addView(blackView);
+        dialogRoot.addView(fixCommentView);
         dialogRoot.addView(updateView);
         dialogRoot.addView(signView);
         dialogRoot.addView(signSongDailyView);

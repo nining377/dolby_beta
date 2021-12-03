@@ -46,6 +46,7 @@ import static de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters;
  *     version: 1.0
  * </pre>
  */
+
 public class ClassHelper {
     //类加载器
     private static ClassLoader classLoader = null;
@@ -231,18 +232,18 @@ public class ClassHelper {
         private static Method[] methods;
         private static Method method;
 
-        public static Class<?> getClazz(Context context) {
+        static void getClazz(Context context) {
             if (clazz == null) {
                 Class<?> mainActivityClass = findClass("com.netease.cloudmusic.activity.MainActivity", context.getClassLoader());
                 clazz = mainActivityClass.getSuperclass();
             }
-            return clazz;
         }
 
-        public static Method[] getTabItemStringMethods() {
-            if (methods == null && clazz != null) {
+        public static Method[] getTabItemStringMethods(Context context) {
+            if (clazz == null)
+                getClazz(context);
+            if (methods == null && clazz != null)
                 methods = findMethodsByExactParameters(clazz, void.class, String[].class);
-            }
             return methods;
         }
 

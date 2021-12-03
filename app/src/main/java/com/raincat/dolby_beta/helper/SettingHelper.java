@@ -38,6 +38,10 @@ public class SettingHelper {
     public static final String black_title = "本地黑胶";
     public static final String black_sub = "去广告、鲸云音效、个性换肤等（自定义启动图等需要访问网易服务器的设置不可用）";
 
+    public static final String fix_comment_key = "β_fix_comment_key";
+    public static final String fix_comment_title = "修复评论区加载失败";
+    public static final String fix_comment_sub = "如平时不看评论区或评论区无问题请勿打钩";
+
     public static final String update_key = "β_update_key";
     public static final String update_title = "隐藏升级提示";
 
@@ -148,6 +152,7 @@ public class SettingHelper {
         settingMap.put(dex_key, sharedPreferences.getBoolean(dex_key, true));
         settingMap.put(warn_key, sharedPreferences.getBoolean(warn_key, true));
         settingMap.put(black_key, sharedPreferences.getBoolean(black_key, true));
+        settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, true));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
         settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));

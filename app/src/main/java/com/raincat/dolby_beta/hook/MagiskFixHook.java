@@ -32,7 +32,6 @@ public class MagiskFixHook {
                     if (state.contains(Environment.MEDIA_MOUNTED))
                         list.add(sdCard);
                 }
-
                 param.setResult(list);
             }
         });
@@ -47,9 +46,8 @@ public class MagiskFixHook {
             return paths[0];
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
     // 获取次存储卡路径,一般就是外置 TF 卡了. 不过也有可能是 USB OTG （Environment.MEDIA_MOUNTED_READ_ONLY），OTG为只读
@@ -58,13 +56,11 @@ public class MagiskFixHook {
             StorageManager sm = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
             Method getVolumePathsMethod = StorageManager.class.getMethod("getVolumePaths");
             String[] paths = (String[]) getVolumePathsMethod.invoke(sm);
-            return paths.length <= 1 ? null : paths[1];
+            return (paths == null || paths.length <= 1) ? null : paths[1];
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
-
     }
 
     // 获取存储卡的挂载状态. path 参数传入上两个方法得到的路径
@@ -75,8 +71,8 @@ public class MagiskFixHook {
             return (String) getVolumeStateMethod.invoke(sm, path);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }
 
