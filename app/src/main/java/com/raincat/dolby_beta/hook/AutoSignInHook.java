@@ -29,7 +29,6 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
  */
 
 public class AutoSignInHook {
-    private String classMainDrawer = "com.netease.cloudmusic.ui.MainDrawer";
     private String methodInitDrawerHeader = "initDrawerHeader";
     private String valueDrawerUserSignIn = "drawerUserSignIn";
 
@@ -68,16 +67,16 @@ public class AutoSignInHook {
             findAndHookMethod(userProfileClass, "isMobileSign", XC_MethodReplacement.returnConstant(true));
         }
 
-        if (versionCode < 138) {
-            classMainDrawer = "com.netease.cloudmusic.ui.l";
+        Class<?> mainDrawerClass = findClassIfExists("com.netease.cloudmusic.ui.MainDrawer", context.getClassLoader());
+        if (mainDrawerClass == null) {
+            mainDrawerClass = findClassIfExists("com.netease.cloudmusic.ui.l", context.getClassLoader());
             methodInitDrawerHeader = "r";
             valueDrawerUserSignIn = "t";
-        } else if (versionCode >= 7003000)
-            return;
+        }
 
         //更改当前签到状态文字
-        if (findClassIfExists(classMainDrawer, context.getClassLoader()) != null) {
-            findAndHookMethod(classMainDrawer, context.getClassLoader(), methodInitDrawerHeader, new XC_MethodHook() {
+        if (versionCode < 7003000 && mainDrawerClass != null) {
+            findAndHookMethod(mainDrawerClass, methodInitDrawerHeader, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     Field drawerUserSignInField = param.thisObject.getClass().getDeclaredField(valueDrawerUserSignIn);

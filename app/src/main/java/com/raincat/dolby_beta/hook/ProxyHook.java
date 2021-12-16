@@ -20,7 +20,7 @@ import de.robv.android.xposed.XC_MethodHook;
 
 import static de.robv.android.xposed.XposedBridge.hookAllConstructors;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 
 /**
  * <pre>
@@ -37,7 +37,6 @@ public class ProxyHook {
     private static Object objectProxy;
     private static Object objectSSLSocketFactory;
 
-    private String classRealCall;
     private String fieldSSLSocketFactory;
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
@@ -50,20 +49,22 @@ public class ProxyHook {
             return;
         }
 
-        if (versionCode >= 7001080) {
-            classRealCall = "okhttp3.internal.connection.RealCall";
+        Class<?> realCallClass = findClassIfExists("okhttp3.internal.connection.RealCall", context.getClassLoader());
+        if (realCallClass != null) {
             fieldSSLSocketFactory = "sslSocketFactoryOrNull";
-        } else if (versionCode >= 114) {
-            classRealCall = "okhttp3.RealCall";
-            fieldSSLSocketFactory = "sslSocketFactory";
         } else {
-            classRealCall = "okhttp3.z";
-            fieldSSLSocketFactory = "o";
-            fieldHttpUrl = "a";
-            fieldProxy = "d";
+            realCallClass = findClassIfExists("okhttp3.RealCall", context.getClassLoader());
+            if (realCallClass != null)
+                fieldSSLSocketFactory = "sslSocketFactory";
+            else {
+                realCallClass = findClassIfExists("okhttp3.z", context.getClassLoader());
+                fieldSSLSocketFactory = "o";
+                fieldHttpUrl = "a";
+                fieldProxy = "d";
+            }
         }
 
-        hookAllConstructors(findClass(classRealCall, context.getClassLoader()), new XC_MethodHook() {
+        hookAllConstructors(realCallClass, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (param.args.length == 3) {
@@ -88,11 +89,14 @@ public class ProxyHook {
         if (isPlayProcess)
             findAndHookMethod("com.netease.cloudmusic.service.PlayService", context.getClassLoader(), "onCreate", new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
                     int retry = Integer.parseInt(ExtraHelper.getExtraDate(ExtraHelper.SCRIPT_RETRY));
                     if (retry > 0) {
                         ScriptHelper.initScript(context, retry == 1);
-                        ScriptHelper.startScript(context);
+                        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_compatibility_key))
+                            ScriptHelper.startScriptCompatibilityMode(context);
+                        else
+                            ScriptHelper.startScript(context);
                         ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, --retry);
                     } else
                         Tools.showToastOnLooper(context, "重试次数过多，UnblockNeteaseMusic运行失败！");
@@ -102,7 +106,7 @@ public class ProxyHook {
         if (!isPlayProcess)
             findAndHookMethod("com.netease.cloudmusic.activity.LoadingActivity", context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
                 }

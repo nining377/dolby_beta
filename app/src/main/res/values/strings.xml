@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">杜比大喇叭β</string>
 
-    <string name="xposed_description">仅供测试</string>
+    <string name="xposed_description">模块无界面，设置已内嵌到“网易云音乐->设置”中</string>
 
     <string-array name="package_scope">
         <item>com.netease.cloudmusic</item>

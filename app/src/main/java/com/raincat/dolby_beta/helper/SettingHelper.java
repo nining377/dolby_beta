@@ -71,6 +71,11 @@ public class SettingHelper {
     public static final String proxy_master_key = "β_proxy_master_key";
     public static final String proxy_master_title = "代理开关";
 
+    public static final String proxy_compatibility_key = "β_proxy_compatibility_key";
+    public static final String proxy_compatibility_title = "兼容模式";
+    public static final String proxy_compatibility_sub = "当正常模式无法启动脚本时可以尝试使用兼容模式，该模式下对运存需求较高，推荐Android 12打钩";
+
+
     public static final String proxy_priority_key = "β_proxy_priority_key";
     public static final String proxy_priority_title = "音质优先";
     public static final String proxy_priority_sub = "音质优先：使用外部音源提高音质，不可避免的会增大匹配错误概率\n匹配度优先：尽可能采用网易云音源，但非会员很多曲目只有128K/96K";
@@ -89,7 +94,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "pyncmd kuwo qq";
+    public static final String proxy_original_default = "pyncmd kuwo qq kugou";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -162,6 +167,7 @@ public class SettingHelper {
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
+        settingMap.put(proxy_compatibility_key, sharedPreferences.getBoolean(proxy_compatibility_key, false));
         settingMap.put(proxy_priority_key, sharedPreferences.getBoolean(proxy_priority_key, false));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));

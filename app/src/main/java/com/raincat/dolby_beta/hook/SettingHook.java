@@ -33,6 +33,7 @@ import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
+import com.raincat.dolby_beta.view.proxy.ProxyCompatibilityView;
 import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
 import com.raincat.dolby_beta.view.proxy.ProxyFlacView;
 import com.raincat.dolby_beta.view.proxy.ProxyGrayView;
@@ -268,6 +269,10 @@ public class SettingHook {
         dialogProxyRoot = new BaseDialogItem(context);
         dialogProxyRoot.setOrientation(LinearLayout.VERTICAL);
         ProxyMasterView proxyMasterView = new ProxyMasterView(context);
+        ProxyCoverView proxyCoverView = new ProxyCoverView(context);
+        proxyCoverView.setBaseOnView(proxyMasterView);
+        ProxyCompatibilityView proxyCompatibilityView = new ProxyCompatibilityView(context);
+        proxyCompatibilityView.setBaseOnView(proxyMasterView);
         ProxyPriorityView proxyPriorityView = new ProxyPriorityView(context);
         proxyPriorityView.setBaseOnView(proxyMasterView);
         ProxyFlacView proxyFlacView = new ProxyFlacView(context);
@@ -278,12 +283,11 @@ public class SettingHook {
         proxyPortView.setBaseOnView(proxyMasterView);
         ProxyOriginalView proxyOriginalView = new ProxyOriginalView(context);
         proxyOriginalView.setBaseOnView(proxyMasterView);
-        ProxyCoverView proxyCoverView = new ProxyCoverView(context);
-        proxyCoverView.setBaseOnView(proxyMasterView);
 
         dialogProxyRoot.addView(new ProxyTitleView(context));
         dialogProxyRoot.addView(proxyMasterView);
         dialogProxyRoot.addView(proxyCoverView);
+        dialogProxyRoot.addView(proxyCompatibilityView);
         dialogProxyRoot.addView(proxyPriorityView);
         dialogProxyRoot.addView(proxyFlacView);
         dialogProxyRoot.addView(proxyGrayView);

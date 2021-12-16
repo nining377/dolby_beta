@@ -6,8 +6,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.stericson.RootShell.exceptions.RootDeniedException;
+import com.stericson.RootShell.execution.Command;
+import com.stericson.RootTools.RootTools;
+
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeoutException;
 
 /**
  * <pre>
@@ -66,5 +72,18 @@ public class Tools {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         return calendar.getTime().getTime();
+    }
+
+    /**
+     * ADB命令
+     */
+    public static void shell(Context context, Command command) {
+        try {
+            RootTools.closeAllShells();
+            RootTools.getShell(false).add(command);
+        } catch (TimeoutException | RootDeniedException | IOException e) {
+            e.printStackTrace();
+            showToastOnLooper(context, e.getMessage());
+        }
     }
 }

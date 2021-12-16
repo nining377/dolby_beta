@@ -69,6 +69,8 @@ public class GrayHook {
                             try {
                                 param.args[0] = maxbr;
                                 XposedHelpers.callMethod(object, "setSubPriv", 1);
+                                XposedHelpers.callMethod(object, "setSharePriv", 1);
+                                XposedHelpers.callMethod(object, "setCommentPriv", 1);
                                 XposedHelpers.callMethod(object, "setDownMaxLevel", maxbr);
                                 XposedHelpers.callMethod(object, "setPlayMaxLevel", maxbr);
                                 if (object.getClass().getDeclaredMethod("setPlayMaxbr", int.class) != null)

@@ -8,6 +8,7 @@ import com.raincat.dolby_beta.BuildConfig;
 import com.raincat.dolby_beta.Hook;
 import com.raincat.dolby_beta.net.HTTPSTrustManager;
 import com.raincat.dolby_beta.utils.Tools;
+import com.stericson.RootShell.execution.Command;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,6 +70,9 @@ public class ScriptHelper {
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libc++_shared.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnative-lib.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnode.so");
+            FileHelper.unzipFile(modulePath, getScriptPath(context), "assets", "node");
+            Command auth = new Command(0, "cd " + getScriptPath(context), "chmod 770 *");
+            Tools.shell(context, auth);
             ExtraHelper.setExtraDate(ExtraHelper.APP_VERSION, BuildConfig.VERSION_CODE);
         }
         initNative(context);
@@ -111,9 +115,9 @@ public class ScriptHelper {
     }
 
     /**
-     * 开始执行UnblockNeteaseMusic
+     * 采用兼容模式执行UnblockNeteaseMusic
      */
-    public static void startScript(Context context) {
+    public static void startScriptCompatibilityMode(Context context) {
         if (loadSuccess) {
             new Thread(() -> {
                 setEnv("ENABLE_FLAC", SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key) + "");
@@ -136,6 +140,42 @@ public class ScriptHelper {
         }
     }
 
+    public static void startScript(final Context context) {
+        if (loadSuccess) {
+            String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
+            String START_PROXY = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&export NODE_TLS_REJECT_UNAUTHORIZED=0&&./node app.js -o %s -p %s",
+                    SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key), SettingHelper.getInstance().getSetting(SettingHelper.proxy_priority_key) ? "256000" : "96000",
+                    SettingHelper.getInstance().getProxyOriginal(), SettingHelper.getInstance().getProxyPort() + ":" + (SettingHelper.getInstance().getProxyPort() + 1));
+
+            Command start = new Command(0, STOP_PROXY, "cd " + getScriptPath(context), START_PROXY) {
+                @Override
+                public void commandOutput(int id, String line) {
+                    if ((!line.contains("mERROR") && line.contains("Error:")) || line.contains("Port ") || line.contains("Please ")) {
+                        Intent intent = new Intent(Hook.msg_send_notification);
+                        intent.putExtra("message", line);
+                        intent.putExtra("title", "脚本产生如下错误信息，若脚本因此无法运行请提issue");
+                        neteaseContext.sendBroadcast(intent);
+                    } else if (line.contains("HTTP Server running")) {
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
+                        Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
+                    } else if (line.contains("Killed")) {
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
+                        if (context != null) {
+                            startScript(context);
+                        }
+                    } else if (line.contains("64-bit ELF file")) {
+                        Intent intent = new Intent(Hook.msg_send_notification);
+                        intent.putExtra("message", line);
+                        intent.putExtra("title", "Node无法启动，请尝试兼容模式");
+                        neteaseContext.sendBroadcast(intent);
+                    }
+                }
+            };
+            Tools.shell(context, start);
+        }
+    }
+
     /**
      * 打印代理日志
      *
@@ -150,12 +190,12 @@ public class ScriptHelper {
         if ((!text.contains("mERROR") && text.contains("Error:")) || text.contains("Port ") || text.contains("Please ")) {
             Intent intent = new Intent(Hook.msg_send_notification);
             intent.putExtra("message", text);
-            intent.putExtra("title", "UnblockNeteaseMusic产生致命错误");
+            intent.putExtra("title", "脚本产生如下错误信息，若脚本因此无法运行请提issue");
             neteaseContext.sendBroadcast(intent);
         } else if (text.contains("HTTP Server running")) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
-            Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
+            Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic以兼容模式运行成功");
         }
     }
 

@@ -28,27 +28,23 @@ import de.robv.android.xposed.XposedHelpers;
  */
 
 public class HideSidebarHook {
-    private Class<?> classDrawerItemEnum;
     private HashMap<String, Boolean> sidebarSettingMap = new HashMap<>();
 
-    private String classMainDrawerString = "com.netease.cloudmusic.ui.MainDrawer";
-    private String classDrawerItemEnumString = "com.netease.cloudmusic.ui.MainDrawer$DrawerItemEnum";
     private String methodRefreshDrawerString = "refreshDrawer";
     private String objectMDrawerContainerString = "mDrawerContainer";
 
     public HideSidebarHook(Context context, int versionCode) {
-        if (versionCode < 138) {
-            classMainDrawerString = "com.netease.cloudmusic.ui.l";
-            classDrawerItemEnumString = "com.netease.cloudmusic.ui.l$b";
-            methodRefreshDrawerString = "m";
-            objectMDrawerContainerString = "i";
+        Class<?> drawerItemEnumClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.MainDrawer$DrawerItemEnum", context.getClassLoader());
+        if (drawerItemEnumClass == null) {
+            drawerItemEnumClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.music.biz.sidebar.ui.MainDrawer$DrawerItemEnum", context.getClassLoader());
+            if (drawerItemEnumClass == null) {
+                drawerItemEnumClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.l$b", context.getClassLoader());
+                objectMDrawerContainerString = "i";
+            }
         }
 
-        classDrawerItemEnum = XposedHelpers.findClassIfExists(classDrawerItemEnumString, context.getClassLoader());
-        if (classDrawerItemEnum == null)
-            classDrawerItemEnum = XposedHelpers.findClassIfExists("com.netease.cloudmusic.music.biz.sidebar.ui.MainDrawer$DrawerItemEnum", context.getClassLoader());
-        if (classDrawerItemEnum != null && classDrawerItemEnum.isEnum()) {
-            Object[] enumConstants = classDrawerItemEnum.getEnumConstants();
+        if (drawerItemEnumClass != null && drawerItemEnumClass.isEnum()) {
+            Object[] enumConstants = drawerItemEnumClass.getEnumConstants();
             SidebarEnum.setSidebarEnum(enumConstants);
             sidebarSettingMap = SettingHelper.getInstance().getSidebarSetting(SidebarEnum.getSidebarEnum());
         }
@@ -83,7 +79,11 @@ public class HideSidebarHook {
                 }
             });
         } else if (versionCode < 7003010) {
-            Class<?> mainDrawerClass = XposedHelpers.findClassIfExists(classMainDrawerString, context.getClassLoader());
+            Class<?> mainDrawerClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.MainDrawer", context.getClassLoader());
+            if (mainDrawerClass == null) {
+                mainDrawerClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.l", context.getClassLoader());
+                methodRefreshDrawerString = "m";
+            }
             if (mainDrawerClass != null)
                 XposedHelpers.findAndHookMethod(mainDrawerClass, methodRefreshDrawerString, new XC_MethodHook() {
                     @Override

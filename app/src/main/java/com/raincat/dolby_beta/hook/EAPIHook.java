@@ -50,12 +50,7 @@ public class EAPIHook {
                     return;
                 String path = uri.getPath();
 
-                if (path.contains("song/enhance/player/url")) {
-                    original = EAPIHelper.modifyPlayer(original);
-                } else if (path.contains("song/enhance/download/url")) {
-                    original = EAPIHelper.modifyPlayer(original.replace("\"data\":", "\"data\":[").replace("},\"code\"", "}],\"code\""));
-                    original = original.replace("[", "").replace("]", "");
-                } else if (path.contains("v1/playlist/manipulate/tracks")) {
+                if (path.contains("v1/playlist/manipulate/tracks")) {
                     original = EAPIHelper.modifyManipulate(ClassHelper.HttpParams.getParams(context, eapi), original);
                 } else if (path.contains("song/like")) {
                     original = EAPIHelper.modifyLike(ClassHelper.HttpParams.getParams(context, eapi), original);

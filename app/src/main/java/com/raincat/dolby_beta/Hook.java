@@ -94,7 +94,7 @@ public class Hook {
                             //自动签到
                             new AutoSignInHook(context, versionCode);
                             //去广告与去升级
-                            new AdAndUpdateHook(context, versionCode);
+                            new AdAndUpdateHook(context);
                             //修复magisk冲突导致的无法读写外置sd卡
                             new MagiskFixHook(context);
                             //去掉内测与听歌识曲弹窗
@@ -114,7 +114,7 @@ public class Hook {
                                 //精简侧边栏
                                 new HideSidebarHook(context, versionCode);
                                 //移除Banner
-                                new HideBannerHook(context, versionCode);
+                                new HideBannerHook(context);
                                 //隐藏小红点
                                 new HideBubbleHook(context);
                                 //黑胶停转，隐藏K歌按钮
@@ -137,7 +137,8 @@ public class Hook {
                                         playProcessInit = true;
                                         if (mainProcessInit && playProcessInit)
                                             context.sendBroadcast(new Intent(msg_hook_play_process));
-                                    } else if (msg_send_notification.equals(intent.getAction())) {
+                                    } else if (msg_send_notification.equals(intent.getAction())
+                                            && SettingHelper.getInstance().isEnable(SettingHelper.warn_key)) {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                                             NotificationHelper.getInstance(context).sendUnLockNotification(context, intent.getIntExtra("code", 0x10),
                                                     intent.getStringExtra("title"), intent.getStringExtra("title"), intent.getStringExtra("message"));

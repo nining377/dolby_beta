@@ -25,21 +25,20 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
  */
 
 public class AdAndUpdateHook {
-    private static String okHttpClientClassString = "okhttp3.OkHttpClient";
     private static String newCallMethodString = "newCall";
     private static String httpUrlFieldString = "url";
     private static String urlFieldString = "url";
 
-    public AdAndUpdateHook(Context context, final int versionCode) {
-        if (versionCode < 138) {
-            okHttpClientClassString = "okhttp3.x";
+    public AdAndUpdateHook(Context context) {
+        //去广告和升级
+        Class<?> okHttpClientClass = findClassIfExists("okhttp3.OkHttpClient", context.getClassLoader());
+        if (okHttpClientClass == null) {
+            okHttpClientClass = findClassIfExists("okhttp3.x", context.getClassLoader());
             newCallMethodString = "a";
             httpUrlFieldString = "a";
             urlFieldString = "j";
         }
 
-        //去广告和升级
-        Class<?> okHttpClientClass = findClassIfExists(okHttpClientClassString, context.getClassLoader());
         if (okHttpClientClass != null)
             hookAllMethods(okHttpClientClass, newCallMethodString, new XC_MethodHook() {
                 @Override
