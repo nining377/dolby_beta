@@ -40,6 +40,8 @@ public class ProxyHook {
     private String fieldSSLSocketFactory;
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
+    private String HttpUrlhost = "127.0.0.1";
+
 
     private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
 
@@ -93,10 +95,15 @@ public class ProxyHook {
                     int retry = Integer.parseInt(ExtraHelper.getExtraDate(ExtraHelper.SCRIPT_RETRY));
                     if (retry > 0) {
                         ScriptHelper.initScript(context, retry == 1);
-                        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_compatibility_key))
-                            ScriptHelper.startScriptCompatibilityMode(context);
-                        else
-                            ScriptHelper.startScript(context);
+                        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+                            ScriptHelper.starhttptproxyMode(context);
+                        }
+                        else{
+                            if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_compatibility_key))
+                                ScriptHelper.startScriptCompatibilityMode(context);
+                            else
+                                ScriptHelper.startScript(context);
+                        }
                         ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, --retry);
                     } else
                         Tools.showToastOnLooper(context, "重试次数过多，UnblockNeteaseMusic运行失败！");
@@ -117,7 +124,13 @@ public class ProxyHook {
      * 设置代理
      */
     private void setProxy(Context context, Object client) throws Exception {
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", SettingHelper.getInstance().getProxyPort()));
+        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+            HttpUrlhost = SettingHelper.getInstance().gethttpProxy();
+        }
+        else{
+            HttpUrlhost="127.0.0.1";
+        }
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(HttpUrlhost, SettingHelper.getInstance().getProxyPort()));
         Field proxyField = client.getClass().getDeclaredField(fieldProxy);
         proxyField.setAccessible(true);
         Field sslSocketFactoryField = client.getClass().getDeclaredField(fieldSSLSocketFactory);
