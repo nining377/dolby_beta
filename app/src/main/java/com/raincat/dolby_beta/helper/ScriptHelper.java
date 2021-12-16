@@ -139,6 +139,37 @@ public class ScriptHelper {
             }).start();
         }
     }
+    /**
+     * 采用代理模式执行UnblockNeteaseMusic
+     */
+    public static void starhttptproxyMode(final Context context) {
+        if (loadSuccess) {
+          /*
+            String PINGserver = String.format("ping %s", SettingHelper.getInstance().gethttpProxy());
+
+            Command start = new Command(0, PINGserver) {
+                @Override
+               public void commandOutput(int id, String line) {
+                  if (line.contains("字节=")||line.contains("bytes=")) {
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
+                        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
+                        Tools.showToastOnLooper(neteaseContext, "服务器代理运行成功");
+                    } else{
+                      Tools.showToastOnLooper(neteaseContext, "服务器代理运行失败");
+                       }
+                  }
+
+            };
+            //Tools.shell(context, start);*/
+                     String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
+                     new Command(0, STOP_PROXY);
+                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
+                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
+                     Tools.showToastOnLooper(neteaseContext, "服务器代理运行成功");
+
+        }
+
+    };
 
     public static void startScript(final Context context) {
         if (loadSuccess) {

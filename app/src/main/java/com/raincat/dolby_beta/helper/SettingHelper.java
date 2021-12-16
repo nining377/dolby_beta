@@ -75,6 +75,10 @@ public class SettingHelper {
     public static final String proxy_compatibility_title = "兼容模式";
     public static final String proxy_compatibility_sub = "当正常模式无法启动脚本时可以尝试使用兼容模式，该模式下对运存需求较高，推荐Android 12打钩";
 
+    public static final String proxy_server_key = "β_proxy_server_key";
+    public static final String proxy_server_title = "服务器代理模式";
+    public static final String proxy_server_sub = "如果您不想使用高占用的node，有自己的服务器代理可使用此方式并填写自己的服务器地址与端口";
+
 
     public static final String proxy_priority_key = "β_proxy_priority_key";
     public static final String proxy_priority_title = "音质优先";
@@ -87,6 +91,10 @@ public class SettingHelper {
     public static final String proxy_gray_key = "β_proxy_gray_key";
     public static final String proxy_gray_title = "不变灰";
     public static final String proxy_gray_sub = "只影响显示效果，与能否播放无关，会导致无音源歌曲无法播放且无法自动跳过";
+
+    public static final String http_proxy_key = "β_http_proxy_key";
+    public static final String http_proxy_title = "代理服务器";
+    public static final String http_proxy_default = "127.0.0.1";
 
     public static final String proxy_port_key = "β_proxy_port_key";
     public static final String proxy_port_title = "代理端口（1~65535）";
@@ -168,6 +176,7 @@ public class SettingHelper {
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
         settingMap.put(proxy_compatibility_key, sharedPreferences.getBoolean(proxy_compatibility_key, false));
+        settingMap.put(proxy_server_key, sharedPreferences.getBoolean(proxy_server_key, false));
         settingMap.put(proxy_priority_key, sharedPreferences.getBoolean(proxy_priority_key, false));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
         settingMap.put(proxy_gray_key, sharedPreferences.getBoolean(proxy_gray_key, false));
@@ -253,5 +262,15 @@ public class SettingHelper {
     public void setProxyOriginal(String original) {
         if (!TextUtils.isEmpty(original))
             sharedPreferences.edit().putString(SettingHelper.proxy_original_key, original).apply();
+    }
+
+    public void setHttpProxy(String http) {
+        if (!TextUtils.isEmpty(http))
+            sharedPreferences.edit().putString(SettingHelper.http_proxy_key, http).apply();
+    }
+
+    public String gethttpProxy() {
+        return sharedPreferences.getString(SettingHelper.http_proxy_key, SettingHelper.http_proxy_default);
+
     }
 }
