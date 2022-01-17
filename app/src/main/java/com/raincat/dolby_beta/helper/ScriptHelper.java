@@ -71,7 +71,7 @@ public class ScriptHelper {
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnative-lib.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), bit, "libnode.so");
             FileHelper.unzipFile(modulePath, getScriptPath(context), "assets", "node");
-            Command auth = new Command(0, "cd " + getScriptPath(context), "chmod 770 *");
+            Command auth = new Command(0, "cd " + getScriptPath(context), "chmod 0777 *");
             Tools.shell(context, auth);
             ExtraHelper.setExtraDate(ExtraHelper.APP_VERSION, BuildConfig.VERSION_CODE);
         }
