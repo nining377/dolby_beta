@@ -83,6 +83,7 @@ public class SidebarEnum {
         enumMap.put("DISCOUNT_COUPON", "优惠券");
         enumMap.put("RED_PACKET", "音乐红包");
         enumMap.put("PROFIT", "赞赏收入");
+        enumMap.put("DYNAMIC_ITEM", "隐私协议");
         enumMap.put("FEEDBACK_HELP", "帮助与反馈");
         enumMap.put("SHARE_APP", "分享网易云音乐");
         enumMap.put("ABOUT", "关于");
