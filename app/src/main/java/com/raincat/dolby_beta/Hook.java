@@ -78,7 +78,7 @@ public class Hook {
                         final String processName = Tools.getCurrentProcessName(context);
                         if (processName.equals(PACKAGE_NAME)) {
                             //设置
-                            new SettingHook(context);
+                            new SettingHook(context, versionCode);
                             //总开关
                             if (!SettingHelper.getInstance().getSetting(SettingHelper.master_key))
                                 return;
