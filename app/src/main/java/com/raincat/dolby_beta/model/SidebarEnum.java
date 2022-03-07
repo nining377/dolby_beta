@@ -63,6 +63,7 @@ public class SidebarEnum {
         enumMap.put("TICKET", "云村有票");
         enumMap.put("NEARBY", "附近的人");
         enumMap.put("STORE", "商城");
+        enumMap.put("BEAT", "Beat交易平台");
         enumMap.put("GAME", "游戏专区");
         enumMap.put("COLOR_RING", "口袋彩铃");
         enumMap.put("SETTING", "设置");
