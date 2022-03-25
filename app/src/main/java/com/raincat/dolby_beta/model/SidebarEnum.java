@@ -63,6 +63,7 @@ public class SidebarEnum {
         enumMap.put("TICKET", "云村有票");
         enumMap.put("NEARBY", "附近的人");
         enumMap.put("STORE", "商城");
+        enumMap.put("BEAT", "Beat交易平台");
         enumMap.put("GAME", "游戏专区");
         enumMap.put("COLOR_RING", "口袋彩铃");
         enumMap.put("SETTING", "设置");
@@ -83,6 +84,7 @@ public class SidebarEnum {
         enumMap.put("DISCOUNT_COUPON", "优惠券");
         enumMap.put("RED_PACKET", "音乐红包");
         enumMap.put("PROFIT", "赞赏收入");
+        enumMap.put("DYNAMIC_ITEM", "第三方隐私协议");
         enumMap.put("FEEDBACK_HELP", "帮助与反馈");
         enumMap.put("SHARE_APP", "分享网易云音乐");
         enumMap.put("ABOUT", "关于");

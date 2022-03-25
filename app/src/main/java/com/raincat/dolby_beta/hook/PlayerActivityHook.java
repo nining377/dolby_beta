@@ -47,10 +47,11 @@ public class PlayerActivityHook {
                                     if (imageView.getContentDescription().toString().contains("音街")
                                             || imageView.getContentDescription().toString().contains("铃声")) {
                                         imageView.setVisibility(View.GONE);
-                                        if (imageView.getParent() != null) {
-                                            View parent = (View) imageView.getParent();
-                                            parent.setVisibility(View.GONE);
-                                        }
+                                 if (imageView.getParent() != null) {
+                                            View Parent = (View) imageView.getParent();
+                                            Parent.getLayoutParams().width=0;
+                                            Parent.getLayoutParams().height=0;
+                                          }
                                     }
                                 }
                             }

@@ -69,15 +69,23 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
  * </pre>
  */
 public class SettingHook {
+    private String SettingActivity;
     private String switchViewName = "";
     private TextView titleView, subView;
     private LinearLayout dialogRoot, dialogProxyRoot, dialogBeautyRoot, dialogSidebarRoot;
 
     private BroadcastReceiver broadcastReceiver;
 
-    public SettingHook(Context context) {
+    public SettingHook(Context context,int versionCode) {
         //一切的前提，没这个页面连设置都进不去
-        Class<?> settingActivityClass = findClassIfExists("com.netease.cloudmusic.activity.SettingActivity", context.getClassLoader());
+        if(versionCode>=8007000)
+        {
+            SettingActivity="com.netease.cloudmusic.music.biz.setting.activity.SettingActivity";
+        }else
+        {
+            SettingActivity="com.netease.cloudmusic.activity.SettingActivity";
+        }
+        Class<?> settingActivityClass = findClassIfExists(SettingActivity, context.getClassLoader());
         Field[] allFields = settingActivityClass.getDeclaredFields();
         for (Field field : allFields) {
             if (field.getType().getName().contains("Switch")) {
