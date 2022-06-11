@@ -73,11 +73,11 @@ public class SettingHelper {
 
     public static final String proxy_compatibility_key = "β_proxy_compatibility_key";
     public static final String proxy_compatibility_title = "兼容模式";
-    public static final String proxy_compatibility_sub = "当正常模式无法启动脚本时可以尝试使用兼容模式，该模式下对运存需求较高，推荐Android 12打钩";
+    public static final String proxy_compatibility_sub = "当正常模式无法启动脚本时可以尝试使用兼容模式，该模式下对运存需求较高，Android 12和API29需要使用此模式";
 
     public static final String proxy_server_key = "β_proxy_server_key";
     public static final String proxy_server_title = "服务器代理模式";
-    public static final String proxy_server_sub = "如果您不想使用高占用的node，有自己的服务器代理可使用此方式并填写自己的服务器地址与端口";
+    public static final String proxy_server_sub = "如果您不想使用高占用的node，有自己的服务器代理可使用此方式并填写自己的服务器地址与端口，且使用服务器对应音质";
 
 
     public static final String proxy_priority_key = "β_proxy_priority_key";
@@ -102,7 +102,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "pyncmd kuwo qq kugou";
+    public static final String proxy_original_default = "kuwo qq pyncmd kugou";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -175,7 +175,7 @@ public class SettingHelper {
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
-        settingMap.put(proxy_compatibility_key, sharedPreferences.getBoolean(proxy_compatibility_key, false));
+        settingMap.put(proxy_compatibility_key, sharedPreferences.getBoolean(proxy_compatibility_key, true));
         settingMap.put(proxy_server_key, sharedPreferences.getBoolean(proxy_server_key, false));
         settingMap.put(proxy_priority_key, sharedPreferences.getBoolean(proxy_priority_key, false));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
