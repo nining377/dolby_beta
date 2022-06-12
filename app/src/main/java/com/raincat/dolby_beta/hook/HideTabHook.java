@@ -30,8 +30,8 @@ public class HideTabHook {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.beauty_tab_hide_key) || versionCode < 138)
             return;
 
-        Method[] setTabItemMethods = ClassHelper.MainActivitySuperClass.getTabItemStringMethods(context);
-        if (setTabItemMethods != null && setTabItemMethods.length != 0) {
+        List<Method> setTabItemMethods = ClassHelper.MainActivitySuperClass.getTabItemStringMethods(context);
+        if (setTabItemMethods != null && setTabItemMethods.size() != 0) {
             for (Method method : setTabItemMethods) {
                 hookMethod(method, new XC_MethodHook() {
                     @Override
@@ -40,7 +40,7 @@ public class HideTabHook {
                             return;
                         String[] tabNames = (String[]) param.args[0];
                         String tabName = Arrays.toString(tabNames);
-                        if ((tabName.contains("我的") && tabName.contains("发现")) || (tabName.contains("mine") && tabName.contains("wow"))) {
+                        if ((tabName.contains("我的") && tabName.contains("发现")) || (tabName.contains("mine") && tabName.contains("main"))) {
                             String[] strings = new String[2];
                             System.arraycopy(tabNames, 0, strings, 0, 2);
                             param.args[0] = strings;

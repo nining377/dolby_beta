@@ -27,45 +27,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class BlackHook {
     public BlackHook(Context context, int versionCode) {
-        if (versionCode > 8002000) {
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "fromJson", JSONObject.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            JSONObject object = (JSONObject) param.args[0];
-                            if (object.optInt("code") == 200 && !object.isNull("data") && !object.getJSONObject("data").isNull("userId") &&
-                                    object.getJSONObject("data").optLong("userId") == Long.parseLong(ExtraHelper.getExtraDate(ExtraHelper.USER_ID))) {
-                                Gson gson = new Gson();
-                                UserPrivilegeBean userPrivilegeBean = gson.fromJson(object.toString(), UserPrivilegeBean.class);
-                                userPrivilegeBean.getData().getAssociator().setExpireTime(System.currentTimeMillis() + 31536000000L);
-                                userPrivilegeBean.getData().getAssociator().setVipCode(100);
-                                userPrivilegeBean.getData().getMusicPackage().setExpireTime(System.currentTimeMillis() + 31536000000L);
-                                userPrivilegeBean.getData().setRedVipAnnualCount(1);
-                                userPrivilegeBean.getData().setRedVipLevel(9);
-                                object = new JSONObject(gson.toJson(userPrivilegeBean));
-                                param.args[0] = object;
-                            }
-                        }
-                    });
-            //VIP，音乐包
-            findAndHookMethod(findClass("com.cmbridge.b", context.getClassLoader()),
-                    "isBlackVip", XC_MethodReplacement.returnConstant(0));//新版VIP
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "isWhateverMusicPackage", XC_MethodReplacement.returnConstant(true));//音乐包
-
-
-            //主题
-            findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
-                    "getPoints", XC_MethodReplacement.returnConstant(0));
-            findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
-                    "getPrice", XC_MethodReplacement.returnConstant("免费"));
-            findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
-                    "isVip", XC_MethodReplacement.returnConstant(false));
-            findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),
-                    "isDigitalAlbum", XC_MethodReplacement.returnConstant(false));
-        }
-        else if (versionCode < 138) {
+        if (versionCode < 138) {
             XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.meta.Profile", context.getClassLoader()), "setUserPoint", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -101,6 +63,7 @@ public class BlackHook {
                                 userPrivilegeBean.getData().getAssociator().setExpireTime(System.currentTimeMillis() + 31536000000L);
                                 userPrivilegeBean.getData().getAssociator().setVipCode(100);
                                 userPrivilegeBean.getData().getMusicPackage().setExpireTime(System.currentTimeMillis() + 31536000000L);
+                                userPrivilegeBean.getData().getMusicPackage().setVipCode(220);
                                 userPrivilegeBean.getData().setRedVipAnnualCount(1);
                                 userPrivilegeBean.getData().setRedVipLevel(9);
                                 object = new JSONObject(gson.toJson(userPrivilegeBean));
@@ -108,10 +71,6 @@ public class BlackHook {
                             }
                         }
                     });
-
-
-            findAndHookMethod(findClass("com.netease.cloudmusic.meta.virtual.UserPrivilege", context.getClassLoader()),
-                    "isWhateverMusicPackage", XC_MethodReplacement.returnConstant(true));//音乐包
 
             //主题
             findAndHookMethod(findClass("com.netease.cloudmusic.theme.core.ThemeInfo", context.getClassLoader()),

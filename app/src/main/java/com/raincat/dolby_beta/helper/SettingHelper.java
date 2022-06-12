@@ -79,7 +79,6 @@ public class SettingHelper {
     public static final String proxy_server_title = "服务器代理模式";
     public static final String proxy_server_sub = "如果您不想使用高占用的node，有自己的服务器代理可使用此方式并填写自己的服务器地址与端口，且使用服务器对应音质";
 
-
     public static final String proxy_priority_key = "β_proxy_priority_key";
     public static final String proxy_priority_title = "音质优先";
     public static final String proxy_priority_sub = "音质优先：使用外部音源提高音质，不可避免的会增大匹配错误概率\n匹配度优先：尽可能采用网易云音源，但非会员很多曲目只有128K/96K";

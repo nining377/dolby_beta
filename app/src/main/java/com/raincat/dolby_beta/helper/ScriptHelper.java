@@ -139,6 +139,7 @@ public class ScriptHelper {
             }).start();
         }
     }
+
     /**
      * 采用代理模式执行UnblockNeteaseMusic
      */
@@ -161,20 +162,20 @@ public class ScriptHelper {
 
             };
             //Tools.shell(context, start);*/
-                     String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
-                     new Command(0, STOP_PROXY);
-                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
-                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
-                     Tools.showToastOnLooper(neteaseContext, "服务器代理运行成功");
+            String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
+            new Command(0, STOP_PROXY);
+            ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
+            ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
+            Tools.showToastOnLooper(neteaseContext, "服务器代理运行成功");
 
         }
 
-    };
+    }
 
     public static void startScript(final Context context) {
         if (loadSuccess) {
             String STOP_PROXY = "killall -9 node >/dev/null 2>&1";
-            String START_PROXY = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&export NODE_TLS_REJECT_UNAUTHORIZED=0&&./node app.js -o %s -p %s",
+            String START_PROXY = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&export NODE_TLS_REJECT_UNAUTHORIZED=0&&./node app.js -a 127.0.0.1 -o %s -p %s",
                     SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key), SettingHelper.getInstance().getSetting(SettingHelper.proxy_priority_key) ? "256000" : "96000",
                     SettingHelper.getInstance().getProxyOriginal(), SettingHelper.getInstance().getProxyPort() + ":" + (SettingHelper.getInstance().getProxyPort() + 1));
 

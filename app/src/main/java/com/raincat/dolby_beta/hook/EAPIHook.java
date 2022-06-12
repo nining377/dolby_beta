@@ -4,9 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-
 import com.raincat.dolby_beta.db.CloudDao;
 import com.raincat.dolby_beta.helper.ClassHelper;
 import com.raincat.dolby_beta.helper.EAPIHelper;
@@ -14,6 +11,9 @@ import com.raincat.dolby_beta.helper.SettingHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 
 
 /**
@@ -108,10 +108,18 @@ public class EAPIHook {
                     original = original.replace("\"waitTime\":60,", "\"waitTime\":5,");
                     CloudDao.getInstance(context).saveSong(Integer.parseInt(jsonObject.getString("id")), original);
                 } else if (path.contains("cloud/pub/v2")) {
-                    String songId = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
-                    EAPIHelper.uploadCloud(songId);
-                    original = CloudDao.getInstance(context).getSong(Integer.parseInt(songId));
+                    String songid = EAPIHelper.decrypt(ClassHelper.HttpParams.getParams(context, eapi).get("params")).getString("songid");
+                    EAPIHelper.uploadCloud(songid);
+                    original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
                 }
+
+//                logcat("EAPI ------------------------");
+//                logcat("EAPI URI: " + uri);
+//                HashMap<String, String> data = ClassHelper.HttpParams.getParams(context, eapi);
+//                logcat("EAPI data: " + (data != null ? data.toString() : ""));
+//                logcat("EAPI original: " + original);
+//                logcat("EAPI ------------------------");
+
                 param.setResult(param.getResult() instanceof JSONObject ? new JSONObject(original) : original);
             }
         });

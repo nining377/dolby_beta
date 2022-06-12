@@ -11,6 +11,7 @@ import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.dexbacked.DexBackedClassDef;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 import org.jf.dexlib2.iface.MultiDexContainer;
+import org.json.JSONObject;
 
 import java.io.Closeable;
 import java.io.File;
@@ -35,6 +36,7 @@ import java.util.zip.ZipFile;
 import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
 import static de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters;
 
 /**
@@ -117,6 +119,13 @@ public class ClassHelper {
         return list;
     }
 
+    private static Class<?> getClassByXposed(String className) {
+        Class<?> clazz = findClassIfExists(className, classLoader);
+        if (clazz == null)
+            clazz = findClassIfExists("com.netease.cloudmusic.NeteaseMusicApplication", classLoader);
+        return clazz;
+    }
+
     public static class Cookie {
         private static Class<?> clazz, abstractClazz;
 
@@ -131,7 +140,7 @@ public class ClassHelper {
 
                 try {
                     abstractClazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(c -> c.getSuperclass() == Object.class)
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ConcurrentHashMap.class))
@@ -143,7 +152,7 @@ public class ClassHelper {
 
                     if (versionCode >= 154) {
                         clazz = Stream.of(list)
-                                .map(s -> findClass(s, classLoader))
+                                .map(ClassHelper::getClassByXposed)
                                 .filter(c -> Modifier.isPublic(c.getModifiers()))
                                 .filter(m -> !Modifier.isInterface(m.getModifiers()))
                                 .filter(c -> c.getSuperclass() == abstractClazz)
@@ -188,7 +197,7 @@ public class ClassHelper {
 
                 try {
                     checkMd5Method = Stream.of(list)
-                            .map(c -> findClass(c, classLoader).getDeclaredMethods())
+                            .map(c -> getClassByXposed(c).getDeclaredMethods())
                             .flatMap(Stream::of)
                             .filter(m -> m.getParameterTypes().length == 4)
                             .filter(m -> m.getParameterTypes()[0] == File.class)
@@ -210,7 +219,7 @@ public class ClassHelper {
 
                 try {
                     checkDownloadStatusMethod = Stream.of(list)
-                            .map(c -> findClass(c, classLoader).getDeclaredMethods())
+                            .map(c -> getClassByXposed(c).getDeclaredMethods())
                             .flatMap(Stream::of)
                             .filter(m -> m.getReturnType() == long.class)
                             .filter(m -> m.getParameterTypes().length == 5)
@@ -229,7 +238,7 @@ public class ClassHelper {
 
     public static class MainActivitySuperClass {
         private static Class<?> clazz;
-        private static Method[] methods;
+        private static List<Method> methods;
         private static Method method;
 
         static void getClazz(Context context) {
@@ -239,11 +248,18 @@ public class ClassHelper {
             }
         }
 
-        public static Method[] getTabItemStringMethods(Context context) {
+        public static List<Method> getTabItemStringMethods(Context context) {
             if (clazz == null)
                 getClazz(context);
-            if (methods == null && clazz != null)
-                methods = findMethodsByExactParameters(clazz, void.class, String[].class);
+            if (methods == null && clazz != null) {
+                List<Method> methodList = Arrays.asList(clazz.getDeclaredMethods());
+                methods = Stream.of(methodList)
+                        .filter(m -> m.getParameterTypes().length >= 1)
+                        .filter(m -> m.getReturnType() == void.class)
+                        .filter(m -> m.getParameterTypes()[0] == String[].class)
+                        .filter(m -> Modifier.isPublic(m.getModifiers()))
+                        .toList();
+            }
             return methods;
         }
 
@@ -273,16 +289,14 @@ public class ClassHelper {
         public static Class<?> getClazz(Context context) {
             if (clazz == null) {
                 try {
-                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.[a-z]\\.[a-z]$");
+                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.[a-z0-9]{1,2}\\.[a-z]$");
                     Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.[a-z0-9]{1,2}\\.[a-z]\\.[a-z]$");
                     Pattern pattern3 = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.main\\.[a-z]$");
-                    Pattern pattern4 = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.[a-z]0\\.[a-z]$");
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
                     list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
                     list.addAll(ClassHelper.getFilteredClasses(pattern3, Collections.reverseOrder()));
-                    list.addAll(ClassHelper.getFilteredClasses(pattern4, Collections.reverseOrder()));
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(m -> Modifier.isFinal(m.getModifiers()))
                             .filter(m -> !Modifier.isInterface(m.getModifiers()))
@@ -336,7 +350,7 @@ public class ClassHelper {
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
                     list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(m -> Modifier.isFinal(m.getModifiers()))
                             .filter(m -> !Modifier.isInterface(m.getModifiers()))
@@ -367,17 +381,18 @@ public class ClassHelper {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.comment2\\.[a-z]\\.[a-z]$");
                     Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.comment\\.[a-z]\\.[a-z]$");
+                    Pattern pattern3 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.comment\\.viewmodel\\.[a-z]$");
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
                     list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
+                    list.addAll(ClassHelper.getFilteredClasses(pattern3, Collections.reverseOrder()));
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(m -> !Modifier.isInterface(m.getModifiers()))
                             .filter(m -> !Modifier.isStatic(m.getModifiers()))
                             .filter(m -> !Modifier.isAbstract(m.getModifiers()))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == int.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == List.class))
-                            .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == ArrayList.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == Intent.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == String.class))
                             .filter(c -> Stream.of(c.getDeclaredFields()).anyMatch(m -> m.getType() == long.class))
@@ -389,6 +404,54 @@ public class ClassHelper {
                 }
             }
             return clazz;
+        }
+    }
+
+    /**
+     * 广告
+     */
+    public static class Ad {
+        private static Class<?> adClazz;
+        private static Class<?> clazz;
+
+        public static Class<?> getClazz() {
+            if (clazz == null) {
+                adClazz = getClassByXposed("com.netease.cloudmusic.meta.Ad");
+                try {
+                    Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.ad\\.[a-z]$");
+                    List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
+                    clazz = Stream.of(list)
+                            .map(ClassHelper::getClassByXposed)
+                            .filter(c -> Modifier.isPublic(c.getModifiers()))
+                            .filter(m -> !Modifier.isInterface(m.getModifiers()))
+                            .filter(m -> !Modifier.isStatic(m.getModifiers()))
+                            .filter(m -> !Modifier.isAbstract(m.getModifiers()))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType().getName().contains("VideoAdInfo")))
+                            .filter(c -> Stream.of(c.getDeclaredMethods()).anyMatch(m -> m.getReturnType() == adClazz))
+                            .findFirst()
+                            .get();
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
+                }
+            }
+            return clazz;
+        }
+
+        public static List<Method> getAdMethod() {
+            try {
+                List<Method> methodList = Arrays.asList(getClazz().getDeclaredMethods());
+                List<Method> hookMethodList = Stream.of(methodList)
+                        .filter(m -> m.getReturnType().getName().contains("com.netease.cloudmusic.meta"))
+                        .filter(m -> Stream.of(m.getParameterTypes()).anyMatch(c -> c == JSONObject.class))
+                        .toList();
+                hookMethodList.addAll(Stream.of(methodList)
+                        .filter(m -> Stream.of(m.getParameterTypes()).anyMatch(c -> c.getName().contains("com.netease.cloudmusic.meta")))
+                        .filter(m -> Stream.of(m.getParameterTypes()).anyMatch(c -> c == JSONObject.class))
+                        .toList());
+                return hookMethodList;
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 
@@ -408,7 +471,7 @@ public class ClassHelper {
 
                 try {
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(c -> Modifier.isFinal(c.getModifiers()))
@@ -454,7 +517,7 @@ public class ClassHelper {
 
                 try {
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(c -> Modifier.isFinal(c.getModifiers()))
@@ -503,7 +566,7 @@ public class ClassHelper {
 
                 try {
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(c -> Modifier.isFinal(c.getModifiers()))
@@ -574,7 +637,7 @@ public class ClassHelper {
 
                 try {
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Modifier.isAbstract(c.getModifiers()))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
                             .filter(c -> c.getSuperclass() == Object.class)
@@ -613,7 +676,7 @@ public class ClassHelper {
 
                 try {
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i == Serializable.class))
                             .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                             .filter(c -> Modifier.isPublic(c.getModifiers()))
@@ -671,7 +734,7 @@ public class ClassHelper {
                 try {
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
                     clazz = Stream.of(list)
-                            .map(s -> findClass(s, classLoader))
+                            .map(ClassHelper::getClassByXposed)
                             .filter(c -> c.getInterfaces().length == 1)
                             .filter(c -> Stream.of(c.getInterfaces()).anyMatch(i -> i.getName().contains("Interceptor")))
                             .filter(c -> !Modifier.isAbstract(c.getModifiers()))

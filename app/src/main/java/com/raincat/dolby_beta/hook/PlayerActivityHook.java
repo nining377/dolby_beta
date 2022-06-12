@@ -3,6 +3,7 @@ package com.raincat.dolby_beta.hook;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ViewFlipper;
@@ -13,7 +14,6 @@ import java.lang.reflect.Field;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
-
 
 /**
  * <pre>
@@ -26,7 +26,7 @@ import de.robv.android.xposed.XposedHelpers;
  */
 
 public class PlayerActivityHook {
-    public PlayerActivityHook(Context context, int versionCode) {
+    public PlayerActivityHook(Context context, final int versionCode) {
         final boolean black = SettingHelper.getInstance().isEnable(SettingHelper.beauty_black_hide_key);
         final boolean ksong = SettingHelper.getInstance().isEnable(SettingHelper.beauty_ksong_hide_key);
         XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.activity.PlayerActivity", context.getClassLoader()),
@@ -46,12 +46,17 @@ public class PlayerActivityHook {
                                 if (imageView.getContentDescription() != null) {
                                     if (imageView.getContentDescription().toString().contains("音街")
                                             || imageView.getContentDescription().toString().contains("铃声")) {
-                                        imageView.setVisibility(View.GONE);
-                                 if (imageView.getParent() != null) {
-                                            View Parent = (View) imageView.getParent();
-                                            Parent.getLayoutParams().width=0;
-                                            Parent.getLayoutParams().height=0;
-                                          }
+                                        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+                                        layoutParams.width = 0;
+                                        layoutParams.height = 0;
+                                        imageView.setLayoutParams(layoutParams);
+                                        if (imageView.getParent() != null) {
+                                            View parent = (View) imageView.getParent();
+                                            layoutParams = parent.getLayoutParams();
+                                            layoutParams.width = 0;
+                                            layoutParams.height = 0;
+                                            parent.setLayoutParams(layoutParams);
+                                        }
                                     }
                                 }
                             }
@@ -84,8 +89,7 @@ public class PlayerActivityHook {
                     }
                 });
 
-
-        if (SettingHelper.getInstance().isEnable(SettingHelper.beauty_rotation_key)) {
+        if (SettingHelper.getInstance().isEnable(SettingHelper.beauty_rotation_key))
             if (versionCode >= 123) {
                 XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.ui.RotationRelativeLayout$AnimationHolder", context.getClassLoader()), "prepareAnimation", new XC_MethodHook() {
                     @Override
@@ -103,10 +107,5 @@ public class PlayerActivityHook {
                     }
                 });
             }
-        }
-
-
     }
 }
-
-

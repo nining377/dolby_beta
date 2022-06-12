@@ -19,17 +19,16 @@ import de.robv.android.xposed.XposedHelpers;
  *     version: 1.0
  * </pre>
  */
-
 public class HideBannerHook {
-    public HideBannerHook(Context context) {
+    private String mainBannerContainerClassString = "com.netease.cloudmusic.ui.MainBannerContainer";
+    public HideBannerHook(Context context, final int versionCode) {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.beauty_banner_hide_key))
             return;
+        if (versionCode < 138)
+            mainBannerContainerClassString = "com.netease.cloudmusic.ui.NeteaseMusicViewFlipper";
 
-        Class<?> mainBannerContainerClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.MainBannerContainer", context.getClassLoader());
-        if (mainBannerContainerClass == null)
-            mainBannerContainerClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.NeteaseMusicViewFlipper", context.getClassLoader());
-        if (mainBannerContainerClass != null)
-            XposedHelpers.findAndHookMethod(mainBannerContainerClass, "onAttachedToWindow", new XC_MethodHook() {
+        if (XposedHelpers.findClassIfExists(mainBannerContainerClassString, context.getClassLoader()) != null)
+            XposedHelpers.findAndHookMethod(mainBannerContainerClassString, context.getClassLoader(), "onAttachedToWindow", new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
                     View view = (View) param.thisObject;
@@ -40,9 +39,9 @@ public class HideBannerHook {
                 }
             });
 
-        Class<?> playlistBannerContainerClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.ui.PlaylistBanner", context.getClassLoader());
-        if (playlistBannerContainerClass != null)
-            XposedHelpers.findAndHookConstructor(playlistBannerContainerClass, Context.class, AttributeSet.class, new XC_MethodHook() {
+        String playlistBannerContainerClassString = "com.netease.cloudmusic.ui.PlaylistBanner";
+        if (XposedHelpers.findClassIfExists(playlistBannerContainerClassString, context.getClassLoader()) != null)
+            XposedHelpers.findAndHookConstructor(playlistBannerContainerClassString, context.getClassLoader(), Context.class, AttributeSet.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
                     final View view = (View) param.thisObject;

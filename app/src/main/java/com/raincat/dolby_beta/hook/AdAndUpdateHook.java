@@ -25,20 +25,21 @@ import static de.robv.android.xposed.XposedHelpers.findClassIfExists;
  */
 
 public class AdAndUpdateHook {
+    private static String okHttpClientClassString = "okhttp3.OkHttpClient";
     private static String newCallMethodString = "newCall";
     private static String httpUrlFieldString = "url";
     private static String urlFieldString = "url";
 
-    public AdAndUpdateHook(Context context) {
-        //去广告和升级
-        Class<?> okHttpClientClass = findClassIfExists("okhttp3.OkHttpClient", context.getClassLoader());
-        if (okHttpClientClass == null) {
-            okHttpClientClass = findClassIfExists("okhttp3.x", context.getClassLoader());
+    public AdAndUpdateHook(Context context, final int versionCode) {
+        if (versionCode < 138) {
+            okHttpClientClassString = "okhttp3.x";
             newCallMethodString = "a";
             httpUrlFieldString = "a";
             urlFieldString = "j";
         }
 
+        //去广告和升级
+        Class<?> okHttpClientClass = findClassIfExists(okHttpClientClassString, context.getClassLoader());
         if (okHttpClientClass != null)
             hookAllMethods(okHttpClientClass, newCallMethodString, new XC_MethodHook() {
                 @Override
@@ -49,7 +50,10 @@ public class AdAndUpdateHook {
                         httpUrl.setAccessible(true);
                         Object urlObj = httpUrl.get(request);
                         //加了一个反营销版权保护的URL，暂时作用未知
-                        if (urlObj.toString().contains("appcustomconfig/get") || (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && !urlObj.toString().contains("music.126.net") && (urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4")))
+                        if (urlObj.toString().contains("appcustomconfig/get")
+                                //去广告
+                                || (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && !urlObj.toString().contains("music.126.net") && (urlObj.toString().contains("resource-exposure/config") || urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4")))
+                                //去升级
                                 || (SettingHelper.getInstance().isEnable(SettingHelper.update_key) && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
                             Field url = urlObj.getClass().getDeclaredField(urlFieldString);
                             boolean urlAccessible = url.isAccessible();
@@ -62,16 +66,14 @@ public class AdAndUpdateHook {
                 }
             });
 
-        Class<?> loadingAdActivityClass = XposedHelpers.findClassIfExists("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader());
-        if (loadingAdActivityClass != null)
-            findAndHookMethod(loadingAdActivityClass, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    if (SettingHelper.getInstance().isEnable(SettingHelper.black_key)) {
-                        ((Activity) param.thisObject).finish();
-                        param.setResult(null);
-                    }
-                }
-            });
+        if (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && XposedHelpers.findClassIfExists("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader()) != null)
+            findAndHookMethod("com.netease.cloudmusic.activity.LoadingAdActivity", context.getClassLoader(),
+                    "onCreate", Bundle.class, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            ((Activity) param.thisObject).finish();
+                            param.setResult(null);
+                        }
+                    });
     }
 }
