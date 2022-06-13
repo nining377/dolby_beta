@@ -49,7 +49,7 @@ public class Tools {
         try {
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

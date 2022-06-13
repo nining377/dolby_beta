@@ -113,13 +113,6 @@ public class EAPIHook {
                     original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
                 }
 
-//                logcat("EAPI ------------------------");
-//                logcat("EAPI URI: " + uri);
-//                HashMap<String, String> data = ClassHelper.HttpParams.getParams(context, eapi);
-//                logcat("EAPI data: " + (data != null ? data.toString() : ""));
-//                logcat("EAPI original: " + original);
-//                logcat("EAPI ------------------------");
-
                 param.setResult(param.getResult() instanceof JSONObject ? new JSONObject(original) : original);
             }
         });

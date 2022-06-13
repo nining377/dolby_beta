@@ -177,7 +177,7 @@ public class Hook {
         //关闭tinker
         Class<?> tinkerClass = XposedHelpers.findClassIfExists("com.tencent.tinker.loader.app.TinkerApplication", lpparam.classLoader);
         if (tinkerClass != null)
-            XposedHelpers.findAndHookConstructor(tinkerClass, int.class, String.class, new XC_MethodHook() {
+            XposedBridge.hookAllConstructors(tinkerClass, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
