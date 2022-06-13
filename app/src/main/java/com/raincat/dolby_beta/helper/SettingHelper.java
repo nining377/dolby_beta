@@ -97,7 +97,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "kuwo qq pyncmd kugou";
+    public static final String proxy_original_default = "kuwo qq kugou";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";

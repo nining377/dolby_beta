@@ -16,6 +16,8 @@ import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedBridge.hookAllConstructors;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -82,6 +84,16 @@ public class ProxyHook {
                 }
             }
         });
+
+        Class<?> okHttpClientBuilderClass = XposedHelpers.findClassIfExists("okhttp3.OkHttpClient$Builder", context.getClassLoader());
+        if (okHttpClientBuilderClass != null)
+            XposedBridge.hookAllMethods(okHttpClientBuilderClass, "addInterceptor", new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    param.setResult(param.thisObject);
+                }
+            });
 
         if (isPlayProcess)
             findAndHookMethod("com.netease.cloudmusic.service.PlayService", context.getClassLoader(), "onCreate", new XC_MethodHook() {
