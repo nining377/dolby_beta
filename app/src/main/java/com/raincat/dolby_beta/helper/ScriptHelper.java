@@ -85,7 +85,7 @@ public class ScriptHelper {
     public static void startScript(final Context context) {
         if (TextUtils.isEmpty(nodeLibPath)) {
             nodeLibPath = TextUtils.isEmpty(modulePath) ? "" : modulePath.substring(0, modulePath.lastIndexOf('/'));
-            nodeLibPath = "export PATH=$PATH:" + nodeLibPath + "/lib/arm64:" + modulePath + "!/lib/arm64-v8a";
+            nodeLibPath = "export PATH=$PATH:" + nodeLibPath + "/lib/arm64:" + modulePath + "!/lib/arm64-v8a:" + context.getApplicationInfo().nativeLibraryDir;
         }
 
         String START_PROXY = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&libnode.so app.js -a 127.0.0.1 -o %s -p %s",
