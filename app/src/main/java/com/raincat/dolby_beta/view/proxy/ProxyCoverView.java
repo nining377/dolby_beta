@@ -41,8 +41,13 @@ public class ProxyCoverView extends BaseDialogItem {
 
         setOnClickListener(view -> {
             ScriptHelper.initScript(context, true);
-            ScriptHelper.stopScript(context);
-            Tools.showToastOnLooper(context, "操作成功，脚本即将重新启动");
+            if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)
+                    && !SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+                ScriptHelper.startScript();
+                Tools.showToastOnLooper(context, "操作成功，脚本即将重新启动");
+            } else {
+                Tools.showToastOnLooper(context, "操作成功");
+            }
         });
     }
 }
