@@ -33,6 +33,7 @@ import com.raincat.dolby_beta.hook.PlayerActivityHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
 import com.raincat.dolby_beta.hook.UserProfileHook;
+import com.raincat.dolby_beta.hook.ListentogetherHook;
 import com.raincat.dolby_beta.utils.Tools;
 
 import java.io.File;
@@ -90,6 +91,11 @@ public class Hook {
                             if (SettingHelper.getInstance().isEnable(SettingHelper.black_key)) {
                                 new BlackHook(context, versionCode);
                                 deleteAdAndTinker();
+                            }
+                            //一起听
+                            if (SettingHelper.getInstance().isEnable(SettingHelper.listen_key)) {
+                                new ListentogetherHook(context, versionCode);
+
                             }
                             //不变灰
                             new GrayHook(context);
