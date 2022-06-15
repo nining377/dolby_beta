@@ -44,7 +44,10 @@ public class ScriptHelper {
     //node路径
     private static String nodeLibPath;
 
-    private static final String STOP_PROXY = "killall -9 libnode.so >/dev/null 2>&1";
+    private static final String[] STOP_PROXY = new String[]{"node=$(ps -ef |grep \"libnode.so app.js\" |grep -v grep)",
+            "if [ -n \"$node\" ]; then",
+            "killall -9 libnode.so >/dev/null 2>&1",
+            "fi"};
 
     @SuppressLint("StaticFieldLeak")
     private static Context neteaseContext;
@@ -68,8 +71,12 @@ public class ScriptHelper {
                 FileHelper.unzipFiles(getScriptPath(context) + "/UnblockNeteaseMusic.zip", getScriptPath(context));
             }
             Command auth = new Command(0, "cd " + getScriptPath(context), "chmod 0777 *");
-            Tools.shell(context, auth);
+            Tools.shell(auth);
             ExtraHelper.setExtraDate(ExtraHelper.APP_VERSION, BuildConfig.VERSION_CODE);
+        }
+        if (TextUtils.isEmpty(nodeLibPath)) {
+            nodeLibPath = TextUtils.isEmpty(modulePath) ? "" : modulePath.substring(0, modulePath.lastIndexOf('/'));
+            nodeLibPath = "export PATH=$PATH:" + nodeLibPath + "/lib/arm64:" + modulePath + "!/lib/arm64-v8a:" + context.getApplicationInfo().nativeLibraryDir;
         }
     }
 
@@ -77,22 +84,24 @@ public class ScriptHelper {
      * 采用代理模式执行UnblockNeteaseMusic
      */
     public static void startHttpProxyMode(final Context context) {
-        stopScript(context);
+        stopScript();
         ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
         Tools.showToastOnLooper(context, "服务器代理运行成功");
     }
 
-    public static void startScript(final Context context) {
-        if (TextUtils.isEmpty(nodeLibPath)) {
-            nodeLibPath = TextUtils.isEmpty(modulePath) ? "" : modulePath.substring(0, modulePath.lastIndexOf('/'));
-            nodeLibPath = "export PATH=$PATH:" + nodeLibPath + "/lib/arm64:" + modulePath + "!/lib/arm64-v8a:" + context.getApplicationInfo().nativeLibraryDir;
-        }
-
-        String START_PROXY = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&libnode.so app.js -a 127.0.0.1 -o %s -p %s",
+    public static void startScript() {
+        String script = String.format("export ENABLE_FLAC=%s&&export MIN_BR=%s&&libnode.so app.js -a 127.0.0.1 -o %s -p %s",
                 SettingHelper.getInstance().getSetting(SettingHelper.proxy_flac_key), SettingHelper.getInstance().getSetting(SettingHelper.proxy_priority_key) ? "256000" : "96000",
                 SettingHelper.getInstance().getProxyOriginal(), SettingHelper.getInstance().getProxyPort() + ":" + (SettingHelper.getInstance().getProxyPort() + 1));
 
-        Command start = new Command(0, STOP_PROXY, "cd " + getScriptPath(context), nodeLibPath + "&&" + START_PROXY) {
+        String[] START_PROXY = new String[]{"node=$(ps -ef |grep \"libnode.so app.js\" |grep -v grep)",
+                "if [ ! \"$node\" ]; then",
+                "cd " + scriptPath, nodeLibPath + "&&" + script,
+                "else",
+                "echo \"RESTART\"",
+                "killall -9 libnode.so >/dev/null 2>&1",
+                "fi"};
+        Command start = new Command(0, START_PROXY) {
             @Override
             public void commandOutput(int id, String line) {
                 if ((!line.contains("mERROR") && line.contains("Error:")) || line.contains("Port ") || line.contains("Please ")) {
@@ -105,19 +114,18 @@ public class ScriptHelper {
                     if (neteaseContext != null && ExtraHelper.getExtraDate(ExtraHelper.SCRIPT_STATUS).equals("0"))
                         Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
-                } else if (line.contains("Killed")) {
+                } else if (line.equals("Killed ")) {
+                    startScript();
+                } else if (line.equals("RESTART")) {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
-                    if (neteaseContext != null) {
-                        startScript(neteaseContext);
-                    }
                 }
             }
         };
-        Tools.shell(context, start);
+        Tools.shell(start);
     }
 
-    public static void stopScript(final Context context) {
-        Tools.shell(context, new Command(0, STOP_PROXY));
+    public static void stopScript() {
+        Tools.shell(new Command(0, STOP_PROXY));
     }
 
     /**

@@ -72,7 +72,7 @@ public class Hooklite {
                             if (!SettingHelper.getInstance().getSetting(SettingHelper.master_key))
                                 return;
                             //音源代理
-                            new ProxyHook(context, versionCode, false);
+                            new ProxyHook(context, false);
                             //黑胶
                             if (SettingHelper.getInstance().isEnable(SettingHelper.black_key)) {
                                 new BlackHook(context, versionCode);
@@ -134,7 +134,7 @@ public class Hooklite {
                             }, intentFilter);
                         } else if (processName.equals(PACKAGE_NAME + ":play") && SettingHelper.getInstance().getSetting(SettingHelper.master_key)) {
                             //音源代理
-                            new ProxyHook(context, versionCode, true);
+                            new ProxyHook(context, true);
                             IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(msg_hook_play_process);
                             context.registerReceiver(new BroadcastReceiver() {

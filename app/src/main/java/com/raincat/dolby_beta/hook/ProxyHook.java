@@ -44,7 +44,7 @@ public class ProxyHook {
 
     private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
 
-    public ProxyHook(Context context, int versionCode, boolean isPlayProcess) {
+    public ProxyHook(Context context, boolean isPlayProcess) {
         if (!SettingHelper.getInstance().isEnable(SettingHelper.proxy_master_key)) {
             ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
             return;
@@ -111,24 +111,17 @@ public class ProxyHook {
             });
         }
 
-        if (isPlayProcess)
-            findAndHookMethod("com.netease.cloudmusic.service.PlayService", context.getClassLoader(), "onCreate", new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    ScriptHelper.initScript(context, false);
-                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
-                        ScriptHelper.startHttpProxyMode(context);
-                    } else {
-                        ScriptHelper.startScript(context);
-                    }
-                }
-            });
-
         if (!isPlayProcess)
             findAndHookMethod("com.netease.cloudmusic.activity.LoadingActivity", context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
+                    ScriptHelper.initScript(context, false);
+                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+                        ScriptHelper.startHttpProxyMode(context);
+                    } else {
+                        ScriptHelper.startScript();
+                    }
                 }
             });
     }
