@@ -44,7 +44,7 @@ public class NeteaseSongListBean {
         private int code;
         private int expi;
         private String type;
-        private int gain;
+        private float gain;
         private int fee;
         private Object uf;
         private int payed;
@@ -118,11 +118,11 @@ public class NeteaseSongListBean {
             this.type = type;
         }
 
-        public int getGain() {
+        public float getGain() {
             return gain;
         }
 
-        public void setGain(int gain) {
+        public void setGain(float gain) {
             this.gain = gain;
         }
 

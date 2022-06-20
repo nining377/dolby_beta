@@ -44,7 +44,7 @@ public class EAPIHelper {
                 dataBean.setFlag(0);
                 dataBean.setPayed(0);
                 dataBean.setFreeTrialInfo(null);
-                if (dataBean.getUrl().contains("?"))
+                if (dataBean.getUrl() != null && dataBean.getUrl().contains("?"))
                     dataBean.setUrl(dataBean.getUrl().substring(0, dataBean.getUrl().indexOf("?")));
             }
             modifyListBean.getData().add(dataBean);
