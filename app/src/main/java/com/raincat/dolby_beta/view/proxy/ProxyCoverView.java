@@ -43,11 +43,11 @@ public class ProxyCoverView extends BaseDialogItem {
             ScriptHelper.initScript(context, true);
             if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)
                     && !SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
-                ScriptHelper.startScript();
                 Tools.showToastOnLooper(context, "操作成功，脚本即将重新启动");
             } else {
                 Tools.showToastOnLooper(context, "操作成功");
             }
+            ScriptHelper.startScript();
         });
     }
 }

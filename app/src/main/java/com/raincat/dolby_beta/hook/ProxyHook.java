@@ -45,11 +45,6 @@ public class ProxyHook {
     private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
 
     public ProxyHook(Context context, boolean isPlayProcess) {
-        if (!SettingHelper.getInstance().isEnable(SettingHelper.proxy_master_key)) {
-            ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
-            return;
-        }
-
         Class<?> realCallClass = findClassIfExists("okhttp3.internal.connection.RealCall", context.getClassLoader());
         if (realCallClass != null) {
             fieldSSLSocketFactory = "sslSocketFactoryOrNull";
@@ -116,11 +111,13 @@ public class ProxyHook {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
-                    ScriptHelper.initScript(context, false);
-                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
-                        ScriptHelper.startHttpProxyMode(context);
-                    } else {
-                        ScriptHelper.startScript();
+                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)) {
+                        ScriptHelper.initScript(context, false);
+                        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+                            ScriptHelper.startHttpProxyMode(context);
+                        } else {
+                            ScriptHelper.startScript();
+                        }
                     }
                 }
             });

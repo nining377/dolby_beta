@@ -115,7 +115,8 @@ public class ScriptHelper {
                         Tools.showToastOnLooper(neteaseContext, "UnblockNeteaseMusic运行成功");
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "1");
                 } else if (line.equals("Killed ")) {
-                    startScript();
+                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key))
+                        startScript();
                 } else if (line.equals("RESTART")) {
                     ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
                 }
