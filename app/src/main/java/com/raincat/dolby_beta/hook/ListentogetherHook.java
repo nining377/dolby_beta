@@ -37,9 +37,9 @@ public class ListentogetherHook {
         }else if (versionCode > 8006019) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
                     "n1", XC_MethodReplacement.returnConstant(true));
-        }else if (versionCode >= 8006000) {
+        }else if (versionCode >= 8006000){
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
                     "m1", XC_MethodReplacement.returnConstant(true));
         }
     }
-
+}
