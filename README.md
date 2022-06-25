@@ -28,7 +28,9 @@
 
 [杜比大喇叭β版](https://wwi.lanzoui.com/b0cqxgwje) 访问密码：brdb
 
-[网易云音乐模块内嵌版](https://wwu.lanzouw.com/b0crkhyzg) 访问密码：3qvw
+[网易云音乐模块内嵌版①](https://wwu.lanzouw.com/b0crkhyzg) 访问密码：3qvw
+
+[网易云音乐模块内嵌版②](https://www.123pan.com/s/8qHrVv-hk1r) 访问密码：Wp2p
 
 [网易云音乐模块内嵌版教程](https://github.com/nining377/dolby_beta/issues/142)
 
