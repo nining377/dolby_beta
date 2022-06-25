@@ -8,8 +8,8 @@ android {
         applicationId "com.raincat.dolby_beta"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 352
-        versionName "3.5.2"
+        versionCode 353
+        versionName "3.5.3"
 
         ndk {
             abiFilters "arm64-v8a"
@@ -54,10 +54,10 @@ dependencies {
     //xposed库
     compileOnly 'de.robv.android.xposed:api:82'
     compileOnly 'de.robv.android.xposed:api:82:sources'
-    implementation 'com.annimon:stream:1.2.1'
+    implementation 'com.annimon:stream:1.2.2'
     implementation 'org.smali:dexlib2:2.3.4'
     implementation 'com.google.guava:guava:28.2-android'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     implementation project(':hotxposed')
 }
