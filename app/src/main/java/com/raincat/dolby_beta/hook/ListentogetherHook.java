@@ -31,10 +31,15 @@ public class ListentogetherHook {
         }else if (versionCode > 8006045) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.r", context.getClassLoader()),
                     "l1", XC_MethodReplacement.returnConstant(true));
-        }else if (versionCode == 8006045) {
+        }else if (versionCode > 8006040) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.p", context.getClassLoader()),
                     "h1", XC_MethodReplacement.returnConstant(true));
-        }
+        }else if (versionCode > 8006019) {
+            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
+                    "n1", XC_MethodReplacement.returnConstant(true));
+        }else if (versionCode >= 8006000) {
+            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
+                    "m1", XC_MethodReplacement.returnConstant(true));
         }
     }
 
