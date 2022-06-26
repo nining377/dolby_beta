@@ -10,7 +10,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class ListentogetherHook {
     public ListentogetherHook(Context context, int versionCode) {
-        if (versionCode == 8007070) {
+        if (versionCode > 8007075) {
+            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
+                    "v", XC_MethodReplacement.returnConstant(true));
+        }else if (versionCode > 8007070) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.y", context.getClassLoader()),
                     "u", XC_MethodReplacement.returnConstant(true));
         }else if (versionCode > 8007055) {
@@ -28,10 +31,15 @@ public class ListentogetherHook {
         }else if (versionCode > 8006045) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.r", context.getClassLoader()),
                     "l1", XC_MethodReplacement.returnConstant(true));
-        }else if (versionCode == 8006045) {
+        }else if (versionCode > 8006040) {
             findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.p", context.getClassLoader()),
                     "h1", XC_MethodReplacement.returnConstant(true));
-        }
+        }else if (versionCode > 8006019) {
+            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
+                    "n1", XC_MethodReplacement.returnConstant(true));
+        }else if (versionCode >= 8006000){
+            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.x", context.getClassLoader()),
+                    "m1", XC_MethodReplacement.returnConstant(true));
         }
     }
-
+}
