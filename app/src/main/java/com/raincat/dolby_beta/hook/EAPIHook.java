@@ -50,7 +50,17 @@ public class EAPIHook {
                     return;
                 String path = uri.getPath();
 
-                if (path.contains("v1/playlist/manipulate/tracks")) {
+                if (path.contains("song/enhance/player/url")) {
+                    original = EAPIHelper.modifyPlayer(original);
+                } else if (path.contains("song/enhance/download/url")) {
+                    JSONObject jsonObject = new JSONObject(original);
+                    JSONObject object = jsonObject.getJSONObject("data");
+                    JSONArray array = new JSONArray();
+                    array.put(object);
+                    jsonObject.put("data", array);
+                    original = EAPIHelper.modifyPlayer(jsonObject.toString())
+                            .replace("[", "").replace("]", "");
+                } else if (path.contains("v1/playlist/manipulate/tracks")) {
                     original = EAPIHelper.modifyManipulate(ClassHelper.HttpParams.getParams(context, eapi), original);
                 } else if (path.contains("song/like")) {
                     original = EAPIHelper.modifyLike(ClassHelper.HttpParams.getParams(context, eapi), original);
@@ -112,13 +122,6 @@ public class EAPIHook {
                     EAPIHelper.uploadCloud(songid);
                     original = CloudDao.getInstance(context).getSong(Integer.parseInt(songid));
                 }
-
-//                logcat("EAPI ------------------------");
-//                logcat("EAPI URI: " + uri);
-//                HashMap<String, String> data = ClassHelper.HttpParams.getParams(context, eapi);
-//                logcat("EAPI data: " + (data != null ? data.toString() : ""));
-//                logcat("EAPI original: " + original);
-//                logcat("EAPI ------------------------");
 
                 param.setResult(param.getResult() instanceof JSONObject ? new JSONObject(original) : original);
             }

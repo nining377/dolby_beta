@@ -33,7 +33,16 @@ import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
-import com.raincat.dolby_beta.view.proxy.*;
+import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
+import com.raincat.dolby_beta.view.proxy.ProxyFlacView;
+import com.raincat.dolby_beta.view.proxy.ProxyGrayView;
+import com.raincat.dolby_beta.view.proxy.ProxyHttpView;
+import com.raincat.dolby_beta.view.proxy.ProxyMasterView;
+import com.raincat.dolby_beta.view.proxy.ProxyOriginalView;
+import com.raincat.dolby_beta.view.proxy.ProxyPortView;
+import com.raincat.dolby_beta.view.proxy.ProxyPriorityView;
+import com.raincat.dolby_beta.view.proxy.ProxyServerView;
+import com.raincat.dolby_beta.view.proxy.ProxyTitleView;
 import com.raincat.dolby_beta.view.setting.AboutView;
 import com.raincat.dolby_beta.view.setting.BeautyView;
 import com.raincat.dolby_beta.view.setting.BlackView;
@@ -46,6 +55,7 @@ import com.raincat.dolby_beta.view.setting.SignSongSelfView;
 import com.raincat.dolby_beta.view.setting.SignView;
 import com.raincat.dolby_beta.view.setting.TitleView;
 import com.raincat.dolby_beta.view.setting.UpdateView;
+import com.raincat.dolby_beta.view.setting.ListenView;
 import com.raincat.dolby_beta.view.setting.WarnView;
 
 import java.lang.reflect.Field;
@@ -230,6 +240,8 @@ public class SettingHook {
         warnView.setBaseOnView(masterView);
         BlackView blackView = new BlackView(context);
         blackView.setBaseOnView(masterView);
+        ListenView listenView = new ListenView(context);
+        listenView.setBaseOnView(masterView);
         FixCommentView fixCommentView = new FixCommentView(context);
         fixCommentView.setBaseOnView(masterView);
         UpdateView updateView = new UpdateView(context);
@@ -250,6 +262,7 @@ public class SettingHook {
         dialogRoot.addView(dexView);
         dialogRoot.addView(warnView);
         dialogRoot.addView(blackView);
+        dialogRoot.addView(listenView);
         dialogRoot.addView(fixCommentView);
         dialogRoot.addView(updateView);
         dialogRoot.addView(signView);
@@ -271,8 +284,6 @@ public class SettingHook {
         ProxyMasterView proxyMasterView = new ProxyMasterView(context);
         ProxyCoverView proxyCoverView = new ProxyCoverView(context);
         proxyCoverView.setBaseOnView(proxyMasterView);
-        ProxyCompatibilityView proxyCompatibilityView = new ProxyCompatibilityView(context);
-        proxyCompatibilityView.setBaseOnView(proxyMasterView);
         ProxyServerView ProxyServerView = new ProxyServerView(context);
         ProxyServerView.setBaseOnView(proxyMasterView);
         ProxyPriorityView proxyPriorityView = new ProxyPriorityView(context);
@@ -291,7 +302,6 @@ public class SettingHook {
         dialogProxyRoot.addView(new ProxyTitleView(context));
         dialogProxyRoot.addView(proxyMasterView);
         dialogProxyRoot.addView(proxyCoverView);
-        dialogProxyRoot.addView(proxyCompatibilityView);
         dialogProxyRoot.addView(ProxyServerView);
         dialogProxyRoot.addView(proxyPriorityView);
         dialogProxyRoot.addView(proxyFlacView);
@@ -350,7 +360,6 @@ public class SettingHook {
 
     private void restartApplication(Context context) {
         ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
-        ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_RETRY, "3");
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoListist = activityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoListist) {

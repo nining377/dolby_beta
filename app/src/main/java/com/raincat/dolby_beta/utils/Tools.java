@@ -49,7 +49,7 @@ public class Tools {
         try {
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -77,13 +77,12 @@ public class Tools {
     /**
      * ADB命令
      */
-    public static void shell(Context context, Command command) {
+    public static void shell(Command command) {
         try {
             RootTools.closeAllShells();
             RootTools.getShell(false).add(command);
         } catch (TimeoutException | RootDeniedException | IOException e) {
             e.printStackTrace();
-            showToastOnLooper(context, e.getMessage());
         }
     }
 }

@@ -16,10 +16,8 @@ import com.raincat.dolby_beta.db.ExtraDao;
  */
 
 public class ExtraHelper {
-    //脚本运行情况
+    //脚本运行情况，运行中1，未运行0
     public static final String SCRIPT_STATUS = "script_status";
-    //脚本运行重试
-    public static final String SCRIPT_RETRY = "script_retry";
     //APP版本号
     public static final String APP_VERSION = "app_version";
 
@@ -47,7 +45,6 @@ public class ExtraHelper {
         ExtraDao.getInstance().saveExtra(key, value.toString());
     }
 
-
     /**
      * 清除当前用户的数据
      */
@@ -55,5 +52,7 @@ public class ExtraHelper {
         setExtraDate(COOKIE, "-1");
         setExtraDate(USER_ID, "-1");
         setExtraDate(LOVE_PLAY_LIST, "-1");
+        setExtraDate(SIGN_TIME, "-1");
+        setExtraDate(SIGN_SONG_TIME, "-1");
     }
 }

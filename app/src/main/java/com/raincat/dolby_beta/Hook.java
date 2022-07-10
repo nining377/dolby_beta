@@ -33,6 +33,7 @@ import com.raincat.dolby_beta.hook.PlayerActivityHook;
 import com.raincat.dolby_beta.hook.ProxyHook;
 import com.raincat.dolby_beta.hook.SettingHook;
 import com.raincat.dolby_beta.hook.UserProfileHook;
+import com.raincat.dolby_beta.hook.ListentogetherHook;
 import com.raincat.dolby_beta.utils.Tools;
 
 import java.io.File;
@@ -85,11 +86,16 @@ public class Hook {
                             if (!SettingHelper.getInstance().getSetting(SettingHelper.master_key))
                                 return;
                             //音源代理
-                            new ProxyHook(context, versionCode, false);
+                            new ProxyHook(context, false);
                             //黑胶
                             if (SettingHelper.getInstance().isEnable(SettingHelper.black_key)) {
                                 new BlackHook(context, versionCode);
                                 deleteAdAndTinker();
+                            }
+                            //一起听
+                            if (SettingHelper.getInstance().isEnable(SettingHelper.listen_key)) {
+                                new ListentogetherHook(context, versionCode);
+
                             }
                             //不变灰
                             new GrayHook(context);
@@ -155,7 +161,7 @@ public class Hook {
                             }, intentFilter);
                         } else if (processName.equals(PACKAGE_NAME + ":play") && SettingHelper.getInstance().getSetting(SettingHelper.master_key)) {
                             //音源代理
-                            new ProxyHook(context, versionCode, true);
+                            new ProxyHook(context, true);
                             IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(msg_hook_play_process);
                             context.registerReceiver(new BroadcastReceiver() {
@@ -177,7 +183,7 @@ public class Hook {
         //关闭tinker
         Class<?> tinkerClass = XposedHelpers.findClassIfExists("com.tencent.tinker.loader.app.TinkerApplication", lpparam.classLoader);
         if (tinkerClass != null)
-            XposedHelpers.findAndHookConstructor(tinkerClass, int.class, String.class, new XC_MethodHook() {
+            XposedBridge.hookAllConstructors(tinkerClass, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);

@@ -38,6 +38,10 @@ public class SettingHelper {
     public static final String black_title = "本地黑胶";
     public static final String black_sub = "去广告、鲸云音效、个性换肤等（自定义启动图等需要访问网易服务器的设置不可用）";
 
+    public static final String listen_key = "β_listen_key";
+    public static final String listen_title = "解锁一起听蒙面查看权限";
+    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面（暂时只支持8.6.0-8.7.80）";
+
     public static final String fix_comment_key = "β_fix_comment_key";
     public static final String fix_comment_title = "修复评论区加载失败";
     public static final String fix_comment_sub = "如平时不看评论区或评论区无问题请勿打钩";
@@ -71,10 +75,6 @@ public class SettingHelper {
     public static final String proxy_master_key = "β_proxy_master_key";
     public static final String proxy_master_title = "代理开关";
 
-    public static final String proxy_compatibility_key = "β_proxy_compatibility_key";
-    public static final String proxy_compatibility_title = "兼容模式";
-    public static final String proxy_compatibility_sub = "当正常模式无法启动脚本时可以尝试使用兼容模式，该模式下对运存需求较高，Android 12和API29需要使用此模式";
-
     public static final String proxy_server_key = "β_proxy_server_key";
     public static final String proxy_server_title = "服务器代理模式";
     public static final String proxy_server_sub = "如果您不想使用高占用的node，有自己的服务器代理可使用此方式并填写自己的服务器地址与端口，且使用服务器对应音质";
@@ -101,7 +101,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "kuwo qq pyncmd kugou";
+    public static final String proxy_original_default = "kuwo pyncmd";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -168,13 +168,13 @@ public class SettingHelper {
         settingMap.put(dex_key, sharedPreferences.getBoolean(dex_key, true));
         settingMap.put(warn_key, sharedPreferences.getBoolean(warn_key, true));
         settingMap.put(black_key, sharedPreferences.getBoolean(black_key, true));
+        settingMap.put(listen_key, sharedPreferences.getBoolean(listen_key, false));
         settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, false));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
         settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
-        settingMap.put(proxy_compatibility_key, sharedPreferences.getBoolean(proxy_compatibility_key, true));
         settingMap.put(proxy_server_key, sharedPreferences.getBoolean(proxy_server_key, false));
         settingMap.put(proxy_priority_key, sharedPreferences.getBoolean(proxy_priority_key, false));
         settingMap.put(proxy_flac_key, sharedPreferences.getBoolean(proxy_flac_key, false));
@@ -268,8 +268,7 @@ public class SettingHelper {
             sharedPreferences.edit().putString(SettingHelper.http_proxy_key, http).apply();
     }
 
-    public String gethttpProxy() {
+    public String getHttpProxy() {
         return sharedPreferences.getString(SettingHelper.http_proxy_key, SettingHelper.http_proxy_default);
-
     }
 }

@@ -36,7 +36,7 @@ public class ProxyHttpView extends BaseDialogInputItem {
         super.init(context, attrs);
         title = SettingHelper.http_proxy_title;
         editView.setKeyListener(DigitsKeyListener.getInstance("0123456789.qwertyuiopasdfghjklzxcvbnm"));
-        setData(SettingHelper.getInstance().gethttpProxy() + "", SettingHelper.http_proxy_default);
+        setData(SettingHelper.getInstance().getHttpProxy() + "", SettingHelper.http_proxy_default);
 
         defaultView.setOnClickListener(view -> {
             editView.setText(SettingHelper.http_proxy_default);
