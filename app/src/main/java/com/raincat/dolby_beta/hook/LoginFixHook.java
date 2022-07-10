@@ -23,7 +23,9 @@ public class LoginFixHook {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
-                    if (param.args[0].equals("/api/login/cellphone")) {
+                    if (param.args[0].equals("/api/login/cellphone")
+                            || param.args[0].equals("/api/login")
+                            || param.args[0].equals("/api/login/sns")) {
                         if (((String) param.args[1]).contains("\"checkToken\":\"\"")) {
                             Class<?> watchmanClass = XposedHelpers.findClassIfExists("com.netease.mobsecurity.rjsb.watchman", context.getClassLoader());
                             if (watchmanClass == null)
