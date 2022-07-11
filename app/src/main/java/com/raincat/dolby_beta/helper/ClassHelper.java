@@ -191,7 +191,7 @@ public class ClassHelper {
         //下载完后的MD5检查
         public static Method getCheckMd5Method(Context context) {
             if (checkMd5Method == null) {
-                Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
+                Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z0-9]{1,2}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
 
                 try {
@@ -213,7 +213,7 @@ public class ClassHelper {
         //下载之前下载状态检查
         public static Method getCheckDownloadStatusMethod(Context context) {
             if (checkDownloadStatusMethod == null) {
-                Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z]$");
+                Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.transfer\\.download\\.[a-z0-9]{1,2}$");
                 List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
 
                 try {
@@ -345,7 +345,7 @@ public class ClassHelper {
             if (clazz == null) {
                 try {
                     Pattern pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.module\\.account\\.[a-z]$");
-                    Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.sidebar\\.account\\.[a-z]$");
+                    Pattern pattern2 = Pattern.compile("^com\\.netease\\.cloudmusic\\.music\\.biz\\.sidebar\\.account\\.[a-z0-9]{1,2}$");
                     List<String> list = ClassHelper.getFilteredClasses(pattern, Collections.reverseOrder());
                     list.addAll(ClassHelper.getFilteredClasses(pattern2, Collections.reverseOrder()));
                     clazz = Stream.of(list)
