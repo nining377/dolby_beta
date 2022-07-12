@@ -40,7 +40,7 @@ public class SettingHelper {
 
     public static final String listen_key = "β_listen_key";
     public static final String listen_title = "解锁一起听蒙面查看权限";
-    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面（暂时只支持8.6.0-8.7.80）";
+    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面（暂时只支持8.6.0-8.7.90）";
 
     public static final String fix_comment_key = "β_fix_comment_key";
     public static final String fix_comment_title = "修复评论区加载失败";
