@@ -136,7 +136,7 @@ public class ScriptHelper {
         SSLContext sslContext = null;
         try {
             File ca = new File(getScriptPath(context) + File.separator + "ca.crt");
-            if (ca.exists()) {
+            if (!SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key) && ca.exists()) {
                 InputStream certificate = new FileInputStream(ca);
                 Certificate certificate1 = CertificateFactory.getInstance("X.509").generateCertificate(certificate);
                 KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
