@@ -53,6 +53,8 @@ public class NeteaseSongListBean {
         private FreeTrialInfoBean freeTrialInfo;
         private String level;
         private String encodeType;
+        private int peak;
+        private int time;
 
         public long getId() {
             return id;
@@ -188,6 +190,22 @@ public class NeteaseSongListBean {
 
         public void setEncodeType(String encodeType) {
             this.encodeType = encodeType;
+        }
+
+        public int getPeak() {
+            return peak;
+        }
+
+        public void setPeak(int peak) {
+            this.peak = peak;
+        }
+
+        public int getTime() {
+            return time;
+        }
+
+        public void setTime(int time) {
+            this.time = time;
         }
 
         public static class FreeTrialInfoBean {
