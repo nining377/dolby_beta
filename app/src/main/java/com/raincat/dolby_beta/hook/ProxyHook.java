@@ -71,10 +71,11 @@ public class ProxyHook {
                     urlField.setAccessible(true);
                     Object urlObj = urlField.get(request);
                     for (String url : whiteUrlList) {
-                        if (urlObj.toString().contains(url)) {
+                        setProxy(context, client);
+                      /*  if (urlObj.toString().contains(url)) {
                             setProxy(context, client);
                             break;
-                        }
+                        }*/
                     }
                 }
             }
