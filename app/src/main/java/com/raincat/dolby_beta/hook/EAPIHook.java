@@ -50,9 +50,9 @@ public class EAPIHook {
                     return;
                 String path = uri.getPath();
 
-                if (path.contains("song/enhance/player/url")) {
+                if (path.contains("song/enhance/player/url")||path.contains("song/enhance/player/url/v1")) {
                     original = EAPIHelper.modifyPlayer(original);
-                } else if (path.contains("song/enhance/download/url")) {
+                } else if (path.contains("song/enhance/download/url")||path.contains("song/enhance/download/url/v1")) {
                     JSONObject jsonObject = new JSONObject(original);
                     JSONObject object = jsonObject.getJSONObject("data");
                     JSONArray array = new JSONArray();

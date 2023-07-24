@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.net.ssl.SSLSocketFactory;
 
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -42,7 +43,7 @@ public class ProxyHook {
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
 
-    private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
+    private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url","/package");
 
     public ProxyHook(Context context, boolean isPlayProcess) {
         Class<?> realCallClass = findClassIfExists("okhttp3.internal.connection.RealCall", context.getClassLoader());
@@ -71,11 +72,10 @@ public class ProxyHook {
                     urlField.setAccessible(true);
                     Object urlObj = urlField.get(request);
                     for (String url : whiteUrlList) {
-                        setProxy(context, client);
-                      /*  if (urlObj.toString().contains(url)) {
+                       if (urlObj.toString().contains(url)) {
                             setProxy(context, client);
                             break;
-                        }*/
+                        }
                     }
                 }
             }

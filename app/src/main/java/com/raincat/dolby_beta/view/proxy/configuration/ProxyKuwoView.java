@@ -1,4 +1,4 @@
-package com.raincat.dolby_beta.view.proxy;
+package com.raincat.dolby_beta.view.proxy.configuration;
 
 import android.content.Context;
 import android.text.Editable;
@@ -18,28 +18,28 @@ import com.raincat.dolby_beta.view.BaseDialogInputItem;
  * </pre>
  */
 
-public class ProxyHttpView extends BaseDialogInputItem {
-    public ProxyHttpView(Context context, AttributeSet attrs, int defStyle) {
+public class ProxyKuwoView extends BaseDialogInputItem {
+    public ProxyKuwoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public ProxyHttpView(Context context, AttributeSet attrs) {
+    public ProxyKuwoView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ProxyHttpView(Context context) {
+    public ProxyKuwoView(Context context) {
         super(context);
     }
 
     @Override
     public void init(Context context, AttributeSet attrs) {
         super.init(context, attrs);
-        title = SettingHelper.http_proxy_title;
-        editView.setKeyListener(DigitsKeyListener.getInstance("0123456789.qwertyuiopasdfghjklzxcvbnm"));
-        setData(SettingHelper.getInstance().getHttpProxy() + "", SettingHelper.http_proxy_default);
+        title = SettingHelper.kuwo_cookie_title;
+        editView.setKeyListener(DigitsKeyListener.getInstance("0123456789_.qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM; "));
+        setData(SettingHelper.getInstance().getKuwoCookie(), SettingHelper.kuwo_cookie_default);
 
         defaultView.setOnClickListener(view -> {
-            editView.setText(SettingHelper.http_proxy_default);
+            editView.setText(SettingHelper.kuwo_cookie_default);
             editView.setSelection(editView.getText().length());
         });
 
@@ -56,7 +56,7 @@ public class ProxyHttpView extends BaseDialogInputItem {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                SettingHelper.getInstance().setHttpProxy(editView.getText().toString());
+                SettingHelper.getInstance().setKuwoCookie(editView.getText().toString());
             }
         });
     }

@@ -33,16 +33,8 @@ import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
-import com.raincat.dolby_beta.view.proxy.ProxyCoverView;
-import com.raincat.dolby_beta.view.proxy.ProxyFlacView;
-import com.raincat.dolby_beta.view.proxy.ProxyGrayView;
-import com.raincat.dolby_beta.view.proxy.ProxyHttpView;
-import com.raincat.dolby_beta.view.proxy.ProxyMasterView;
-import com.raincat.dolby_beta.view.proxy.ProxyOriginalView;
-import com.raincat.dolby_beta.view.proxy.ProxyPortView;
-import com.raincat.dolby_beta.view.proxy.ProxyPriorityView;
-import com.raincat.dolby_beta.view.proxy.ProxyServerView;
-import com.raincat.dolby_beta.view.proxy.ProxyTitleView;
+import com.raincat.dolby_beta.view.proxy.*;
+import com.raincat.dolby_beta.view.proxy.configuration.*;
 import com.raincat.dolby_beta.view.setting.AboutView;
 import com.raincat.dolby_beta.view.setting.BeautyView;
 import com.raincat.dolby_beta.view.setting.BlackView;
@@ -193,6 +185,7 @@ public class SettingHook {
         intentFilter.addAction(SettingHelper.proxy_setting);
         intentFilter.addAction(SettingHelper.beauty_setting);
         intentFilter.addAction(SettingHelper.sidebar_setting);
+        intentFilter.addAction(SettingHelper.proxy_configuration_setting);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -219,6 +212,8 @@ public class SettingHook {
                     showBeautyDialog(context);
                 } else if (intent.getAction().equals(SettingHelper.sidebar_setting)) {
                     showSidebarDialog(context);
+                }else if (intent.getAction().equals(SettingHelper.proxy_configuration_setting)) {
+                    showProxyConfigurationDialog(context);
                 }
             }
         };
@@ -292,12 +287,9 @@ public class SettingHook {
         proxyFlacView.setBaseOnView(proxyMasterView);
         ProxyGrayView proxyGrayView = new ProxyGrayView(context);
         proxyGrayView.setBaseOnView(proxyMasterView);
-        ProxyHttpView proxyHttpView = new ProxyHttpView(context);
-        proxyHttpView.setBaseOnView(proxyMasterView);
-        ProxyPortView proxyPortView = new ProxyPortView(context);
-        proxyPortView.setBaseOnView(proxyMasterView);
-        ProxyOriginalView proxyOriginalView = new ProxyOriginalView(context);
-        proxyOriginalView.setBaseOnView(proxyMasterView);
+        ProxyConfigurationView proxyConfigurationView = new ProxyConfigurationView(context);
+        proxyConfigurationView.setBaseOnView(proxyMasterView);
+
 
         dialogProxyRoot.addView(new ProxyTitleView(context));
         dialogProxyRoot.addView(proxyMasterView);
@@ -306,16 +298,36 @@ public class SettingHook {
         dialogProxyRoot.addView(proxyPriorityView);
         dialogProxyRoot.addView(proxyFlacView);
         dialogProxyRoot.addView(proxyGrayView);
-        dialogProxyRoot.addView(proxyHttpView);
-        dialogProxyRoot.addView(proxyPortView);
-        dialogProxyRoot.addView(proxyOriginalView);
+        dialogProxyRoot.addView(proxyConfigurationView);
+
         new AlertDialog.Builder(context)
                 .setView(dialogProxyRoot)
                 .setCancelable(true)
                 .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
                 .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
     }
+    private void showProxyConfigurationDialog(final Context context) {
+        dialogProxyRoot = new BaseDialogItem(context);
+        dialogProxyRoot.setOrientation(LinearLayout.VERTICAL);
+        ProxyHttpView proxyHttpView = new ProxyHttpView(context);
+        ProxyPortView proxyPortView = new ProxyPortView(context);
+        ProxyOriginalView proxyOriginalView = new ProxyOriginalView(context);
+        ProxyKuwoView proxykuwoView = new ProxyKuwoView(context);
+        ProxyQqView proxyqqView = new ProxyQqView(context);
 
+
+        dialogProxyRoot.addView(new ProxyConfigurationTitleView(context));
+        dialogProxyRoot.addView(proxyHttpView);
+        dialogProxyRoot.addView(proxyPortView);
+        dialogProxyRoot.addView(proxyOriginalView);
+        dialogProxyRoot.addView(proxykuwoView);
+        dialogProxyRoot.addView(proxyqqView);
+        new AlertDialog.Builder(context)
+                .setView(dialogProxyRoot)
+                .setCancelable(true)
+                .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
+                .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
+    }
     private void showBeautyDialog(final Context context) {
         dialogBeautyRoot = new BaseDialogItem(context);
         dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);

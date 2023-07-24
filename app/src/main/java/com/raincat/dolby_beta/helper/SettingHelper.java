@@ -22,6 +22,7 @@ public class SettingHelper {
     public static final String proxy_setting = "β_proxy_setting";
     public static final String beauty_setting = "β_beauty_setting";
     public static final String sidebar_setting = "β_sidebar_setting";
+    public static final String proxy_configuration_setting = "β_proxy_configuration_setting";
 
     public static final String master_key = "β_master_key";
     public static final String master_title = "总开关";
@@ -40,7 +41,7 @@ public class SettingHelper {
 
     public static final String listen_key = "β_listen_key";
     public static final String listen_title = "解锁一起听蒙面查看权限";
-    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面（暂时只支持8.6.0-8.7.90）";
+    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面";
 
     public static final String fix_comment_key = "β_fix_comment_key";
     public static final String fix_comment_title = "修复评论区加载失败";
@@ -72,6 +73,10 @@ public class SettingHelper {
     public static final String proxy_key = "β_proxy_key";
     public static final String proxy_title = "音源代理设置";
 
+    public static final String proxy_configuration_key = "β_proxy_configuration_key";
+    public static final String proxy_configuration_title = "代理参数配置";
+    public static final String proxy_configuration_sub = "在此填入对于代理服务器与相关脚本参数";
+
     public static final String proxy_master_key = "β_proxy_master_key";
     public static final String proxy_master_title = "代理开关";
 
@@ -94,6 +99,14 @@ public class SettingHelper {
     public static final String http_proxy_key = "β_http_proxy_key";
     public static final String http_proxy_title = "代理服务器";
     public static final String http_proxy_default = "127.0.0.1";
+
+    public static final String kuwo_cookie_key = "β_kuwo_cookie_key";
+    public static final String kuwo_cookie_title = "酷我Cookie";
+    public static final String kuwo_cookie_default = "Hm_Iuvt_cdb524f42f0ce19b169b8072123a4727=CQXkhzXjGD6MFQrPTBxEpSmZXF78wP8e; Secret=1d0d220792feb563f97fdb0de2b7ebad69f781cdcdbe51d1203a3be9d3e92f5e04b00a24";
+
+    public static final String qq_cookie_key = "β_qq_cookie_key";
+    public static final String qq_cookie_title = "QQCookie";
+    public static final String qq_cookie_default = "uin=<your_uin>; qm_keyst=<your_qm_keyst>";
 
     public static final String proxy_port_key = "β_proxy_port_key";
     public static final String proxy_port_title = "代理端口（1~65535）";
@@ -270,5 +283,19 @@ public class SettingHelper {
 
     public String getHttpProxy() {
         return sharedPreferences.getString(SettingHelper.http_proxy_key, SettingHelper.http_proxy_default);
+    }
+    public String getKuwoCookie() {
+        return sharedPreferences.getString(SettingHelper.kuwo_cookie_key, SettingHelper.kuwo_cookie_default);
+    }
+    public void setKuwoCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.kuwo_cookie_key, cookie).apply();
+    }
+    public String getQqCookie() {
+        return sharedPreferences.getString(SettingHelper.qq_cookie_key, SettingHelper.qq_cookie_default);
+    }
+    public void setQqCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.qq_cookie_key, cookie).apply();
     }
 }

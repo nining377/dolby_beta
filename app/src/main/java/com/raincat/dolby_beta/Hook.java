@@ -94,8 +94,7 @@ public class Hook {
                             }
                             //一起听
                             if (SettingHelper.getInstance().isEnable(SettingHelper.listen_key)) {
-                                new ListentogetherHook(context, versionCode);
-
+                                new ListentogetherHook(context,versionCode);
                             }
                             //不变灰
                             new GrayHook(context);
