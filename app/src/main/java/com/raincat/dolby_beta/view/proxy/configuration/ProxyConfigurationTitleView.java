@@ -9,10 +9,10 @@ import com.raincat.dolby_beta.view.BaseDialogItem;
 
 /**
  * <pre>
- *     author : RainCat
- *     e-mail : nining377@gmail.com
- *     time   : 2021/09/10
- *     desc   : 代理标题
+ *     author : Luoxingran
+ *     e-mail : szb5845201314@gmail.com
+ *     time   : 2023/07/24
+ *     desc   : 代理配置标题
  *     version: 1.0
  * </pre>
  */

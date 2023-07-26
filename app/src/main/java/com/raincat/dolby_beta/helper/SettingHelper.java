@@ -108,6 +108,10 @@ public class SettingHelper {
     public static final String qq_cookie_title = "QQCookie";
     public static final String qq_cookie_default = "uin=<your_uin>; qm_keyst=<your_qm_keyst>";
 
+    public static final String migu_cookie_key = "β_migu_cookie_key";
+    public static final String migu_cookie_title = "咪咕Cookie";
+    public static final String migu_cookie_default = "<your_aversionid>";
+
     public static final String proxy_port_key = "β_proxy_port_key";
     public static final String proxy_port_title = "代理端口（1~65535）";
     public static final int proxy_port_default = 23338;
@@ -297,5 +301,12 @@ public class SettingHelper {
     public void setQqCookie(String cookie) {
         if (!TextUtils.isEmpty(cookie))
             sharedPreferences.edit().putString(SettingHelper.qq_cookie_key, cookie).apply();
+    }
+    public String getMiguCookie() {
+        return sharedPreferences.getString(SettingHelper.migu_cookie_key, SettingHelper.migu_cookie_default);
+    }
+    public void setMiguCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.migu_cookie_key, cookie).apply();
     }
 }

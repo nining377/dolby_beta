@@ -12,8 +12,8 @@ import com.raincat.dolby_beta.view.BaseDialogInputItem;
  * <pre>
  *     author : Luoxingran
  *     e-mail : szb5845201314@gmail.com
- *     time   : 2021/12/14
- *     desc   : http代理模式
+ *     time   : 2023/07/24
+ *     desc   : 酷我cookie
  *     version: 1.0
  * </pre>
  */
@@ -35,7 +35,7 @@ public class ProxyKuwoView extends BaseDialogInputItem {
     public void init(Context context, AttributeSet attrs) {
         super.init(context, attrs);
         title = SettingHelper.kuwo_cookie_title;
-        editView.setKeyListener(DigitsKeyListener.getInstance("0123456789_.qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM; "));
+        //editView.setKeyListener(DigitsKeyListener.getInstance("0123456789_.qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM; "));
         setData(SettingHelper.getInstance().getKuwoCookie(), SettingHelper.kuwo_cookie_default);
 
         defaultView.setOnClickListener(view -> {
