@@ -107,5 +107,25 @@ public class PlayerActivityHook {
                     }
                 });
             }
+        if (SettingHelper.getInstance().isEnable(SettingHelper.beauty_background_key))
+            if (versionCode >= 123) {
+                XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.ui.PlayerBackgroundImage", context.getClassLoader()), "setBlurCover",String.class,String.class,int.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        param.args[0]= SettingHelper.getInstance().getPictureUrl();
+                        param.args[2]= SettingHelper.getInstance().getBackgroundBlur();
+                    }
+                });
+            } else {
+                XposedHelpers.findAndHookMethod(XposedHelpers.findClass("com.netease.cloudmusic.ui.r", context.getClassLoader()), "a",String.class,String.class,int.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        param.args[0]= SettingHelper.getInstance().getPictureUrl();
+                        param.args[2]= SettingHelper.getInstance().getBackgroundBlur();
+                    }
+                });
+            }
     }
 }

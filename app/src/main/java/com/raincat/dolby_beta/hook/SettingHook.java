@@ -33,6 +33,11 @@ import com.raincat.dolby_beta.view.beauty.BeautySidebarHideItem;
 import com.raincat.dolby_beta.view.beauty.BeautySidebarHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTabHideView;
 import com.raincat.dolby_beta.view.beauty.BeautyTitleView;
+import com.raincat.dolby_beta.view.beauty.PlayerBackgroundView;
+import com.raincat.dolby_beta.view.beauty.background.BackgroundMasterView;
+import com.raincat.dolby_beta.view.beauty.background.BackgroundTitleView;
+import com.raincat.dolby_beta.view.beauty.background.BackgroundPictureUrlView;
+import com.raincat.dolby_beta.view.beauty.background.BackgroundBlurRadiusView;
 import com.raincat.dolby_beta.view.proxy.*;
 import com.raincat.dolby_beta.view.proxy.configuration.*;
 import com.raincat.dolby_beta.view.setting.AboutView;
@@ -49,6 +54,7 @@ import com.raincat.dolby_beta.view.setting.TitleView;
 import com.raincat.dolby_beta.view.setting.UpdateView;
 import com.raincat.dolby_beta.view.setting.ListenView;
 import com.raincat.dolby_beta.view.setting.WarnView;
+
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -185,6 +191,7 @@ public class SettingHook {
         intentFilter.addAction(SettingHelper.proxy_setting);
         intentFilter.addAction(SettingHelper.beauty_setting);
         intentFilter.addAction(SettingHelper.sidebar_setting);
+        intentFilter.addAction(SettingHelper.background_setting);
         intentFilter.addAction(SettingHelper.proxy_configuration_setting);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -212,7 +219,9 @@ public class SettingHook {
                     showBeautyDialog(context);
                 } else if (intent.getAction().equals(SettingHelper.sidebar_setting)) {
                     showSidebarDialog(context);
-                }else if (intent.getAction().equals(SettingHelper.proxy_configuration_setting)) {
+                } else if (intent.getAction().equals(SettingHelper.background_setting)) {
+                    showPlayerBackgroundDialog(context);
+                } else if (intent.getAction().equals(SettingHelper.proxy_configuration_setting)) {
                     showProxyConfigurationDialog(context);
                 }
             }
@@ -252,6 +261,7 @@ public class SettingHook {
         BeautyView beautyView = new BeautyView(context);
         beautyView.setBaseOnView(masterView);
 
+
         dialogRoot.addView(new TitleView(context));
         dialogRoot.addView(masterView);
         dialogRoot.addView(dexView);
@@ -265,6 +275,7 @@ public class SettingHook {
         dialogRoot.addView(signSongSelfView);
         dialogRoot.addView(proxyView);
         dialogRoot.addView(beautyView);
+
         dialogRoot.addView(new AboutView(context));
         new AlertDialog.Builder(context)
                 .setView(scrollView)
@@ -312,7 +323,7 @@ public class SettingHook {
         ProxyHttpView proxyHttpView = new ProxyHttpView(context);
         ProxyPortView proxyPortView = new ProxyPortView(context);
         ProxyOriginalView proxyOriginalView = new ProxyOriginalView(context);
-        ProxyKuwoView proxykuwoView = new ProxyKuwoView(context);
+       // ProxyKuwoView proxykuwoView = new ProxyKuwoView(context);
         ProxyQqView proxyqqView = new ProxyQqView(context);
         ProxyMiguView proxymiguView = new ProxyMiguView(context);
 
@@ -320,11 +331,29 @@ public class SettingHook {
         dialogProxyRoot.addView(proxyHttpView);
         dialogProxyRoot.addView(proxyPortView);
         dialogProxyRoot.addView(proxyOriginalView);
-        dialogProxyRoot.addView(proxykuwoView);
+       // dialogProxyRoot.addView(proxykuwoView);
         dialogProxyRoot.addView(proxyqqView);
         dialogProxyRoot.addView(proxymiguView);
         new AlertDialog.Builder(context)
                 .setView(dialogProxyRoot)
+                .setCancelable(true)
+                .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
+                .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
+    }
+    private void showPlayerBackgroundDialog(final Context context) {
+        dialogBeautyRoot = new BaseDialogItem(context);
+        dialogBeautyRoot.setOrientation(LinearLayout.VERTICAL);
+        BackgroundMasterView backgroundMasterView = new BackgroundMasterView(context);
+        BackgroundPictureUrlView backgroundPictureUrlView = new BackgroundPictureUrlView(context);
+        BackgroundBlurRadiusView backgroundBlurRadiusView = new BackgroundBlurRadiusView(context);
+
+        dialogBeautyRoot.addView(new BackgroundTitleView(context));
+        dialogBeautyRoot.addView(backgroundMasterView);
+        dialogBeautyRoot.addView(backgroundPictureUrlView);
+        dialogBeautyRoot.addView(backgroundBlurRadiusView);
+
+        new AlertDialog.Builder(context)
+                .setView(dialogBeautyRoot)
                 .setCancelable(true)
                 .setPositiveButton("仅保存", (dialogInterface, i) -> refresh())
                 .setNegativeButton("保存并重启", (dialogInterface, i) -> restartApplication(context)).show();
@@ -341,6 +370,7 @@ public class SettingHook {
         dialogBeautyRoot.addView(new BeautyBlackHideView(context));
         dialogBeautyRoot.addView(new BeautyRotationView(context));
         dialogBeautyRoot.addView(new BeautyCommentHotView(context));
+        dialogBeautyRoot.addView(new PlayerBackgroundView(context));
         dialogBeautyRoot.addView(new BeautySidebarHideView(context));
         new AlertDialog.Builder(context)
                 .setView(dialogBeautyRoot)

@@ -2,13 +2,12 @@ package com.raincat.dolby_beta.hook;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
 
 import com.raincat.dolby_beta.helper.ExtraHelper;
-import com.raincat.dolby_beta.helper.SettingHelper;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.XposedBridge;
 
 
 
@@ -59,10 +58,15 @@ public class ListentogetherHook {
         }
         //新版写法
         listening = context.getSharedPreferences("LISTEN_TOGETHER", Context.MODE_MULTI_PROCESS);
-        while(SettingHelper.getInstance().isEnable(SettingHelper.listen_key)) {
-            findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.meta.RoomInfo", context.getClassLoader()),
-                    "getUnlockedIdentity", XC_MethodReplacement.returnConstant(true));
-            listening.edit().putBoolean("match_unlock_status" + ExtraHelper.USER_ID, true).apply();
-        }
+        XposedBridge.hookAllMethods(findClass("com.netease.cloudmusic.activity.PlayerActivity", context.getClassLoader()), "onCreate", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                findAndHookMethod(findClass("com.netease.cloudmusic.module.listentogether.meta.RoomInfo", context.getClassLoader()),
+                        "getUnlockedIdentity", XC_MethodReplacement.returnConstant(true));
+                listening.edit().putBoolean("match_unlock_status" + ExtraHelper.USER_ID, true).apply();
+            }
+        });
+
     }
 }

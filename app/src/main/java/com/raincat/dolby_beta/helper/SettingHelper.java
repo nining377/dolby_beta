@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 public class SettingHelper {
     public static final String refresh_setting = "β_refresh_setting";
     public static final String proxy_setting = "β_proxy_setting";
+    public static final String background_setting = "β_background_setting";
     public static final String beauty_setting = "β_beauty_setting";
     public static final String sidebar_setting = "β_sidebar_setting";
     public static final String proxy_configuration_setting = "β_proxy_configuration_setting";
@@ -72,6 +73,9 @@ public class SettingHelper {
 
     public static final String proxy_key = "β_proxy_key";
     public static final String proxy_title = "音源代理设置";
+
+    public static final String background_key = "β_background_key";
+    public static final String background_title = "播放界面背景设置";
 
     public static final String proxy_configuration_key = "β_proxy_configuration_key";
     public static final String proxy_configuration_title = "代理参数配置";
@@ -150,12 +154,23 @@ public class SettingHelper {
     public static final String beauty_rotation_key = "β_beauty_rotation_key";
     public static final String beauty_rotation_title = "播放页专辑图片停止转动";
 
+    public static final String beauty_background_key = "β_beauty_background_key";
+    public static final String beauty_background_title = "自定义播放界面背景";
+
     public static final String beauty_comment_hot_key = "β_beauty_comment_hot_key";
     public static final String beauty_comment_hot_title = "评论区优先显示“最热”内容";
 
     public static final String beauty_sidebar_hide_key = "β_beauty_sidebar_hide_key";
     public static final String beauty_sidebar_hide_title = "精简侧边栏";
     public static final String beauty_sidebar_hide_sub = "部分Item需配合“设置”->“侧边栏管理”开关生效";
+
+    public static final String background_url_key = "β_background_url_key";
+    public static final String background_url_title = "图片URL(请自行上传至图床)";
+    public static final String background_url_default = "";
+
+    public static final String background_blur_key = "β_background_blur_key";
+    public static final String background_blur_title = "高斯模糊度(默认透明无模糊)";
+    public static final int background_blur_default = 0 ;
 
     private static SettingHelper instance;
 
@@ -205,6 +220,9 @@ public class SettingHelper {
         settingMap.put(beauty_rotation_key, sharedPreferences.getBoolean(beauty_rotation_key, false));
         settingMap.put(beauty_black_hide_key, sharedPreferences.getBoolean(beauty_black_hide_key, false));
         settingMap.put(beauty_comment_hot_key, sharedPreferences.getBoolean(beauty_comment_hot_key, false));
+        settingMap.put(beauty_background_key, sharedPreferences.getBoolean(beauty_background_key, false));
+
+
     }
 
     public void setSetting(String key, boolean value) {
@@ -308,5 +326,20 @@ public class SettingHelper {
     public void setMiguCookie(String cookie) {
         if (!TextUtils.isEmpty(cookie))
             sharedPreferences.edit().putString(SettingHelper.migu_cookie_key, cookie).apply();
+    }
+    public String getPictureUrl() {
+        return sharedPreferences.getString(SettingHelper.background_url_key, SettingHelper.background_url_default);
+    }
+    public void setPictureUrl(String url) {
+        if (!TextUtils.isEmpty(url))
+            sharedPreferences.edit().putString(SettingHelper.background_url_key, url).apply();
+    }
+    public int getBackgroundBlur() {
+        return sharedPreferences.getInt(SettingHelper.background_blur_key, SettingHelper.background_blur_default);
+    }
+
+    public void setBackgroundBlur(String blur) {
+        if (!TextUtils.isEmpty(blur))
+            sharedPreferences.edit().putInt(SettingHelper.background_blur_key, Integer.parseInt(blur)).apply();
     }
 }
