@@ -32,4 +32,4 @@ jobs:
           name: app-release
           path: ${{github.workspace}}/app/build/outputs/apk/release/*.apk
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 180
