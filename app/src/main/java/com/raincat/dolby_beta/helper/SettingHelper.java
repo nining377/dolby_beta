@@ -122,7 +122,7 @@ public class SettingHelper {
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "kuwo pyncmd";
+    public static final String proxy_original_default = "pyncmd kuwo";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -225,7 +225,7 @@ public class SettingHelper {
 
     }
 
-    public void setSetting(String key, boolean value) {
+    public void  setSetting(String key, boolean value) {
         settingMap.put(key, value);
         sharedPreferences.edit().putBoolean(key, value).apply();
     }
