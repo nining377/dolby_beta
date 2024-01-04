@@ -203,7 +203,7 @@ public class SettingHelper {
         settingMap.put(listen_key, sharedPreferences.getBoolean(listen_key, false));
         settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, false));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
-        settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));
+        settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, false));
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
@@ -236,6 +236,38 @@ public class SettingHelper {
 
     public boolean isEnable(String key) {
         return settingMap.get(master_key) && settingMap.get(key);
+    }
+
+    private void deleteSetting(String key) {
+        if (sharedPreferences.contains(key)) {
+            sharedPreferences.edit().remove(key).apply();
+        }
+    }
+
+    public void resetSetting() {
+        deleteSetting(master_key);
+        deleteSetting(dex_key);
+        deleteSetting(warn_key);
+        deleteSetting(black_key);
+        deleteSetting(listen_key);
+        deleteSetting(fix_comment_key);
+        deleteSetting(update_key);
+        deleteSetting(sign_key);
+        deleteSetting(sign_song_key);
+        deleteSetting(proxy_master_key);
+        deleteSetting(proxy_server_key);
+        deleteSetting(proxy_priority_key);
+        deleteSetting(proxy_flac_key);
+        deleteSetting(proxy_gray_key);
+        deleteSetting(beauty_night_mode_key);
+        deleteSetting(beauty_tab_hide_key);
+        deleteSetting(beauty_bubble_hide_key);
+        deleteSetting(beauty_banner_hide_key);
+        deleteSetting(beauty_ksong_hide_key);
+        deleteSetting(beauty_rotation_key);
+        deleteSetting(beauty_black_hide_key);
+        deleteSetting(beauty_comment_hot_key);
+        deleteSetting(beauty_background_key);
     }
 
     public HashMap<String, Boolean> getSidebarSetting(LinkedHashMap<String, String> map) {

@@ -20,6 +20,10 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Sync latest Unblocked Music source code
+        run:
+          git clone --depth=1 https://github.com/UnblockNeteaseMusic/server.git && cd server && zip -r ../UnblockNeteaseMusic.zip . && cd .. && rm ./app/src/main/assets/UnblockNeteaseMusic.zip && rm -rf server && mv ./UnblockNeteaseMusic.zip ./app/src/main/assets/UnblockNeteaseMusic.zip
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -32,4 +36,4 @@ jobs:
           name: app-release
           path: ${{github.workspace}}/app/build/outputs/apk/release/*.apk
           if-no-files-found: warn
-          retention-days: 180
+          retention-days: 30
