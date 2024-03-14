@@ -20,8 +20,10 @@ import java.util.LinkedHashMap;
 public class SettingHelper {
     public static final String refresh_setting = "β_refresh_setting";
     public static final String proxy_setting = "β_proxy_setting";
+    public static final String background_setting = "β_background_setting";
     public static final String beauty_setting = "β_beauty_setting";
     public static final String sidebar_setting = "β_sidebar_setting";
+    public static final String proxy_configuration_setting = "β_proxy_configuration_setting";
 
     public static final String master_key = "β_master_key";
     public static final String master_title = "总开关";
@@ -40,7 +42,7 @@ public class SettingHelper {
 
     public static final String listen_key = "β_listen_key";
     public static final String listen_title = "解锁一起听蒙面查看权限";
-    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面（暂时只支持8.6.0-8.7.90）";
+    public static final String listen_sub = "开启后可直接查看对方信息，无需对方解除蒙面";
 
     public static final String fix_comment_key = "β_fix_comment_key";
     public static final String fix_comment_title = "修复评论区加载失败";
@@ -72,6 +74,13 @@ public class SettingHelper {
     public static final String proxy_key = "β_proxy_key";
     public static final String proxy_title = "音源代理设置";
 
+    public static final String background_key = "β_background_key";
+    public static final String background_title = "播放界面背景设置";
+
+    public static final String proxy_configuration_key = "β_proxy_configuration_key";
+    public static final String proxy_configuration_title = "代理参数配置";
+    public static final String proxy_configuration_sub = "在此填入对于代理服务器与相关脚本参数";
+
     public static final String proxy_master_key = "β_proxy_master_key";
     public static final String proxy_master_title = "代理开关";
 
@@ -95,13 +104,25 @@ public class SettingHelper {
     public static final String http_proxy_title = "代理服务器";
     public static final String http_proxy_default = "127.0.0.1";
 
+    public static final String kuwo_cookie_key = "β_kuwo_cookie_key";
+    public static final String kuwo_cookie_title = "酷我Cookie";
+    public static final String kuwo_cookie_default = "Hm_Iuvt_cdb524f42f0ce19b169b8072123a4727=CQXkhzXjGD6MFQrPTBxEpSmZXF78wP8e; Secret=1d0d220792feb563f97fdb0de2b7ebad69f781cdcdbe51d1203a3be9d3e92f5e04b00a24";
+
+    public static final String qq_cookie_key = "β_qq_cookie_key";
+    public static final String qq_cookie_title = "QQCookie";
+    public static final String qq_cookie_default = "uin=<your_uin>; qm_keyst=<your_qm_keyst>";
+
+    public static final String migu_cookie_key = "β_migu_cookie_key";
+    public static final String migu_cookie_title = "咪咕Cookie";
+    public static final String migu_cookie_default = "<your_aversionid>";
+
     public static final String proxy_port_key = "β_proxy_port_key";
     public static final String proxy_port_title = "代理端口（1~65535）";
     public static final int proxy_port_default = 23338;
 
     public static final String proxy_original_key = "β_proxy_original_key";
     public static final String proxy_original_title = "代理源（空格隔开）";
-    public static final String proxy_original_default = "kuwo pyncmd";
+    public static final String proxy_original_default = "pyncmd kuwo";
 
     public static final String proxy_cover_key = "β_proxy_cover_key";
     public static final String proxy_cover_title = "重新释放脚本";
@@ -133,12 +154,23 @@ public class SettingHelper {
     public static final String beauty_rotation_key = "β_beauty_rotation_key";
     public static final String beauty_rotation_title = "播放页专辑图片停止转动";
 
+    public static final String beauty_background_key = "β_beauty_background_key";
+    public static final String beauty_background_title = "自定义播放界面背景";
+
     public static final String beauty_comment_hot_key = "β_beauty_comment_hot_key";
     public static final String beauty_comment_hot_title = "评论区优先显示“最热”内容";
 
     public static final String beauty_sidebar_hide_key = "β_beauty_sidebar_hide_key";
     public static final String beauty_sidebar_hide_title = "精简侧边栏";
     public static final String beauty_sidebar_hide_sub = "部分Item需配合“设置”->“侧边栏管理”开关生效";
+
+    public static final String background_url_key = "β_background_url_key";
+    public static final String background_url_title = "图片URL(请自行上传至图床)";
+    public static final String background_url_default = "";
+
+    public static final String background_blur_key = "β_background_blur_key";
+    public static final String background_blur_title = "高斯模糊度(默认透明无模糊)";
+    public static final int background_blur_default = 0 ;
 
     private static SettingHelper instance;
 
@@ -171,7 +203,7 @@ public class SettingHelper {
         settingMap.put(listen_key, sharedPreferences.getBoolean(listen_key, false));
         settingMap.put(fix_comment_key, sharedPreferences.getBoolean(fix_comment_key, false));
         settingMap.put(update_key, sharedPreferences.getBoolean(update_key, true));
-        settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, true));
+        settingMap.put(sign_key, sharedPreferences.getBoolean(sign_key, false));
         settingMap.put(sign_song_key, sharedPreferences.getBoolean(sign_song_key, false));
 
         settingMap.put(proxy_master_key, sharedPreferences.getBoolean(proxy_master_key, true));
@@ -188,9 +220,12 @@ public class SettingHelper {
         settingMap.put(beauty_rotation_key, sharedPreferences.getBoolean(beauty_rotation_key, false));
         settingMap.put(beauty_black_hide_key, sharedPreferences.getBoolean(beauty_black_hide_key, false));
         settingMap.put(beauty_comment_hot_key, sharedPreferences.getBoolean(beauty_comment_hot_key, false));
+        settingMap.put(beauty_background_key, sharedPreferences.getBoolean(beauty_background_key, false));
+
+
     }
 
-    public void setSetting(String key, boolean value) {
+    public void  setSetting(String key, boolean value) {
         settingMap.put(key, value);
         sharedPreferences.edit().putBoolean(key, value).apply();
     }
@@ -201,6 +236,38 @@ public class SettingHelper {
 
     public boolean isEnable(String key) {
         return settingMap.get(master_key) && settingMap.get(key);
+    }
+
+    private void deleteSetting(String key) {
+        if (sharedPreferences.contains(key)) {
+            sharedPreferences.edit().remove(key).apply();
+        }
+    }
+
+    public void resetSetting() {
+        deleteSetting(master_key);
+        deleteSetting(dex_key);
+        deleteSetting(warn_key);
+        deleteSetting(black_key);
+        deleteSetting(listen_key);
+        deleteSetting(fix_comment_key);
+        deleteSetting(update_key);
+        deleteSetting(sign_key);
+        deleteSetting(sign_song_key);
+        deleteSetting(proxy_master_key);
+        deleteSetting(proxy_server_key);
+        deleteSetting(proxy_priority_key);
+        deleteSetting(proxy_flac_key);
+        deleteSetting(proxy_gray_key);
+        deleteSetting(beauty_night_mode_key);
+        deleteSetting(beauty_tab_hide_key);
+        deleteSetting(beauty_bubble_hide_key);
+        deleteSetting(beauty_banner_hide_key);
+        deleteSetting(beauty_ksong_hide_key);
+        deleteSetting(beauty_rotation_key);
+        deleteSetting(beauty_black_hide_key);
+        deleteSetting(beauty_comment_hot_key);
+        deleteSetting(beauty_background_key);
     }
 
     public HashMap<String, Boolean> getSidebarSetting(LinkedHashMap<String, String> map) {
@@ -270,5 +337,41 @@ public class SettingHelper {
 
     public String getHttpProxy() {
         return sharedPreferences.getString(SettingHelper.http_proxy_key, SettingHelper.http_proxy_default);
+    }
+    public String getKuwoCookie() {
+        return sharedPreferences.getString(SettingHelper.kuwo_cookie_key, SettingHelper.kuwo_cookie_default);
+    }
+    public void setKuwoCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.kuwo_cookie_key, cookie).apply();
+    }
+    public String getQqCookie() {
+        return sharedPreferences.getString(SettingHelper.qq_cookie_key, SettingHelper.qq_cookie_default);
+    }
+    public void setQqCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.qq_cookie_key, cookie).apply();
+    }
+    public String getMiguCookie() {
+        return sharedPreferences.getString(SettingHelper.migu_cookie_key, SettingHelper.migu_cookie_default);
+    }
+    public void setMiguCookie(String cookie) {
+        if (!TextUtils.isEmpty(cookie))
+            sharedPreferences.edit().putString(SettingHelper.migu_cookie_key, cookie).apply();
+    }
+    public String getPictureUrl() {
+        return sharedPreferences.getString(SettingHelper.background_url_key, SettingHelper.background_url_default);
+    }
+    public void setPictureUrl(String url) {
+        if (!TextUtils.isEmpty(url))
+            sharedPreferences.edit().putString(SettingHelper.background_url_key, url).apply();
+    }
+    public int getBackgroundBlur() {
+        return sharedPreferences.getInt(SettingHelper.background_blur_key, SettingHelper.background_blur_default);
+    }
+
+    public void setBackgroundBlur(String blur) {
+        if (!TextUtils.isEmpty(blur))
+            sharedPreferences.edit().putInt(SettingHelper.background_blur_key, Integer.parseInt(blur)).apply();
     }
 }

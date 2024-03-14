@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import com.raincat.dolby_beta.helper.ScriptHelper;
 
-import net.androidwing.hotxposed.HotXposed;
-
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
@@ -26,7 +24,9 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 //            HotXposed.hook(HookerDispatcher.class, lpparam);
                 new Hook(lpparam);
         }else if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.netease.cloudmusic.lite")) {
-            new Hooklite(lpparam);
+            new HookOther(lpparam);
+        }else if (!TextUtils.isEmpty(lpparam.packageName) && lpparam.packageName.equals("com.hihonor.cloudmusic")) {
+            new HookOther(lpparam);
         }
     }
 
