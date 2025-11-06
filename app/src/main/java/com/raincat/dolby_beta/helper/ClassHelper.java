@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+
 import com.annimon.stream.Stream;
 
+import com.raincat.dolby_beta.utils.Tools;
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.dexbacked.DexBackedClassDef;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
@@ -134,8 +136,12 @@ public class ClassHelper {
                 Pattern pattern;
                 if (versionCode < 154)
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.[a-z]\\.[a-z]\\.[a-z]\\.[a-z]$");
-                else
+                else if (versionCode < 8008050)
                     pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.[a-z]\\.[a-z]\\.[a-z]$");
+                else
+                    pattern = Pattern.compile("^com\\.netease\\.cloudmusic\\.network\\.cookie\\.store\\.[a-zA-Z0-9]{1,25}$");
+
+
                 List<String> list = getFilteredClasses(pattern, null);
 
                 try {
@@ -149,7 +155,7 @@ public class ClassHelper {
                             .findFirst()
                             .get();
 
-                    if (versionCode >= 154) {
+                  if (versionCode >= 154) {
                         clazz = Stream.of(list)
                                 .map(ClassHelper::getClassByXposed)
                                 .filter(c -> Modifier.isPublic(c.getModifiers()))
@@ -166,11 +172,11 @@ public class ClassHelper {
             }
 
             Object cookieString = null;
-            if (versionCode >= 154) {
+          if (versionCode >= 154) {
                 //获取静态cookie方法
                 Method cookieMethod = XposedHelpers.findMethodsByExactParameters(clazz, clazz)[0];
                 Object cookie = XposedHelpers.callStaticMethod(clazz, cookieMethod.getName());
-                for (Method method : XposedHelpers.findMethodsByExactParameters(abstractClazz, String.class)) {
+              for (Method method : XposedHelpers.findMethodsByExactParameters(abstractClazz, String.class)) {
                     if (method.getTypeParameters().length == 0 && method.getModifiers() == Modifier.PUBLIC) {
                         cookieString = XposedHelpers.callMethod(cookie, method.getName());
                     }

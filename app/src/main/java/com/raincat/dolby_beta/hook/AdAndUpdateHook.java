@@ -52,7 +52,7 @@ public class AdAndUpdateHook {
                         //加了一个反营销版权保护的URL，暂时作用未知
                         if (urlObj.toString().contains("appcustomconfig/get")
                                 //去广告
-                                || (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && !urlObj.toString().contains("music.126.net") && (urlObj.toString().contains("resource-exposure/config") || urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4")))
+                                || (SettingHelper.getInstance().isEnable(SettingHelper.black_key) && !urlObj.toString().contains("music.126.net") && (urlObj.toString().contains("resource-exposure/config") || urlObj.toString().contains("api/ad") || urlObj.toString().endsWith(".jpg") || urlObj.toString().endsWith(".mp4") || urlObj.toString().contains("ad/get")|| urlObj.toString().contains("ad/loading")))
                                 //去升级
                                 || (SettingHelper.getInstance().isEnable(SettingHelper.update_key) && (urlObj.toString().contains("android/version") || urlObj.toString().contains("android/upgrade")))) {
                             Field url = urlObj.getClass().getDeclaredField(urlFieldString);

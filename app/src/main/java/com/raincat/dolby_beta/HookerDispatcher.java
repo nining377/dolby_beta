@@ -18,7 +18,7 @@ public class HookerDispatcher implements IHookerDispatcher {
     @Override
     public void dispatch(XC_LoadPackage.LoadPackageParam lpparam) {
         new Hook(lpparam);
-        new Hooklite(lpparam);
+        new HookOther(lpparam);
     }
 }
 

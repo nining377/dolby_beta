@@ -24,7 +24,7 @@
 
 ## 下载方式
 
-[GitHub Release](https://github.com/nining377/dolby_beta/releases/latest)
+[GitHub Release](https://github.com/luoxingran/dolby_beta/releases/latest)
 
 [杜比大喇叭β版](https://wwi.lanzoui.com/b0cqxgwje) 访问密码：brdb
 

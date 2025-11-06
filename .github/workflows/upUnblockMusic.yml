@@ -1,0 +1,67 @@
+name: Build Modified APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget curl unzip zipalign openjdk-11-jdk
+        
+    - name: Download tools
+      run: |
+        # 下载apktool
+        wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.8.1/apktool_2.8.1.jar -O apktool.jar
+        wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
+        chmod +x apktool
+        
+        # 下载签名工具
+        wget -q https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
+        
+    - name: Get latest APK
+      run: |
+        # 获取最新发布的APK
+        LATEST_URL=$(curl -s https://api.github.com/repos/luoxingran/dolby_beta/releases/latest | grep browser_download_url | grep .apk | head -1 | cut -d '"' -f 4)
+        wget -O original.apk "$LATEST_URL"
+        
+    - name: Update UnblockNeteaseMusic
+      run: |
+        git clone --depth=1 https://github.com/UnblockNeteaseMusic/server.git
+        cd server && zip -r ../UnblockNeteaseMusic.zip . && cd ..
+        
+    - name: Decompile and modify
+      run: |
+        ./apktool d original.apk -o decoded
+        cp UnblockNeteaseMusic.zip decoded/assets/
+        
+    - name: Rebuild APK
+      run: |
+        ./apktool b decoded -o unsigned.apk
+        
+    - name: Sign APK
+      run: |
+        java -jar uber-apk-signer-1.3.0.jar \
+          --apks unsigned.apk \
+          --ks app/lin.jks \
+          --ksAlias lin \
+          --ksPass 123456 \
+          --ksKeyPass 123456 \
+          --out .
+        mv unsigned-aligned-signed.apk dolby_beta_modified.apk
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: modified-apk
+        path: dolby_beta_modified.apk
+        retention-days: 30

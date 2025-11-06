@@ -3,6 +3,7 @@ package com.raincat.dolby_beta.hook;
 import android.content.Context;
 import android.os.Bundle;
 
+
 import com.raincat.dolby_beta.helper.ExtraHelper;
 import com.raincat.dolby_beta.helper.ScriptHelper;
 import com.raincat.dolby_beta.helper.SettingHelper;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.net.ssl.SSLSocketFactory;
+
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -41,8 +43,7 @@ public class ProxyHook {
     private String fieldSSLSocketFactory;
     private String fieldHttpUrl = "url";
     private String fieldProxy = "proxy";
-
-    private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url");
+    private final List<String> whiteUrlList = Arrays.asList("song/enhance/player/url", "song/enhance/download/url","/package");
 
     public ProxyHook(Context context, boolean isPlayProcess) {
         Class<?> realCallClass = findClassIfExists("okhttp3.internal.connection.RealCall", context.getClassLoader());
@@ -71,7 +72,7 @@ public class ProxyHook {
                     urlField.setAccessible(true);
                     Object urlObj = urlField.get(request);
                     for (String url : whiteUrlList) {
-                        if (urlObj.toString().contains(url)) {
+                       if (urlObj.toString().contains(url)) {
                             setProxy(context, client);
                             break;
                         }
@@ -106,21 +107,17 @@ public class ProxyHook {
             });
         }
 
-        if (!isPlayProcess)
-            findAndHookMethod("com.netease.cloudmusic.activity.LoadingActivity", context.getClassLoader(), "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
-                    if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)) {
-                        ScriptHelper.initScript(context, false);
-                        if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
-                            ScriptHelper.startHttpProxyMode(context);
-                        } else {
-                            ScriptHelper.startScript();
-                        }
-                    }
+        if (!isPlayProcess) {
+            ExtraHelper.setExtraDate(ExtraHelper.SCRIPT_STATUS, "0");
+            if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_master_key)) {
+                ScriptHelper.initScript(context, false);
+                if (SettingHelper.getInstance().getSetting(SettingHelper.proxy_server_key)) {
+                    ScriptHelper.startHttpProxyMode(context);
+                } else {
+                    ScriptHelper.startScript();
                 }
-            });
+            }
+        }
     }
 
     /**
